@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id = "@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:gravity="center"
+        android:text="부모 로그인"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/login_Manager_id"
+        android:layout_width="match_parent"
+        android:paddingLeft="15dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="30dp"
+        android:hint="ID :"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/login_Manager_pw"
+        android:paddingLeft="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="30dp"
+        android:hint="PW : "
+        android:inputType="textPassword" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_manager_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:text="로그인"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_manager_login2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:text="회원가입"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_manager_login3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:text="ID찾기"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btn_manager_login4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:text="PW찾기"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>
