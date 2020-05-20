@@ -7,7 +7,7 @@
 
 
     <TextView
-        android:id="@+id/tv_imcp"
+        android:id="@+id/tv_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="0"
@@ -17,7 +17,6 @@
         android:textSize="70dp" />
 
     <TextView
-        android:id="@+id/tv_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="2"
