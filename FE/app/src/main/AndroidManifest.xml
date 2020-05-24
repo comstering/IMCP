@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChildrenLoginActivity"/>
+        <activity android:name=".PrimaryKey"/>
     </application>
 
 </manifest>

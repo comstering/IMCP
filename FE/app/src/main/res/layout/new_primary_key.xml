@@ -4,14 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_Primary"
+    <Button
+        android:id="@+id/btn_PrimaryKey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-
         android:layout_marginTop="200dp"
-
         android:text="고유키"
         android:textColor="#AAAAAAAA"
         android:textSize="40dp" />
@@ -21,9 +19,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="고유키 생성란"
         android:layout_marginTop="150dp"
         android:textColor="#AAAAAAAA"
-        android:textSize="40dp" />
+        android:textSize="40dp"
+        android:text=""
+        />
 
 </LinearLayout>
