@@ -3,7 +3,7 @@
 <%@ page import="DBConnect.*"%>
 <%@ page import="User.MemberDAO" %>
 <%
-	request.setCharacterEncoding("UTF-8");
+		request.setCharacterEncoding("UTF-8");
  		String name = request.getParameter("name");	//	부모 이름
  		String email = request.getParameter("email");	//	부모 이메일 주소
 		String returns = "";

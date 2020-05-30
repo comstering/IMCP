@@ -17,7 +17,7 @@ public class MemberDAO {
 	private PreparedStatement pstmt2;
 	private ResultSet rs;
 	private String results = "";
-
+	private String error = "non";
 	public MemberDAO() {
 		dbConnector = new DBConnector();
 	}
@@ -55,7 +55,7 @@ public class MemberDAO {
 				}
 		}
 		//	오류 발생시
-		return "non";
+		return error;
 	}
 	
 	public String memberLogin(String id, String password) {	//	로그인
@@ -82,7 +82,7 @@ public class MemberDAO {
 			}
 		}
 		//	오류 혹은 id가 틀렸거나 비밀번호가 맞지 않을때
-		return "non";
+		return error;
 	}
 	
 	public String memberFindID(String name, String email) {	//	비밀번호 찾기
@@ -109,7 +109,7 @@ public class MemberDAO {
 			}
 		}
 		//	오류 혹은 이름과 email이 일치하는 부모가 데이터베이스에 없을 때
-		return "non";
+		return error;
 	}
 	
 	public String memberFindPW(String id, String name, String email) {	//	비밀번호 찾기
@@ -137,7 +137,7 @@ public class MemberDAO {
 			}
 		}
 		//	오류 혹은 id, 이름, 이메일이 일치하는 정보가 없을 때
-		return "non";
+		return error;
 	}
 	
 	public String memberChangePW(String id, String password) {	//	비밀번호 변경
@@ -165,6 +165,6 @@ public class MemberDAO {
 			}
 		}
 		//	오류 혹은 id가 없을때
-		return "non";
+		return error;
 	}
 }
