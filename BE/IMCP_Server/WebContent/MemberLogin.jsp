@@ -2,14 +2,19 @@
 	pageEncoding="UTF-8"%>
 <%@ page import="DBConnect.*"%>
 <%@ page import="User.MemberDAO"%>
+<%@ page import="User.MemberDTO"%>
 <%
 		request.setCharacterEncoding("UTF-8");
 		String id = request.getParameter("id"); //	부모 id
 		String password = request.getParameter("password"); //	부모 password
 		String returns = "";
 	
-		MemberDAO memDAO = new MemberDAO();
-		returns = memDAO.memberLogin(id, password);
+		MemberDTO memDTO = new MemberDTO();
+		memDTO.setId(id);
+		memDTO.setPassword(password);
+ 		
+		MemberDAO memDAO = new MemberDAO(memDTO);
+		returns = memDAO.memberLogin();
 	
 		out.clear();
 		out.print(returns);

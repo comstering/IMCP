@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ page import="DBConnect.*"%>
 <%@ page import="User.ParentDAO"%>
+<%@ page import="User.ParentDTO"%>
 <%
 		request.setCharacterEncoding("UTF-8");
 		String img_file = request.getParameter("img_file"); //	파일경로
@@ -9,10 +10,18 @@
 		String name = request.getParameter("name"); //	변경된 아이이름		
 		String birth = request.getParameter("birth"); //	변경된 아이 생년월일
 		String childKey = request.getParameter("childKey"); //	아이 고유키(식별키)
+		String downPath = getServletContext().getRealPath("/") + "WebContent\\WEB-INF\\upload";	//	이미지 저장경로
 		String returns = "";
-	
-		ParentDAO parentDAO = new ParentDAO();
-		returns = parentDAO.modifyChildInfo(childKey, img_file, img_realfile, name, birth);
+
+		ParentDTO parentDTO = new ParentDTO();
+		parentDTO.setImg_file(img_file);
+		parentDTO.setImg_realfile(img_realfile);
+		parentDTO.setName(name);
+		parentDTO.setBirth(birth);
+		parentDTO.setChildKey(childKey);
+		
+		ParentDAO parentDAO = new ParentDAO(parentDTO);
+		returns = parentDAO.modifyChildInfo();
 	
 		out.clear();
 		out.print(returns);
