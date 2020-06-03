@@ -22,13 +22,13 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
     Context context;
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView mykids_photo;
-        TextView mykids_name;
+        ImageView mychild_photo;
+        TextView mychild_name;
 
         public ViewHolder(View itemView){
             super(itemView);
-            mykids_photo = itemView.findViewById(R.id.mykids_photo);
-            mykids_name = itemView.findViewById(R.id.mykids_name);
+            mychild_photo = itemView.findViewById(R.id.mychild_photo);
+            mychild_name = itemView.findViewById(R.id.mychild_name);
         }
     }
 
@@ -46,17 +46,17 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
         Context context = parent.getContext();
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View view = inflater.inflate(R.layout.item_mykids, parent, false);
+        View view = inflater.inflate(R.layout.item_children, parent, false);
         rv_mychildren_adapter.ViewHolder vh = new rv_mychildren_adapter.ViewHolder(view);
 
         return vh;
     }
 
-    public void onBindViewHolder(rv_mychildren_adapter.ViewHolder holder, final int postion){
-        final rv_mychildren_data item = mychildren.get(postion);
+    public void onBindViewHolder(rv_mychildren_adapter.ViewHolder holder, final int position){
+        final rv_mychildren_data item = mychildren.get(position);
 
-        holder.mykids_photo.setImageBitmap(StringToBitmap(item.getRv_mykids_image()));
-        holder.mykids_name.setText(item.getRv_mykids_name());
+        holder.mychild_photo.setImageBitmap(item.getRv_mychild_image());
+        holder.mychild_name.setText(item.getRv_mychild_name());
     }
 
 

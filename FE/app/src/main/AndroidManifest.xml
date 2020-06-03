@@ -9,6 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCIlG1hd50PhKb1BbtP_Y2A3ucu4jCgRaw"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 
@@ -19,6 +23,8 @@
 
         <activity android:name=".Parents.parents_main"></activity>
         <activity android:name=".Parents.Children_add"></activity>
+        <activity android:name=".Parents.Child"></activity>
+        <activity android:name=".Parents.missing_children"></activity>
     </application>
 
 </manifest>

@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <TextView
+   <TextView
         android:id="@+id/tv_addchild"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -15,12 +14,31 @@
         android:textStyle="bold"
         android:text="아이 추가 등록" />
 
-    <ImageView
-        android:id="@+id/imageView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
-        app:srcCompat="@drawable/children" />
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal"></LinearLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_addchild_photo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:src="@drawable/children" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal"></LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,7 +48,7 @@
         >
 
         <EditText
-            android:id="@+id/textView2"
+            android:id="@+id/etv_addchild_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="이름"
@@ -39,19 +57,19 @@
             />
 
         <EditText
-            android:id="@+id/textView3"
+            android:id="@+id/etv_addchild_key"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="고유키" />
 
         <EditText
-            android:id="@+id/textView4"
+            android:id="@+id/etv_addchild_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="비밀번호" />
 
         <EditText
-            android:id="@+id/textView5"
+            android:id="@+id/etv_addchild_birthday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="생년월일" />
@@ -71,11 +89,11 @@
                 android:orientation="horizontal"></LinearLayout>
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/btn_addchild_add"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:text="추가" />
 
             <LinearLayout
                 android:layout_width="0dp"
