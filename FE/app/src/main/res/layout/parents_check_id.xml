@@ -14,27 +14,20 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
         android:gravity="center"
-        android:text="부모 로그인"
+        android:text="아이디 찾기"
         android:textSize="40sp"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/et_parents_id"
+        android:id="@+id/et_parents_check_id"
         android:layout_width="match_parent"
         android:paddingLeft="15dp"
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
-        android:hint="ID :"
+        android:hint="아이디 : "
         android:inputType="textPassword" />
 
-    <EditText
-        android:id="@+id/et_parents_pw"
-        android:paddingLeft="15dp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
-        android:hint="PW : "
-        android:inputType="textPassword" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,24 +41,6 @@
             android:layout_gravity="start"
             android:layout_weight="1"
             android:text="로그인"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/btn_parents_signup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:text="회원가입"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/btn_parents_findid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="1"
-            android:text="ID찾기"
             android:textSize="14sp" />
 
         <Button

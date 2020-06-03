@@ -19,7 +19,7 @@
         android:textSize="40sp" />
 
     <EditText
-        android:id="@+id/member_re_name"
+        android:id="@+id/et_parents_findid_name"
         android:paddingLeft="15dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -28,7 +28,7 @@
         android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/member_re_mail"
+        android:id="@+id/et_parents_findid_email"
         android:paddingStart="15dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -37,7 +37,7 @@
         android:inputType="textPersonName" />
 
     <Button
-        android:id="@+id/btn_pw_re"
+        android:id="@+id/btn_parents_findid_ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"

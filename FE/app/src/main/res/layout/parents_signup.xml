@@ -19,7 +19,7 @@
         android:textSize="40sp" />
 
     <EditText
-        android:id="@+id/sign_id"
+        android:id="@+id/et_sign_id"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
@@ -28,7 +28,7 @@
         android:paddingStart="15dp" />
 
     <EditText
-        android:id="@+id/sign_pw"
+        android:id="@+id/et_sign_pw"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
@@ -37,7 +37,7 @@
         android:paddingStart="15dp" />
 
     <EditText
-        android:id="@+id/sign_pw2"
+        android:id="@+id/et_sign_repw"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
@@ -46,7 +46,7 @@
         android:paddingStart="15dp" />
 
     <EditText
-        android:id="@+id/sign_name"
+        android:id="@+id/et_sign_name"
         android:paddingStart="15dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -55,7 +55,7 @@
         android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/sign_email2"
+        android:id="@+id/et_sign_phonenum"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
@@ -64,7 +64,7 @@
         android:paddingStart="15dp" />
 
     <EditText
-        android:id="@+id/sign_email"
+        android:id="@+id/et_sign_email"
         android:paddingStart="15dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -78,7 +78,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_member_cancle"
+            android:id="@+id/btn_signup_cancle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="취소" />
@@ -89,7 +89,7 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/btn_member_signup"
+            android:id="@+id/btn_signup_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
