@@ -36,16 +36,12 @@ public class ParentDAO {
 				return "childAddFail";
 			}
 			else {	//	아이를 등록
-				sql2 = "insert into CHILD_INFO (img_file, img_realfile, name, childkey, birth) values (?, ?, ?, ?, ?)";
+				sql2 = "insert into CHILD_INFO (img_realfile, name, childkey, birth) values (?, ?, ?, ?)";
 				pstmt2 = conn.prepareStatement(sql2);
-				pstmt2.setString(1, paDTO.getImg_file());
-				pstmt2.setString(2, paDTO.getImg_realfile());
-				pstmt2.setString(3, paDTO.getName());
-				pstmt2.setString(4, paDTO.getChildKey());
-				pstmt2.setString(5, paDTO.getBirth());
-				/*
-				 * 이미지 파일을 서버에 저장하는 코드 필요
-				 */
+				pstmt2.setString(1, paDTO.getImg_realfile());
+				pstmt2.setString(2, paDTO.getName());
+				pstmt2.setString(3, paDTO.getChildKey());
+				pstmt2.setString(4, paDTO.getBirth());
 				return "childAddSuccess";
 			}
 		} catch (SQLException e) {
@@ -70,17 +66,13 @@ public class ParentDAO {
 			pstmt.setString(1, paDTO.getChildKey());
 			rs = pstmt.executeQuery();
 			if(rs.next()) {	//	아이 정보가 존재할 떄
-				sql2 = "update CHILD_INFO set img_file=?, img_realfile=?, name=?, birth=? where childkey=?";
+				sql2 = "update CHILD_INFO set img_realfile=?, name=?, birth=? where childkey=?";
 				pstmt2 = conn.prepareStatement(sql2);
-				pstmt2.setString(1, paDTO.getImg_file());
-				pstmt2.setString(2, paDTO.getImg_realfile());
-				pstmt2.setString(3, paDTO.getName());
-				pstmt2.setString(4, paDTO.getBirth());
-				pstmt2.setString(5, paDTO.getChildKey());
+				pstmt2.setString(1, paDTO.getImg_realfile());
+				pstmt2.setString(2, paDTO.getName());
+				pstmt2.setString(3, paDTO.getBirth());
+				pstmt2.setString(4, paDTO.getChildKey());
 				pstmt2.executeUpdate();
-				/*
-				 * 이미지 파일을 서버에 저장하는 코드 필요
-				 */
 				
 				return "childInfoUpdateSuccess";
 			}

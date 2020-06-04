@@ -1,17 +1,17 @@
 package User;
 
 public class ParentDTO {
-	private String img_file;
 	private String img_realfile;
 	private String name;
 	private String childKey;
 	private String birth;
+	private String filePath;
 	
-	public String getImg_file() {
-		return img_file;
+	public String getFilePath() {
+		return filePath;
 	}
-	public void setImg_file(String img_file) {
-		this.img_file = img_file;
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 	public String getImg_realfile() {
 		return img_realfile;
