@@ -21,7 +21,6 @@
  		
 		MemberDAO memDAO = new MemberDAO(memDTO);
 		returns = memDAO.memberJoin();
-		
 		out.clear();
 		out.print(returns);
 		out.flush();

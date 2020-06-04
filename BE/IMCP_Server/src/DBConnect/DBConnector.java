@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class DBConnector {
 	//  DB 접속 변수
-	private String dbURL = "jdbc:mysql://localhost:3306/labwebsite?serverTimezone=UTC";
-	private String dbID = "root";
-	private String dbPassword = "security915!";
+	private String dbURL = "jdbc:mysql://localhost:3307/labwebsite?serverTimezone=UTC";
+	private String dbID = "IMCP";
+	private String dbPassword = "Security915!";
 	
 	public DBConnector() {
 		
