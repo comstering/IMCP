@@ -8,9 +8,9 @@
 	request.setCharacterEncoding("UTF-8");
 	String childKey = request.getParameter("Key");
 	ChildDAO childDAO = new ChildDAO();
-	ChildDTO child = childDAO.getChildInfo(childKey);
-	String info = new String("{\"img\":" + child.getImgRealname() + ",\"name\":" + child.getName()
-		+ ",\"birth\":" + child.getBirth() + "}");
+	double[] gps = childDAO.getChildGPS(childKey);
+	
+	String info = new String("{\"lati\":" + gps[0] + ",\"longi\":" + gps[1] + "}");
 	
 	out.clear();
 	out.println(info);

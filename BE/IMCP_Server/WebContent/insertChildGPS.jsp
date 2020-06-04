@@ -7,12 +7,13 @@
 <%
 	request.setCharacterEncoding("UTF-8");
 	String childKey = request.getParameter("Key");
+	double lati = Double.parseDouble(request.getParameter("lati"));
+	double longi = Double.parseDouble(request.getParameter("longi"));
 	ChildDAO childDAO = new ChildDAO();
-	ChildDTO child = childDAO.getChildInfo(childKey);
-	String info = new String("{\"img\":" + child.getImgRealname() + ",\"name\":" + child.getName()
-		+ ",\"birth\":" + child.getBirth() + "}");
+	
+	int result = childDAO.setChildGPS(childKey, lati, longi);
 	
 	out.clear();
-	out.println(info);
+	out.println(result);
 	out.flush();
 %>

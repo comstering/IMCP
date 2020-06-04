@@ -17,5 +17,7 @@
 	child.deleteCharAt(child.length() - 1);
 	child.append("]");
 	
+	out.clear();
 	out.println(child);
+	out.flush();
 %>
