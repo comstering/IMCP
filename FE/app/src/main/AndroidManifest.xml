@@ -18,6 +18,12 @@
         </activity>
         <activity android:name=".ChildrenLoginActivity"/>
         <activity android:name=".PrimaryKey"/>
+
+        <activity android:name=".ParentsLoginActivity"/>
+        <activity android:name=".ParentsSignup"/>
+        <activity android:name=".ParentsFindId"/>
+        <activity android:name=".ParentsFindPw"/>
+
     </application>
 
 </manifest>

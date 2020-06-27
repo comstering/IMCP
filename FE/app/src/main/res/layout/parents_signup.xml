@@ -11,8 +11,9 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="70dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+
         android:gravity="center"
         android:text="회원가입"
         android:textStyle="bold"
@@ -21,60 +22,64 @@
     <EditText
         android:id="@+id/et_sign_id"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:hint="ID : "
-        android:inputType="textPassword"
-        android:paddingStart="15dp" />
+
+        android:paddingLeft="15dp" />
 
     <EditText
         android:id="@+id/et_sign_pw"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:hint="PW : "
         android:inputType="textPassword"
-        android:paddingStart="15dp" />
+
+        android:paddingLeft="15dp" />
 
     <EditText
-        android:id="@+id/et_sign_repw"
+        android:id="@+id/et_sign_re_pw"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:hint="PW (재입력) : "
         android:inputType="textPassword"
-        android:paddingStart="15dp" />
+        android:paddingLeft="15dp" />
 
     <EditText
         android:id="@+id/et_sign_name"
-        android:paddingStart="15dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:hint="이름 :"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:paddingLeft="15dp" />
 
     <EditText
-        android:id="@+id/et_sign_phonenum"
+        android:id="@+id/et_sign_phone_num"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:hint="전화번호 : "
         android:inputType="textEmailAddress"
-        android:paddingStart="15dp" />
+
+        android:paddingLeft="15dp" />
 
     <EditText
         android:id="@+id/et_sign_email"
-        android:paddingStart="15dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:hint="E-Mail : "
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:paddingLeft="15dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+
         android:orientation="horizontal">
 
         <Button

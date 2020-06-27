@@ -47,6 +47,7 @@ public class ChildrenLoginActivity extends AppCompatActivity {
             // 비밀번호 일치
             Toast.makeText(getApplicationContext(), "비밀번호 맞음", Toast.LENGTH_LONG).show();
 
+            // 고유키 발급 창
             setContentView(R.layout.new_primary_key);
         } else {
             // 비밀번호 불일치
