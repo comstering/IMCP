@@ -25,10 +25,10 @@ public class MissingDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getAge() {
+	public String getBirth() {
 		return birth;
 	}
-	public void setAge(String birth) {
+	public void setBirth(String birth) {
 		this.birth = birth;
 	}
 	public String getPrentPhone() {
@@ -37,14 +37,7 @@ public class MissingDTO {
 	public void setPrentPhone(String prentPhone) {
 		this.prentPhone = prentPhone;
 	}
-	
-	public MissingDTO(String childKey, String img, String name, String birth) {
-		super();
-		this.childKey = childKey;
-		this.img = img;
-		this.name = name;
-		this.birth = birth;
-	}
+
 	public MissingDTO(String childKey, String img, String name, String birth, String prentPhone) {
 		super();
 		this.childKey = childKey;
