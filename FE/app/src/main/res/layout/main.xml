@@ -50,7 +50,7 @@
             android:orientation="horizontal"></LinearLayout>
 
         <Button
-            android:id="@+id/b_missinglist"
+            android:id="@+id/btn_main_missinglist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dp"
@@ -65,7 +65,7 @@
             android:orientation="horizontal"></LinearLayout>
 
         <Button
-            android:id="@+id/b_addchild"
+            android:id="@+id/btn_main_addchild"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dp"

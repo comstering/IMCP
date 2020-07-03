@@ -1,7 +1,8 @@
-package com.example.imcp_fe.Parents.Adapter;
+package com.example.imcp_fe.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -11,10 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.imcp_fe.Parents.Data.rv_missingchild_data;
+import com.example.imcp_fe.Data.rv_missingchild_data;
+import com.example.imcp_fe.Missing_child_info;
 import com.example.imcp_fe.R;
 
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ public class rv_missingchild_adapter extends RecyclerView.Adapter<rv_missingchil
 
         public ViewHolder(View itemView){
             super(itemView);
-            missingchild_photo = itemView.findViewById(R.id.mychild_photo);
-            missingchild_name = itemView.findViewById(R.id.mychild_name);
+            missingchild_photo = itemView.findViewById(R.id.missingchild_photo);
+            missingchild_name = itemView.findViewById(R.id.missingchild_name);
         }
     }
 
@@ -44,14 +45,11 @@ public class rv_missingchild_adapter extends RecyclerView.Adapter<rv_missingchil
         this.context = context;
     }
 
-    public rv_missingchild_adapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        Context context = parent.getContext();
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public rv_missingchild_adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType){
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_missingchild, viewGroup, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
 
-        View view = inflater.inflate(R.layout.item_missingchild, parent, false);
-        rv_missingchild_adapter.ViewHolder vh = new rv_missingchild_adapter.ViewHolder(view);
-
-        return vh;
     }
 
 
@@ -61,6 +59,13 @@ public class rv_missingchild_adapter extends RecyclerView.Adapter<rv_missingchil
 
         holder.missingchild_photo.setImageBitmap(item.getRv_missingchild_image());
         holder.missingchild_name.setText(item.getRv_missingchild_name());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, Missing_child_info.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
 
@@ -69,9 +74,5 @@ public class rv_missingchild_adapter extends RecyclerView.Adapter<rv_missingchil
         this.context =activity;//보여지는 엑티비티
     }
 
-    private Bitmap StringToBitmap(String encodedString){//String을 Bitmap으로 변환
-        byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length) ;
-        return bitmap;
-    }
+
 }

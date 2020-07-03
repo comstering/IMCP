@@ -15,7 +15,7 @@ public class ParentsFindPw extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.parents_find_password);
+        setContentView(R.layout.find_password);
 
         btn_parents_findpw = (Button)findViewById(R.id.btn_parents_findpw);
 

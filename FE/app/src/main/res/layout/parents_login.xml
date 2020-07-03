@@ -25,7 +25,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
         android:hint="ID :"
-        android:inputType="textPassword" />
+       />
 
     <EditText
         android:id="@+id/et_parents_pw"

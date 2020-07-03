@@ -1,6 +1,9 @@
-package com.example.imcp_fe.Parents;
+package com.example.imcp_fe;
 
+import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -14,9 +17,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.imcp_fe.Network.AppHelper;
-import com.example.imcp_fe.Parents.Adapter.rv_missingchild_adapter;
-import com.example.imcp_fe.Parents.Data.rv_missingchild_data;
-import com.example.imcp_fe.R;
+import com.example.imcp_fe.Adapter.rv_mychildren_adapter;
+import com.example.imcp_fe.Data.rv_mychildren_data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,27 +27,77 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import android.graphics.Bitmap;
 
-public class missing_children extends AppCompatActivity {
-    private RecyclerView rv_missingchildren = null;
+public class Parents_main extends AppCompatActivity {
+
+    private RecyclerView rv_mychildren = null;
     private LinearLayoutManager layoutManager = null;
-    private rv_missingchild_adapter rvMissingchildrenAdapter = null;
-    private ArrayList<rv_missingchild_data> arrayList;
-    private rv_missingchild_data rvMissingchildrenData;
-    private ImageButton b_back;
+    private rv_mychildren_adapter rvMychildrenAdapter = null;
+    private ArrayList<rv_mychildren_data> arrayList;
+    private rv_mychildren_data rvMychildrenData;
+    private Button btn_main_addchild;
+    private Button btn_main_missingclist;
+    private ImageButton iv_mypage;
+    private Intent intent;
+    public Bitmap test =null;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.missing_children);
+        setContentView(R.layout.main);
+        btn_main_missingclist = findViewById(R.id.btn_main_missinglist);
+        btn_main_addchild = findViewById(R.id.btn_main_addchild);
+        iv_mypage = findViewById(R.id.iv_mypage);
+        test = BitmapFactory.decodeResource(getResources(),R.drawable.children);
 
-        b_back = (ImageButton) findViewById(R.id.btn_missingchilren_back);
-        rv_missingchildren = (RecyclerView) findViewById(R.id.rv_missingchildren);
+        btn_main_addchild.setOnClickListener(new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent = new Intent(view.getContext(), Add_child.class);
+                startActivity(intent);
+            }
+        });
+
+       iv_mypage.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               intent = new Intent(view.getContext(), Parent_info.class);
+               startActivity(intent);
+           }
+       });
+       btn_main_missingclist.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               intent = new Intent(view.getContext(),Missing_children.class);
+               startActivity(intent);
+           }
+       });
+
+        rvMychildrenData = new rv_mychildren_data(); //  리사이클러뷰 테스트용
+        arrayList = new ArrayList<rv_mychildren_data>();
+        rv_mychildren = (RecyclerView)findViewById(R.id.rv_mychildren);
+
+
+        layoutManager = new LinearLayoutManager(this);
+        rv_mychildren = findViewById(R.id.rv_mychildren);
+        rv_mychildren.setHasFixedSize(true);//일정한 크기의 아이템뷰를 만들어줌
+        rv_mychildren.setLayoutManager(layoutManager);//LinearLayout으로 리사이클러뷰 모양을 만듬.
+
+        rvMychildrenData.setRv_mychild_image(test);
+        rvMychildrenData.setRv_mychild_name("이민규");
+        arrayList.add(rvMychildrenData);
+        rvMychildrenAdapter = new rv_mychildren_adapter(this,arrayList);
+        rv_mychildren.setAdapter(rvMychildrenAdapter);
+
+        // sendRequest();
 
 
     }
 
 
 
+    //아이 리스트를 요청
     public void sendRequest() {
         String url = "https://www.google.co.kr";
 
@@ -60,18 +112,18 @@ public class missing_children extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            arrayList = new ArrayList<rv_missingchild_data>();
+                            arrayList = new ArrayList<rv_mychildren_data>();
                             JSONArray jarray = new JSONArray(response);
                             int size = jarray.length();
                             for (int i = 0; i < size; i++) {
                                 JSONObject row = jarray.getJSONObject(i);
-                                rvMissingchildrenData = new rv_missingchild_data();
-                               // rvMissingchildrenData.setRv_missingchild_image(row.getString("image"));//이미지 받아서 데이터로 저장
-                                rvMissingchildrenData.setRv_missingchild_name(row.getString("name"));// 이름 받아서 데이터로 저장
+                                rvMychildrenData = new rv_mychildren_data();
+                              //  rvMychildrenData.setRv_mychild_image(row.getString("image"));//이미지 받아서 데이터로 저장
+                                rvMychildrenData.setRv_mychild_name(row.getString("name"));// 이름 받아서 데이터로 저장
 
                             }
-                            rvMissingchildrenAdapter = new rv_missingchild_adapter(missing_children.this, arrayList);
-                            rv_missingchildren.setAdapter(rvMissingchildrenAdapter);//리사이클러뷰에 어댑터 연결
+                            rvMychildrenAdapter = new rv_mychildren_adapter(Parents_main.this, arrayList);
+                            rv_mychildren.setAdapter(rvMychildrenAdapter);//리사이클러뷰에 어댑터 연결
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -90,7 +142,6 @@ public class missing_children extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-              //  params.put();
                 return params;
             }
         };
@@ -103,4 +154,6 @@ public class missing_children extends AppCompatActivity {
         AppHelper.requestQueue.add(request);
 
     }
+
+
 }

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.imcp_fe">
-<uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,19 +16,21 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCIlG1hd50PhKb1BbtP_Y2A3ucu4jCgRaw"/>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".Start">
             <intent-filter>
                 
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
 
-        <activity android:name=".Parents.parents_main"></activity>
-        <activity android:name=".Parents.Children_add"></activity>
-        <activity android:name=".Parents.Child"></activity>
-        <activity android:name=".Parents.missing_children"></activity>
+        <activity android:name=".Parents_main"/>
+        <activity android:name=".Add_child"/>
+        <activity android:name=".Child"/>
+        <activity android:name=".Child_info"/>
+        <activity android:name=".Parent_info"/>
+        <activity android:name=".Missing_children"/>
+        <activity android:name=".Missing_child_info"/>
         <activity android:name=".ChildrenLoginActivity"/>
         <activity android:name=".PrimaryKey"/>
         <activity android:name=".ParentsLoginActivity"/>

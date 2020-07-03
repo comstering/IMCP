@@ -16,7 +16,7 @@ public class ParentsChangePassword extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.parents_change_password);
+        setContentView(R.layout.change_password);
 
         // 비밀번호 입력 초기화
         et_parents_change_pw=(EditText)findViewById(R.id.et_parents_change_pw);

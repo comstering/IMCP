@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-   
-            
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,51 +6,8 @@
     android:orientation="vertical">
 
 
-
     <TextView
-        android:id="@+id/tv_Parents"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_row="4"
-
-        android:layout_column="1"
-        android:layout_gravity="center"
-        android:text="부모"
-        android:textColor="#ff55aaff"
-        android:textSize="24dp"
-        android:textStyle="bold" />
-
-    <ImageButton
-        android:id="@+id/ib_Children"
-        android:layout_width="170dp"
-        android:layout_height="170dp"
-
-        android:layout_row="3"
-        android:layout_column="2"
-
-        android:contentDescription="ok button"
-        android:scaleType="centerInside"
-        android:src="@drawable/children">
-
-    </ImageButton>
-
-    <TextView
-        android:id="@+id/tv_Children"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:layout_row="4"
-
-        android:layout_column="2"
-        android:layout_gravity="center"
-        android:text="아이"
-        android:textColor="#ff55aaff"
-        android:textSize="24dp"
-        android:textStyle="bold" />
-
-
-</GridLayout>
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_gravity="center"
@@ -139,4 +94,3 @@
 
 
 </LinearLayout>
-

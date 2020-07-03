@@ -1,7 +1,8 @@
-package com.example.imcp_fe.Parents.Adapter;
+package com.example.imcp_fe.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -12,7 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.imcp_fe.Parents.Data.rv_mychildren_data;
+
+import com.example.imcp_fe.Child;
+import com.example.imcp_fe.Data.rv_mychildren_data;
 import com.example.imcp_fe.R;
 
 import java.util.ArrayList;
@@ -42,14 +45,12 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
         this.context = context;
     }
 
-    public rv_mychildren_adapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        Context context = parent.getContext();
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public rv_mychildren_adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType){
 
-        View view = inflater.inflate(R.layout.item_children, parent, false);
-        rv_mychildren_adapter.ViewHolder vh = new rv_mychildren_adapter.ViewHolder(view);
+       View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_children, viewGroup, false);
+       ViewHolder viewHolder = new ViewHolder(view);
+       return viewHolder;
 
-        return vh;
     }
 
     public void onBindViewHolder(rv_mychildren_adapter.ViewHolder holder, final int position){
@@ -57,6 +58,14 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
 
         holder.mychild_photo.setImageBitmap(item.getRv_mychild_image());
         holder.mychild_name.setText(item.getRv_mychild_name());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, Child.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
 
@@ -65,10 +74,6 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
         this.context =activity;//보여지는 엑티비티
     }
 
-    private Bitmap StringToBitmap(String encodedString){//String을 Bitmap으로 변환
-        byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length) ;
-        return bitmap;
-    }
+
 }
 

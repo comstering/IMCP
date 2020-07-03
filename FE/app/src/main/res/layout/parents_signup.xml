@@ -62,9 +62,9 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:hint="전화번호 : "
-        android:inputType="textEmailAddress"
-
-        android:paddingLeft="15dp" />
+        android:inputType="phone"
+        android:paddingLeft="15dp"
+        />
 
     <EditText
         android:id="@+id/et_sign_email"
@@ -81,12 +81,6 @@
         android:layout_weight="1"
 
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_signup_cancle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="취소" />
 
         <View
             android:layout_width="0dp"

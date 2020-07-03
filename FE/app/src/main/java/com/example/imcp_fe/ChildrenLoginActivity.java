@@ -2,19 +2,12 @@ package com.example.imcp_fe;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.Random;
-
-import javax.xml.datatype.Duration;
 
 public class ChildrenLoginActivity extends AppCompatActivity {
     EditText et_children_new_pw, et_children_re_pw;
@@ -25,7 +18,7 @@ public class ChildrenLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.children_first_password_page);
+        setContentView(R.layout.key_password);
 
         // 비밀번호 입력 초기화
         et_children_new_pw = (EditText) findViewById(R.id.et_children_new_pw);
@@ -34,6 +27,14 @@ public class ChildrenLoginActivity extends AppCompatActivity {
 
         sNewPW = et_children_new_pw.getText().toString();
         sRePW = et_children_re_pw.getText().toString();
+
+        btn_children_create_pw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PrimaryKey.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

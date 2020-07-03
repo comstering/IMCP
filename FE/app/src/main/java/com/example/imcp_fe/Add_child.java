@@ -1,21 +1,17 @@
-package com.example.imcp_fe.Parents;
+package com.example.imcp_fe;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,15 +22,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.imcp_fe.Network.AppHelper;
-import com.example.imcp_fe.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -44,7 +34,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Children_add extends AppCompatActivity {
+public class Add_child extends AppCompatActivity {
 
     private final int REQ_CODE_SELECT_IMAGE =100;//??
 
@@ -53,8 +43,8 @@ public class Children_add extends AppCompatActivity {
     private EditText key;
     private EditText password;
     private EditText birthday;
-    private Button addbutton;
-    private  String url;
+    private Button btn_addchild_add;
+    private  String url = "tomcat.comstering.synoloty.me/IMCP_Server/addChild.jsp";
     private String img_path = new String();
     private String imageName = null;
     private Bitmap image_bitmap = null;
@@ -62,15 +52,24 @@ public class Children_add extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.addchild);
+        setContentView(R.layout.add_child);
         photo = (CircleImageView)findViewById(R.id.iv_addchild_photo);
         name = (EditText)findViewById(R.id.etv_addchild_name);
         key =(EditText)findViewById(R.id.etv_addchild_key);
         password = (EditText)findViewById(R.id.etv_addchild_password);
         birthday = (EditText)findViewById(R.id.etv_addchild_birthday);
+        btn_addchild_add = (Button)findViewById(R.id.btn_addchild_add);
 
 
 
+
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,26 +80,22 @@ public class Children_add extends AppCompatActivity {
             }
         });
 
-        addbutton = (Button)findViewById(R.id.btn_addchild_add);
-        addbutton.setOnClickListener(new View.OnClickListener(){
+        btn_addchild_add.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
                 Log.e("check","click check");
                 //edittext에 모두 값이 있는지 확인
-               if(name.getText().toString().length() ==0 ||key.getText().toString().length()==0||password.getText().toString().length()==0||birthday.getText().toString().length()==0) {
-                   Toast.makeText(getApplicationContext(), "공란 없이 채워주세요.", Toast.LENGTH_SHORT).show();
-                   Log.e("check", "ddd");
-               }else{
-                   //DoFileUpload(url, img_path);
-                   //sendRequest();
+                if(name.getText().toString().length() ==0 ||key.getText().toString().length()==0||password.getText().toString().length()==0||birthday.getText().toString().length()==0) {
+                    Toast.makeText(getApplicationContext(), "공란 없이 채워주세요.", Toast.LENGTH_SHORT).show();
+                    Log.e("check", "ddd");
+                }else{
+                   DoFileUpload(url, img_path);
                    Toast.makeText(getApplicationContext(), "이미지 전송 성공", Toast.LENGTH_SHORT).show();
-                   Log.e("check", "Success");
-               }
+                    Log.e("check", "Success");
+                }
             }
         });
-
-
 
 
     }
@@ -149,7 +144,7 @@ public class Children_add extends AppCompatActivity {
 
         //이미지의 이름 값
         String imgName = imgPath.substring(imgPath.lastIndexOf("/") + 1);
-        Toast.makeText(Children_add.this, "이미지 이름 : " + imgName, Toast.LENGTH_SHORT).show();
+        Toast.makeText(Add_child.this, "이미지 이름 : " + imgName, Toast.LENGTH_SHORT).show();
         this.imageName = imgName;
 
         return imgPath;
@@ -176,7 +171,12 @@ public class Children_add extends AppCompatActivity {
             conn.setUseCaches(false);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connextion", "Keep-Alive");
+
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
+            conn.setRequestProperty("name", "A");
+            conn.setRequestProperty("key", "B");
+            conn.setRequestProperty("pasword", "C");
+            conn.setRequestProperty("brithday", "D");
 
             //write data
             DataOutputStream dos = new DataOutputStream(conn.getOutputStream());

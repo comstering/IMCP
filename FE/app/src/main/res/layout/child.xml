@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/child_layout"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +14,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/ib_child_back"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -29,7 +31,7 @@
             android:textSize="24dp" />
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/ib_child_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -39,19 +41,36 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_weight="3"
+        android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView"
+            android:id="@+id/iv_child_photo"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/children"
-             />
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:src="@drawable/children" />
+
+        <TextView
+            android:id="@+id/tv_child_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="24dp"
+            android:text="이름" />
+
+        <TextView
+            android:id="@+id/tv_child_primarykey"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="24dp"
+            android:text="고유키" />
 
     </LinearLayout>
 
     <fragment
-        android:id="@+id/mapView"
+        android:id="@+id/mv_child"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
@@ -69,6 +88,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:text="Button" />
+            android:text="도움요청" />
     </LinearLayout>
 </LinearLayout>
