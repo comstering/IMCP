@@ -320,8 +320,8 @@ public class ParentDAO {
 				pstmt.setString(4, id);    //  부모 아이디
 			} else {    //  부모 위치 저장 정보가 없을 경우
 				pstmt.setString(1, id);    //  부모 아이디
-				pstmt.setString(1, getTime());    //  서버 시간
-				pstmt.setDouble(1, lati);    //  위도
+				pstmt.setString(2, getTime());    //  서버 시간
+				pstmt.setDouble(3, lati);    //  위도
 				pstmt.setDouble(4, longi);    //  경도
 			}
 			return pstmt.executeUpdate();
@@ -364,10 +364,48 @@ public class ParentDAO {
 		}
 		return -1;    //  DB 오류
 	}
+
+	private boolean checkChildInfo(String childKey) {    //  아이 정보 유무 확인
+		ChildDAO childDAO = new ChildDAO();
+		return childDAO.checkChild(childKey);
+	}
 	
-	public int addChild(String childKey, String password, String name, String birth, String img) {    //  아이 추가
-		if(checkChildKey(childKey, password) == 1) {
-			String sql = "insert into CHILD_INFO values(?, ?, ?, ?)";
+	public int addChildCheck(String parentID, String childKey, String password) {    //  아이 추가시 아이 정보가 저장되어 있는지 확인
+		if(checkChildKey(childKey, password) == 1) {    //  아이 고유키 있는지 확인
+			if(checkChildInfo(childKey)) {    //  아이 정보 있을 경우
+				return addPtoC(parentID, childKey);    //  아이와 부모 연결
+			} else {    //  아이 정보 없을 경우
+				return 0;
+			}
+		}
+		return -1;    //  DB 오류
+	}
+	
+	private int addPtoC(String parentID, String childKey) {    //  아이와 부모 연결
+		String sql = "insert into PtoC values(?, ?)";
+		conn = dbConnector.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, parentID);    //  부모 아이디
+			pstmt.setString(2, childKey);    //  아이 식별값
+			return pstmt.executeUpdate();
+		} catch (SQLException e)  {
+			System.err.println("ParentDAO addPtoC SQLException error");
+		} finally {
+			try {
+				if(conn != null) {conn.close();}
+				if(pstmt != null) {pstmt.close();}
+			} catch(SQLException e) {
+				System.err.println("ParentDAO addPtoC close SQLException error");
+			}
+		}
+		return -1;
+	}
+	
+	public int addChild(String parentID, String childKey, String password, String name, String birth, String img) {    //  아이 추가
+		if(checkChildKey(childKey, password) == 1) {    //  아이 식별값이 저장되어 있는지 확인
+			String sql = "insert into CHILD_INFO(ChildKey, Name, Birth, Image) values(?, ?, ?, ?)";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
@@ -376,7 +414,10 @@ public class ParentDAO {
 				pstmt.setString(2, name);    //  아이 이름
 				pstmt.setString(3, birth);    //  아이 생일
 				pstmt.setString(4, img);    //  아이 사진파일 경로
-				return pstmt.executeUpdate();
+				int check = pstmt.executeUpdate();
+				if(check == 1) {    //  정보 저장 후 성공하면 아이와 부모 연결
+					return addPtoC(parentID, childKey);    //  아이와 부모 연결
+				}
 			} catch (SQLException e) {    //  예외처리
 				System.err.println("ParentDAO addChild SQLExceptoin error");
 			} finally {    //  자원해제
@@ -433,39 +474,6 @@ public class ParentDAO {
 		}
 		
 		return childArray.toString();
-	}
-	
-	private boolean checkChildInfo(String childKey) {    //  아이 정보 유무 확인
-		ChildDAO childDAO = new ChildDAO();
-		return childDAO.checkChild(childKey);
-	}
-	
-	public ChildDTO getChildInfo(String childKey) {    //  아이 정보 획득
-		ChildDTO childDTO = null;
-		if(checkChildInfo(childKey)) {
-			String sql = "select Name, Birth, Image from CHILD_INFO where ChildKey = ?";
-			conn = dbConnector.getConnection();
-			PreparedStatement pstmt = null;
-			try {
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, childKey);    //  아이 식별값
-				rs = pstmt.executeQuery();
-				if(rs.next()) {
-					childDTO = new ChildDTO(childKey, rs.getString(1), rs.getString(2), rs.getString(3));
-				}
-			} catch (SQLException e) {    //  예외처리
-				System.err.println("ParentDAO getChildInfo SQLExceptoin error");
-			} finally {    //  자원해제
-				try {
-					if(conn != null) {conn.close();}
-					if(pstmt != null) {pstmt.close();}
-					if(rs != null) {rs.close();}
-				} catch(SQLException e) {
-					System.err.println("ParentDAO getChildInfo close SQLException error");
-				}
-			}
-		}
-		return childDTO;
 	}
 	
 	public String getChildGPS(String childKey) {    //  아이 현재 위치 획득
@@ -528,27 +536,55 @@ public class ParentDAO {
 		}
 	}
 	
-	private boolean deleteInitial(String childKey) {    //  초기 안전 위치 등록시 이전에 저장된 Initial 삭제
-		int result = 0;
-		String sql = "delete from CHILD_GPS_INITIAL where ChildKey = ?";
+	private boolean checkInitial(String childKey) {    //  초기 안전 위치 저장된 값이 있는지 확인
+		String sql = "select * from CHILD_GPS_INITIAL where ChildKey = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);    //  아이 식별값
-			result = pstmt.executeUpdate();
+			pstmt.setString(1, childKey);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+			return false;
 		} catch (SQLException e) {    //  예외처리
-			System.err.println("ParentDAO deleteInitial SQLException error");
-			result = -1;    //  DB 오류
+			System.err.println("ParentDAO checkInitial SQLException error");
 		} finally {    //  자원해제
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
+				if(rs != null) {rs.close();}
 			} catch(SQLException e) {
-				System.err.println("ParentDAO deleteInitial SQLException error");
+				System.err.println("ParentDAO checkInitial SQLException error");
 			}
 		}
-		if(result == 1) {
+		return false;
+	}
+	
+	private boolean deleteInitial(String childKey) {    //  초기 안전 위치 등록시 이전에 저장된 Initial 삭제
+		int result = 0;
+		if(checkInitial(childKey)) {
+			String sql = "delete from CHILD_GPS_INITIAL where ChildKey = ?";
+			conn = dbConnector.getConnection();
+			PreparedStatement pstmt = null;
+			try {
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, childKey);    //  아이 식별값
+				result = pstmt.executeUpdate();
+			} catch (SQLException e) {    //  예외처리
+				System.err.println("ParentDAO deleteInitial SQLException error");
+				result = -1;    //  DB 오류
+			} finally {    //  자원해제
+				try {
+					if(conn != null) {conn.close();}
+					if(pstmt != null) {pstmt.close();}
+				} catch(SQLException e) {
+					System.err.println("ParentDAO deleteInitial SQLException error");
+				}
+			}
+		}
+		if(result == 1 || result == 0) {
 			return true;    //  delete 성공시
 		} else {
 			return false;    //  delete 실패시
@@ -559,14 +595,15 @@ public class ParentDAO {
 		int result = 0;
 		if(checkChildInfo(childKey)) {
 			if(deleteInitial(childKey)) {
-				JSONParser jsonParser = new JSONParser();
 				try {
+					JSONParser jsonParser = new JSONParser();
 					JSONArray gpsArray = (JSONArray) jsonParser.parse(gpsData);
+					result = gpsArray.size();
+					String sql = "insert into CHILD_GPS_INITIAL values(?, ?, ?)";
 					for(int i = 0; i < gpsArray.size(); i++) {
 						JSONObject gpsJSON = (JSONObject) gpsArray.get(i);
 						double lati = Double.parseDouble(gpsJSON.get("lati").toString());
 						double longi = Double.parseDouble(gpsJSON.get("longi").toString());
-						String sql = "insert into CHILD_GPS_INITIAL values(?, ?, ?)";
 						conn = dbConnector.getConnection();
 						PreparedStatement pstmt = null;
 						try {
@@ -597,7 +634,6 @@ public class ParentDAO {
 			} else {
 				result = -3;    //  초기 위치 삭제 실패
 			}
-			
 		}
 		/*
 		 * result = 0: 저장된 아이 정보 없음

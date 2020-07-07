@@ -7,9 +7,8 @@
  	String password = request.getParameter("password");    //  고유키 확인 password
  	
  	ChildDAO childDAO = new ChildDAO();
-	String returns = childDAO.childLogin(childKey, password);
 	
 	out.clear();
-	out.print(returns);
+	out.print(childDAO.childLogin(childKey, password));
 	out.flush();
 %>

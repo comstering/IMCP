@@ -8,9 +8,8 @@
 	String email = request.getParameter("email");    //  이메일
 	
 	ParentDAO parentDAO = new ParentDAO();
-	String returns = parentDAO.findPW(id, name, email);
 
 	out.clear();
-	out.print(returns);
+	out.print(parentDAO.findPW(id, name, email));
 	out.flush();
 %>

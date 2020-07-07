@@ -7,9 +7,8 @@
 	String password = request.getParameter("password");    //  부모 비밀번호
 	
 	ParentDAO parentDAO = new ParentDAO();
-	String returns = parentDAO.login(id, password);
 
 	out.clear();
-	out.print(returns);
+	out.print(parentDAO.login(id, password));
 	out.flush();
 %>

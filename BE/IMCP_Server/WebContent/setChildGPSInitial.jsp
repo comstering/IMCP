@@ -3,7 +3,7 @@
 <%@ page import="Parent.ParentDAO" %>
 <%
 	request.setCharacterEncoding("UTF-8");
-	String childKey = request.getParameter("chlidKey");    //  아이 식별값
+	String childKey = request.getParameter("childKey");    //  아이 식별값
 	String gpsData = request.getParameter("gps");    //  아이 초기 위치 데이터(JSON 데이터)
 	
 	ParentDAO parentDAO = new ParentDAO();

@@ -19,22 +19,24 @@
 	//  파일을 제외한 파라미터들
 	Enumeration<?> params = multipartRequest.getParameterNames();
 	
-	String[] values = new String[4];
+	String[] values = new String[5];
 	int i = 0;
 	//  모든 파라미터 값들 저장
 	while(params.hasMoreElements()) {
 		String param = (String)params.nextElement();
 		values[i++] = multipartRequest.getParameter(param);
 	}
+	//  values[0]: password
+	//  values[1]: name
+	//  values[2]: key
+	//  values[3]: id
+	//  values[4]: birth
 	
-	String str = values[0] + values[1] + values[2] + values[3] + img;
-	
-	/*
 	ParentDAO parentDAO = new ParentDAO();
-	int result = parentDAO.addChild(values[0], values[1], values[2], values[3], img);
-	*/
+	int result = parentDAO.addChild(values[3], values[2], values[0], values[1], values[4], img);
+	
 	String returns = "";
-	/*
+	
 	if(result == 1) {
 		returns = "AddSuccess";
 	} else if(result == 0) {
@@ -42,8 +44,7 @@
 	} else if(result == -1) {
 		returns = "DBError";
 	}
-	*/
-	returns = str;
+	
 	out.clear();
 	out.println(returns);
 	out.flush();

@@ -27,16 +27,21 @@
 		String param = (String)params.nextElement();
 		values[i++] = multipartRequest.getParameter(param);
 	}
+	//  values[0]: password
+	//  values[1]: name
+	//  values[2]: key
+	//  values[3]: id
+	//  values[4]: birth
 	
 	String str = values[0] + values[1] + values[2] + values[3] + values[4] + img;
 	
-	/*
-	ChildDTO childDTO = new ChildDTO(values[1], values[3], values[4], img);
+	
+	ChildDTO childDTO = new ChildDTO(values[2], values[1], values[4], img);
 	ParentDAO parentDAO = new ParentDAO();
-	int result = parentDAO.modifyChildInfo(values[0], values[2], childDTO);
-	*/
+	int result = parentDAO.modifyChildInfo(values[2], values[0], childDTO);
+	
 	String returns = "";
-	/*
+	
 	if(result == 1) {
 		returns = "ModifySuccess";
 	} else if(result == 0) {
@@ -44,7 +49,7 @@
 	} else if(result == -1) {
 		returns = "DBError";
 	}
-	*/
+	
 	returns = str;
 	out.clear();
 	out.println(returns);

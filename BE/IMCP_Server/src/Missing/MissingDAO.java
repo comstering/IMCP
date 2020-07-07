@@ -62,32 +62,6 @@ public class MissingDAO {
 		return missingArray.toString();
 	}
 	
-	public MissingDTO getMissingInfo(String childKey) {    //  실종아동 정보 획득
-		String sql = "select Image, Name, Birth, Phone from MISSING_INFO where ChildKey = ?";
-		conn = dbConnector.getConnection();
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);    //  아이 식별값
-			rs = pstmt.executeQuery();
-			if(rs.next()) {
-				MissingDTO missingDTO = new MissingDTO(childKey, rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
-				return missingDTO;
-			}
-		} catch (SQLException e) {    //  예외처리
-			System.err.println("MissingDAO getMissingInfo SQLExceptoin error");
-		} finally {    //  자원해제
-			try {
-				if(conn != null) {conn.close();}
-				if(pstmt != null) {pstmt.close();}
-				if(rs != null) {rs.close();}
-			} catch(SQLException e) {
-				System.err.println("MissingDAO getMissingInfo close SQLException error");
-			}
-		}
-		return null;
-	}
-	
 	public double[] getMissingGPS(String childKey) {    //  실종아동 위치 획득
 		double[] gps = new double[2];
 		String sql = "select Latitude, Longitude from CHILD_GPS where ChildKey = ? order by Time desc limit 1 ";
