@@ -1,6 +1,7 @@
 package com.example.imcp_fe;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.imcp_fe.Network.AppHelper;
 
 import org.json.JSONArray;
@@ -27,11 +29,13 @@ public class Parent_info extends AppCompatActivity {
     private TextView tv_parentinfo_phone;
     private TextView tv_parentinfo_email;
     private Button btn_parentinfo_logout;
+    private String url ="http://tomcat.comstering.synology.me/IMCP_Server/getParentInfo.jsp";
 
 
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+
+
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.parent_info);
         tv_parentinfo_id = findViewById(R.id.tv_parentinfo_id);
@@ -41,42 +45,43 @@ public class Parent_info extends AppCompatActivity {
         btn_parentinfo_logout = findViewById(R.id.btn_parentinfo_logout);
 
 
-        //         mypageRequest();
+         mypageRequest(url);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-    }
-
-    public void mypageRequest() {
-        String url = "https://www.google.co.kr";
+    public void mypageRequest(String url) {
 
         StringRequest request = new StringRequest(
-                Request.Method.GET,
+                Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
+                            if(response.equals(null)==false) {
+                                JSONArray jarray = new JSONArray(response);
+                                int size = jarray.length();
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject row = jarray.getJSONObject(i);
+                                    tv_parentinfo_id.setText(row.getString("id"));
+                                    tv_parentinfo_name.setText(row.getString("name"));
+                                    tv_parentinfo_phone.setText(row.getString("phone"));
+                                    tv_parentinfo_email.setText(row.getString("email"));
 
-                            JSONArray jarray = new JSONArray(response);
-                            int size = jarray.length();
-                            for (int i = 0; i < size; i++) {
-                                JSONObject row = jarray.getJSONObject(i);
-
+                                }
+                            }else{
+                                Log.e("pInfo", response);
                             }
-
                         } catch (JSONException e) {
                             e.printStackTrace();
+
                         }
                     }
                 },
                 new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Log.e("pInfo", "Error ; "+error);
                     }
                 }
         ) {
@@ -88,6 +93,8 @@ public class Parent_info extends AppCompatActivity {
         };
 
         request.setShouldCache(false);
+        AppHelper.requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
+
     }
 }

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.imcp_fe.Data.rv_missingchild_data;
 import com.example.imcp_fe.Missing_child_info;
 import com.example.imcp_fe.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -57,12 +58,18 @@ public class rv_missingchild_adapter extends RecyclerView.Adapter<rv_missingchil
     public void onBindViewHolder(rv_missingchild_adapter.ViewHolder holder, final int postion){
         final rv_missingchild_data item = missingchild.get(postion);
 
-        holder.missingchild_photo.setImageBitmap(item.getRv_missingchild_image());
+        Picasso.with(context).load(item.getRv_missingchild_image()).into(holder.missingchild_photo);
         holder.missingchild_name.setText(item.getRv_missingchild_name());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Missing_child_info.class);
+                intent.putExtra("key", item.getRv_missingchild_key());
+                intent.putExtra("image", item.getRv_missingchild_image());
+                intent.putExtra("name", item.getRv_missingchild_name());
+                intent.putExtra("birth", item.getRv_missingchild_birth());
+                intent.putExtra("phone", item.getRv_missingchild_Phone());
+
                 context.startActivity(intent);
             }
         });

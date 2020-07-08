@@ -1,8 +1,10 @@
 package com.example.imcp_fe;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -16,6 +18,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.imcp_fe.Network.AppHelper;
 import com.example.imcp_fe.Adapter.rv_mychildren_adapter;
 import com.example.imcp_fe.Data.rv_mychildren_data;
@@ -28,10 +31,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import android.graphics.Bitmap;
+import android.widget.Toast;
 
 public class Parents_main extends AppCompatActivity {
 
-    private RecyclerView rv_mychildren = null;
+    private RecyclerView rv_mychildren;
     private LinearLayoutManager layoutManager = null;
     private rv_mychildren_adapter rvMychildrenAdapter = null;
     private ArrayList<rv_mychildren_data> arrayList;
@@ -41,7 +45,11 @@ public class Parents_main extends AppCompatActivity {
     private ImageButton iv_mypage;
     private Intent intent;
     public Bitmap test =null;
-
+    private ArrayList<String> keyvalue;
+    private ArrayList<String>birthvalue;
+    private SharedPreferences login;
+   // private  final SharedPreferences.Editor editor = login.edit();
+    private String url = "http://tomcat.comstering.synology.me/IMCP_Server/getChildList.jsp";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,12 +57,13 @@ public class Parents_main extends AppCompatActivity {
         btn_main_missingclist = findViewById(R.id.btn_main_missinglist);
         btn_main_addchild = findViewById(R.id.btn_main_addchild);
         iv_mypage = findViewById(R.id.iv_mypage);
+        rv_mychildren = findViewById(R.id.rv_mychildren);
         test = BitmapFactory.decodeResource(getResources(),R.drawable.children);
 
         btn_main_addchild.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(view.getContext(), Add_child.class);
+                intent = new Intent(view.getContext(), Add_child_check.class);
                 startActivity(intent);
             }
         });
@@ -73,7 +82,7 @@ public class Parents_main extends AppCompatActivity {
                startActivity(intent);
            }
        });
-
+/*
         rvMychildrenData = new rv_mychildren_data(); //  리사이클러뷰 테스트용
         arrayList = new ArrayList<rv_mychildren_data>();
         rv_mychildren = (RecyclerView)findViewById(R.id.rv_mychildren);
@@ -89,42 +98,42 @@ public class Parents_main extends AppCompatActivity {
         arrayList.add(rvMychildrenData);
         rvMychildrenAdapter = new rv_mychildren_adapter(this,arrayList);
         rv_mychildren.setAdapter(rvMychildrenAdapter);
-
-        // sendRequest();
-
+*/
+       childlistRequest(url);
 
     }
 
 
 
     //아이 리스트를 요청
-    public void sendRequest() {
-        String url = "https://www.google.co.kr";
+    public void childlistRequest(String url) {
 
-        //StringRequest를 만듬 (파라미터구분을 쉽게하기위해 엔터를 쳐서 구분하면 좋다)
-        //StringRequest는 요청객체중 하나이며 가장 많이 쓰인다고한다.
-        //요청객체는 다음고 같이 보내는방식(GET,POST), URL, 응답성공리스너, 응답실패리스너 이렇게 4개의 파라미터를 전달할 수 있다.(리퀘스트큐에 ㅇㅇ)
-        //화면에 결과를 표시할때 핸들러를 사용하지 않아도되는 장점이있다.
         StringRequest request = new StringRequest(
-                Request.Method.GET,
+                Request.Method.POST,
                 url,
-                new Response.Listener<String>() {  //응답을 문자열로 받아서 여기다 넣어달란말임(응답을 성공적으로 받았을 떄 이메소드가 자동으로 호출됨
+                new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            arrayList = new ArrayList<rv_mychildren_data>();
-                            JSONArray jarray = new JSONArray(response);
-                            int size = jarray.length();
-                            for (int i = 0; i < size; i++) {
-                                JSONObject row = jarray.getJSONObject(i);
-                                rvMychildrenData = new rv_mychildren_data();
-                              //  rvMychildrenData.setRv_mychild_image(row.getString("image"));//이미지 받아서 데이터로 저장
-                                rvMychildrenData.setRv_mychild_name(row.getString("name"));// 이름 받아서 데이터로 저장
+                           if(response.equals(null)==false ) {
+                               arrayList = new ArrayList<rv_mychildren_data>();
+                               JSONArray jarray = new JSONArray(response);
+                               int size = jarray.length();
+                               for (int i = 0; i < size; i++) {
+                                   JSONObject row = jarray.getJSONObject(i);
+                                   rvMychildrenData = new rv_mychildren_data();
+                                   rvMychildrenData.setRv_mychild_image(row.getString("image"));
+                                   rvMychildrenData.setRv_mychild_name(row.getString("name"));
+                                   rvMychildrenData.setkey(row.getString("key"));
+                                   rvMychildrenData.setbirth(row.getString("birth"));
 
-                            }
-                            rvMychildrenAdapter = new rv_mychildren_adapter(Parents_main.this, arrayList);
-                            rv_mychildren.setAdapter(rvMychildrenAdapter);//리사이클러뷰에 어댑터 연결
-                        } catch (JSONException e) {
+                                   arrayList.add(rvMychildrenData);
+                               }
+                               rvMychildrenAdapter = new rv_mychildren_adapter(Parents_main.this, arrayList);
+                               rv_mychildren.setAdapter(rvMychildrenAdapter);//리사이클러뷰에 어댑터 연결
+                           }else if(response.equals(null)==true){
+                               Toast.makeText(getApplicationContext(), "null..",Toast.LENGTH_SHORT).show();
+                           } } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -132,13 +141,10 @@ public class Parents_main extends AppCompatActivity {
                 new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Log.e("volley", "main error : "+error);
                     }
                 }
         ) {
-            //만약 POST 방식에서 전달할 요청 파라미터가 있다면 getParams 메소드에서 반환하는 HashMap 객체에 넣어줍니다.
-            //이렇게 만든 요청 객체는 요청 큐에 넣어주는 것만 해주면 됩니다.
-            //POST방식으로 안할거면 없어도 되는거같다.
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -146,11 +152,8 @@ public class Parents_main extends AppCompatActivity {
             }
         };
 
-        //아래 add코드처럼 넣어줄때 Volley라고하는게 내부에서 캐싱을 해준다, 즉, 한번 보내고 받은 응답결과가 있으면
-        //그 다음에 보냈을 떄 이전 게 있으면 그냥 이전거를 보여줄수도  있다.
-        //따라서 이렇게 하지말고 매번 받은 결과를 그대로 보여주기 위해 다음과같이 setShouldCache를 false로한다.
-        //결과적으로 이전 결과가 있어도 새로 요청한 응답을 보여줌
         request.setShouldCache(false);
+        AppHelper.requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
 
     }

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.imcp_fe.Child;
 import com.example.imcp_fe.Data.rv_mychildren_data;
 import com.example.imcp_fe.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -55,14 +56,18 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
 
     public void onBindViewHolder(rv_mychildren_adapter.ViewHolder holder, final int position){
         final rv_mychildren_data item = mychildren.get(position);
-
-        holder.mychild_photo.setImageBitmap(item.getRv_mychild_image());
+        Picasso.with(context).load(item.getRv_mychild_image()).into(holder.mychild_photo);
         holder.mychild_name.setText(item.getRv_mychild_name());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Child.class);
+                intent.putExtra("key",item.getRv_mychild_Key());
+                intent.putExtra("image", item.getRv_mychild_image());
+                intent.putExtra("name", item.getRv_mychild_name());
+                intent.putExtra("birth", item.getRv_mychild_Birth());
+
                 context.startActivity(intent);
             }
         });

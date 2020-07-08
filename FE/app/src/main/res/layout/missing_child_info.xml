@@ -35,14 +35,14 @@
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/iv_missingchild_info_photo"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
             android:src="@drawable/children" />
 
         <TextView
-            android:id="@+id/tv_missingchild_name"
+            android:id="@+id/tv_missingchild_info_name"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -51,7 +51,7 @@
              />
 
         <TextView
-            android:id="@+id/tv_missingchild_age"
+            android:id="@+id/tv_missingchild_info_age"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -60,7 +60,7 @@
              />
 
         <TextView
-            android:id="@+id/tv_missingchild_phone"
+            android:id="@+id/tv_missingchild_info_phone"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

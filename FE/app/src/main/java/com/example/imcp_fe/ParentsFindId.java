@@ -1,10 +1,12 @@
 package com.example.imcp_fe;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -27,6 +29,10 @@ public class ParentsFindId extends AppCompatActivity {
     private EditText et_findid_name;
     private  EditText et_findid_email;
     private Button btn_findid_ok;
+    private String name;
+    private String email;
+    private Intent intent;
+    private String url="http://tomcat.comstering.synology.me/IMCP_Server/parentFindID.jsp";
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -37,53 +43,51 @@ public class ParentsFindId extends AppCompatActivity {
         et_findid_email = findViewById(R.id.et_parents_findid_email);
         btn_findid_ok = findViewById(R.id.btn_parents_findid_ok);
 
+        name =et_findid_name.getText().toString();
+        email=et_findid_email.getText().toString();
+
         btn_findid_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkRequest(et_findid_name.getText().toString(), et_findid_email.getText().toString());
+                findidRequest(url);
             }
         });
-        // 찾기 버튼을 누르면
-        // 이름과 이메일이 존재하는지 판단 후
-        // 이메일로 아이디를 전송한다.
-
     }
 
-    public void checkRequest(String name, String email) {
-        String url = "https://www.google.co.kr";
+    public void findidRequest(String url) {
 
         StringRequest request = new StringRequest(
-                Request.Method.GET,
+                Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        try {
+                        switch (response){
+                            case "NoID":
+                                Toast.makeText(getApplicationContext(), "등록된 아이디가 아닙니다. ",Toast.LENGTH_SHORT).show();
 
-                            JSONArray jarray = new JSONArray(response);
-                            int size = jarray.length();
-                            for (int i = 0; i < size; i++) {
-                                JSONObject row = jarray.getJSONObject(i);
-                             /*   x= row.getDouble("x"); // x, y 좌표를 받아옴.
-                                y = row.getDouble("y");
-                           */ }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                                break;
+                            case "DBError":
+                                Toast.makeText(getApplicationContext(), "Error",Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                findID(response);
+                                break;
                         }
                     }
                 },
                 new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        error.printStackTrace();
                     }
                 }
         ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-              //  params.put("",sendlocation);
+                params.put("Name",name);
+                params.put("Email",email);
                 return params;
             }
         };
@@ -91,4 +95,11 @@ public class ParentsFindId extends AppCompatActivity {
         request.setShouldCache(false);
         AppHelper.requestQueue.add(request);
     }
+    public void findID(String ID){
+
+        intent = new Intent(getApplicationContext(), Get_id.class);
+        intent.putExtra("ID", ID);
+        startActivity(intent);
+    }
+
 }

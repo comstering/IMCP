@@ -20,7 +20,7 @@
 
 
     <EditText
-        android:id="@+id/member_new_pw"
+        android:id="@+id/et_childmain_password"
         android:layout_width="match_parent"
         android:layout_height="51dp"
         android:hint="비밀번호 : "
@@ -28,14 +28,14 @@
         />
 
     <Button
-        android:id="@+id/btn_member_mypage_logout"
+        android:id="@+id/et_childmain_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:text="확인" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/ib_childmain_sos"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginLeft="90dp"

@@ -52,27 +52,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="이름"
-
-
+            android:maxLength="5"
+            android:maxLines="1"
             />
 
         <EditText
             android:id="@+id/etv_addchild_key"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="고유키" />
+            android:hint="고유키"
+            android:maxLength="6"
+            android:maxLines="1"
+            />
+
 
         <EditText
             android:id="@+id/etv_addchild_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="비밀번호" />
+            android:hint="비밀번호"
+            android:maxLines="1"/>
 
         <EditText
             android:id="@+id/etv_addchild_birthday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="생년월일" />
+            android:hint="생년월일"
+            android:maxLines="1"/>
     </LinearLayout>
 
     <!--공백 !-->

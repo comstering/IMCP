@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
@@ -22,48 +24,37 @@ import com.example.imcp_fe.Network.AppHelper;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ParentsChangePassword extends AppCompatActivity {
-    private EditText et_parents_change_pw, et_parents_change_re_pw;
-    private String sNewPW, sRePw;
-    private Button btn_parents_change_pw_ok;
-    private Intent intent;
-    private String url ="http://tomcat.comstering.synology.me/IMCP_Server/parentNewPW.jsp";
-    private SharedPreferences login_preference;
-    @Override
-    protected void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.change_password);
+public class Child_main extends AppCompatActivity {
 
-        // 비밀번호 입력 초기화
-        et_parents_change_pw=(EditText)findViewById(R.id.et_changepassword_pw);
-        et_parents_change_re_pw=(EditText)findViewById(R.id.et_changepassword_repw);
-        btn_parents_change_pw_ok=(Button)findViewById(R.id.btn_childinfo_save);
+    private EditText et_childmain_password;
+    private ImageButton ib_childmain_sos;
+    private SharedPreferences login_preference;
+    private String password;
+    private Intent intent;
+    private String url = "http://tomcat.comstering.synology.me/IMCP_Server/childLogin.jsp";
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.child_main);
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
 
+        et_childmain_password = findViewById(R.id.et_childmain_password);
+        ib_childmain_sos = findViewById(R.id.ib_childmain_sos);
 
-        btn_parents_change_pw_ok.setOnClickListener(new View.OnClickListener() {
+        ib_childmain_sos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sNewPW = et_parents_change_pw.getText().toString();
-                sRePw=et_parents_change_re_pw.getText().toString();
-                if (sNewPW.equals(sRePw)) {
-
-                    // 비밀번호 일치
-                    Toast.makeText(getApplicationContext(), "비밀번호 맞음", Toast.LENGTH_LONG).show();
-                    NewPWRequest(url);
-                } else {
-                    // 비밀번호 불일치
-                    Toast.makeText(getApplicationContext(), "비밀번호 틀림", Toast.LENGTH_LONG).show();
-                }
-
+                password = et_childmain_password.getText().toString();
+                childRequest(url);
 
             }
         });
 
+
     }
 
-
-    public void NewPWRequest(String url) {
+    public void childRequest(String url) {
 
         StringRequest request = new StringRequest(
                 Request.Method.POST,
@@ -72,15 +63,18 @@ public class ParentsChangePassword extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         switch (response){
-                            case "NewPWSuccess":
-                                Toast.makeText(getApplicationContext(), "변경 성공",Toast.LENGTH_SHORT).show();
-
+                            case "ChildLoginSuccess":
+                                Toast.makeText(getApplicationContext(), "로그인 성공",Toast.LENGTH_SHORT).show();
+                                Success();
+                                break;
+                            case "ChildLoginFail":
+                                Toast.makeText(getApplicationContext(), "로그인 실패",Toast.LENGTH_SHORT).show();
                                 break;
                             case "DBError":
                                 Toast.makeText(getApplicationContext(), "Error",Toast.LENGTH_SHORT).show();
                                 break;
                             default:
-                                Log.e("pInfo", response);
+                                Log.e("child", response);
                                 break;
                         }
                     }
@@ -95,15 +89,20 @@ public class ParentsChangePassword extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("ID",login_preference.getString("id",""));
-                params.put("newPassword",sNewPW);
-                params.put("email",login_preference.getString("email",""));
+                params.put("childKey", login_preference.getString("key", ""));
+                params.put("password",password);
                 return params;
             }
         };
+
 
         request.setShouldCache(false);
         AppHelper.requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
     }
+    public void Success(){
+        intent = new Intent(getApplicationContext(), PrimaryKey.class);
+        startActivity(intent);
+    }
+
 }

@@ -5,12 +5,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.imcp_fe.Network.AppHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParentsLoginActivity extends AppCompatActivity {
 
@@ -19,6 +31,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
     private Intent intent;
     private SharedPreferences login_preference;
     private Button btn_parents_login, btn_parents_signup, btn_parents_findid, btn_parents_findpw;
+    private String url = "tomcat.comstering.synology.me/IMCP_Server/parentLogin.jsp";
 
     private EditText sign_id, sign_pw;
 
@@ -28,7 +41,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.parents_login);
 
-        login_preference = getSharedPreferences("Login", Activity.MODE_PRIVATE);
+        login_preference = getSharedPreferences("Login",MODE_PRIVATE);
         sign_id = findViewById(R.id.et_parents_id);
         sign_pw = findViewById(R.id.et_parents_pw);
         btn_parents_login = (Button)findViewById(R.id.btn_parents_login);
@@ -52,6 +65,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
                 }else if(String.valueOf(pw).equals(login_preference.getString("pw",""))==false){
                     Toast.makeText(getApplicationContext(), "비밀번호를 다시 입력해주세요.", Toast.LENGTH_SHORT).show();
                 }else if(String.valueOf(id).equals(login_preference.getString("id",""))==true &&String.valueOf(pw).equals(login_preference.getString("pw",""))==true){
+                    LoginRequest(url);
                     intent = new Intent(getApplicationContext(), Parents_main.class);
                     startActivity(intent);
                 }
@@ -88,5 +102,59 @@ public class ParentsLoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+    public void LoginRequest(String url) {
+
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        switch (response){
+                            case "LoginSucess":
+                                Toast.makeText(getApplicationContext(), "로그인 성공",Toast.LENGTH_SHORT).show();
+                                LoginPass();
+                                break;
+                            case "LoginFail":
+                                Toast.makeText(getApplicationContext(), "로그인 실패",Toast.LENGTH_SHORT).show();
+                                break;
+                            case "NoID":
+                                Toast.makeText(getApplicationContext(), "등록된 아이디가 아닙니다. ",Toast.LENGTH_SHORT).show();
+
+                                break;
+                            case "DBError":
+                                Toast.makeText(getApplicationContext(), "Error",Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                Log.e("volley", response);
+                                break;
+                        }
+                    }
+                },
+                new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("ID",id.toString());
+                params.put("password",pw.toString());
+                return params;
+            }
+        };
+
+        request.setShouldCache(false);
+        AppHelper.requestQueue = Volley.newRequestQueue(this);
+        AppHelper.requestQueue.add(request);
+    }
+
+    public void LoginPass(){
+        intent = new Intent(getApplicationContext(), Parents_main.class);
+        startActivity(intent);
     }
 }

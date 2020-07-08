@@ -14,18 +14,17 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
         android:gravity="center"
-        android:text="아이디 찾기"
+        android:text="아이디 확인"
         android:textSize="40sp"
         android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/et_parents_check_id"
+    <TextView
+        android:id="@+id/tv_getid_checkid"
         android:layout_width="match_parent"
-        android:paddingLeft="15dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
-        android:hint="아이디 : "
-        android:inputType="textPassword" />
+        android:layout_height="wrap_content"
+        android:hint="아이디"
+        android:textSize="24dp"
+       />
 
 
 
@@ -35,7 +34,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btn_parents_login"
+            android:id="@+id/btn_getid_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -44,7 +43,7 @@
             android:textSize="14sp" />
 
         <Button
-            android:id="@+id/btn_parents_findpw"
+            android:id="@+id/btn_getid_findpw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"

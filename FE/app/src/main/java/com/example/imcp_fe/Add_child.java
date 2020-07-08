@@ -2,10 +2,12 @@ package com.example.imcp_fe;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -23,10 +25,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.imcp_fe.Network.AppHelper;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,15 +51,24 @@ public class Add_child extends AppCompatActivity {
     private EditText password;
     private EditText birthday;
     private Button btn_addchild_add;
-    private  String url = "tomcat.comstering.synoloty.me/IMCP_Server/addChild.jsp";
+    private  String url = "http://tomcat.comstering.synology.me/IMCP_Server/addChild.jsp";
     private String img_path = new String();
     private String imageName = null;
     private Bitmap image_bitmap = null;
     private Bitmap image_bitmap_copy = null;
+    private SharedPreferences login_preference;
+//    private  final SharedPreferences.Editor editor = login_preference.edit();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_child);
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .permitDiskReads()
+                .permitDiskWrites()
+                .permitNetwork().build());
+
+
+
         photo = (CircleImageView)findViewById(R.id.iv_addchild_photo);
         name = (EditText)findViewById(R.id.etv_addchild_name);
         key =(EditText)findViewById(R.id.etv_addchild_key);
@@ -61,15 +77,6 @@ public class Add_child extends AppCompatActivity {
         btn_addchild_add = (Button)findViewById(R.id.btn_addchild_add);
 
 
-
-
-
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,8 +84,10 @@ public class Add_child extends AppCompatActivity {
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
+                Log.d("Test", img_path);
             }
         });
+
 
         btn_addchild_add.setOnClickListener(new View.OnClickListener(){
 
@@ -90,8 +99,9 @@ public class Add_child extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "공란 없이 채워주세요.", Toast.LENGTH_SHORT).show();
                     Log.e("check", "ddd");
                 }else{
-                   DoFileUpload(url, img_path);
-                   Toast.makeText(getApplicationContext(), "이미지 전송 성공", Toast.LENGTH_SHORT).show();
+                    Log.d("Test", "DoFileUpload 전 : "+img_path);
+                    DoFileUpload(url, img_path);
+                    Toast.makeText(getApplicationContext(), "이미지 전송 성공", Toast.LENGTH_SHORT).show();
                     Log.e("check", "Success");
                 }
             }
@@ -112,6 +122,8 @@ public class Add_child extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "img_path : " + img_path, Toast.LENGTH_SHORT).show();
                     //이미지를 비트맵형식으로 반환
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+
+                    //사용자 단말기의 width , height 값 반환
                     int reWidth = (int) (getWindowManager().getDefaultDisplay().getWidth());
                     int reHeight = (int) (getWindowManager().getDefaultDisplay().getHeight());
 
@@ -126,10 +138,7 @@ public class Add_child extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-
-
+    }//end of onActivityResult()
 
     public String getImagePathToUri(Uri data) {
         //사용자가 선택한 이미지의 정보를 받아옴
@@ -158,32 +167,80 @@ public class Add_child extends AppCompatActivity {
     String twoHyphens = "--";
     String boundary = "*****";
 
+    public void HttpFileUpload(String urlString, String params, String fileName) {
+        try {
+            Log.d("Test", urlString);
+            File file = new File(fileName);
+            Log.d("Test","name : "+ fileName);
 
-    public void HttpFileUpload(String urlString, String params, String fileName){
-        try{
-            FileInputStream mFileInputStream = new FileInputStream(fileName);
-            URL connecturl = new URL(urlString);
+            FileInputStream mFileInputStream = new FileInputStream(file);
+            Log.e("Test", "1");
+            URL connectUrl = new URL(urlString);
+            Log.e("Test", "2");
 
-            //HttpsURLConnection 통신
-            HttpsURLConnection conn = (HttpsURLConnection) connecturl.openConnection();
+            Log.d("Test", "mFileInputStream  is " + mFileInputStream);
+
+            // HttpURLConnection 통신
+            HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
             conn.setDoInput(true);
             conn.setDoOutput(true);
             conn.setUseCaches(false);
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Connextion", "Keep-Alive");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+         /*   conn.setRequestProperty("name", "1");
+            conn.setRequestProperty("key", "2");
+            conn.setRequestProperty("password", "3");
+            conn.setRequestProperty("birth", "4");
+            conn.setRequestProperty("ID", "5");
+           */ Log.e("Test", "3");
 
-            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
-            conn.setRequestProperty("name", "A");
-            conn.setRequestProperty("key", "B");
-            conn.setRequestProperty("pasword", "C");
-            conn.setRequestProperty("brithday", "D");
 
-            //write data
+            // write data
             DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(twoHyphens + boundary+lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + fileName + "\"" + lineEnd);
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"name\""+ lineEnd);
+            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("lmg"+ lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"key\""+ lineEnd);
+            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(key.getText().toString()+ lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"password\""+ lineEnd);
+            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(password.getText().toString()+ lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"birth\""+ lineEnd);
+            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(birthday.getText().toString()+ lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"id\""+ lineEnd);
+            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("dasdasd"+ lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"" + fileName + "\"" + lineEnd);
+            dos.writeBytes(("Content-Type: " + URLConnection.guessContentTypeFromName(file.getName())) + lineEnd);
+            dos.writeBytes("Content-Transfer-Encoding: binary"+lineEnd);
+            dos.writeBytes(lineEnd);
+
+
+
             int bytesAvailable = mFileInputStream.available();
-            int maxBufferSize = 1024;
+            int maxBufferSize = 1024;//?1024
             int bufferSize = Math.min(bytesAvailable, maxBufferSize);
 
             byte[] buffer = new byte[bufferSize];
@@ -205,6 +262,7 @@ public class Add_child extends AppCompatActivity {
             // close streams
             Log.e("Test", "File is written");
             mFileInputStream.close();
+
             dos.flush();
             // finish upload...
 
@@ -216,7 +274,8 @@ public class Add_child extends AppCompatActivity {
                 b.append((char) ch);
             }
             is.close();
-            Log.e("Test", b.toString());
+            Log.e("Test", "responese : "+b.toString());
+
 
         } catch (Exception e) {
             Log.d("Test", "exception " + e.getMessage());
@@ -224,40 +283,6 @@ public class Add_child extends AppCompatActivity {
         }
     } // end of HttpFileUpload()
 
-
-    public void sendRequest() {
-        String url = "https://www.google.co.kr";
-
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                    }
-                },
-                new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("name", name.getText().toString());
-                params.put("key", key.getText().toString());
-                params.put("password", password.getText().toString());
-                params.put("birthday",birthday.getText().toString());
-                return params;
-            }
-        };
-
-        request.setShouldCache(false);
-        AppHelper.requestQueue.add(request);
-    }
 
 
 

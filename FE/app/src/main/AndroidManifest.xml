@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.imcp_fe">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,12 +29,14 @@
 
         <activity android:name=".Parents_main"/>
         <activity android:name=".Add_child"/>
+        <activity android:name=".Add_child_check"/>
         <activity android:name=".Child"/>
+        <activity android:name=".Child_main"/>
         <activity android:name=".Child_info"/>
         <activity android:name=".Parent_info"/>
         <activity android:name=".Missing_children"/>
         <activity android:name=".Missing_child_info"/>
-        <activity android:name=".ChildrenLoginActivity"/>
+        <activity android:name=".Keypassword"/>
         <activity android:name=".PrimaryKey"/>
         <activity android:name=".ParentsLoginActivity"/>
         <activity android:name=".ParentsSignup"/>
