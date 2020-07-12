@@ -43,6 +43,8 @@
 		returns = "NoPrivateKey";
 	} else if(result == -1) {
 		returns = "DBError";
+	} else if(result == -1) {
+		returns = "PtoCError";
 	}
 	
 	out.clear();

@@ -100,31 +100,6 @@ public class ChildDAO {
 		return "DBError";    //  DB 오류
 	}
 	
-	public int getAge(String birth) {    //  만 나이 구하기
-		String sql = "select truncate(datediff((select curdate()), ?) /365, 0)";
-		conn = dbConnector.getConnection();
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, birth);    //  생년월일
-			rs = pstmt.executeQuery();
-			if(rs.next()) {
-				return rs.getInt(1);
-			}
-		} catch (SQLException e) {    //  예외처리
-			System.err.println("ChildDAO getAge SQLExceptoin error");
-		} finally {    //  자원해제
-			try {
-				if(conn != null) {conn.close();}
-				if(pstmt != null) {pstmt.close();}
-				if(rs != null) {rs.close();}
-			} catch(SQLException e) {
-				System.err.println("ChildDAO getAge close SQLException error");
-			}
-		}
-		return -1;    //  DB 오류
-	}
-	
 	public boolean checkChild(String childKey) {    //  아이정보가 저장되었는지 확인
 		String sql = "select ChildKey from CHILD_INFO where ChildKey = ?";
 		conn = dbConnector.getConnection();

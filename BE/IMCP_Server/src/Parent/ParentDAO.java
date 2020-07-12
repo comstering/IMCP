@@ -381,26 +381,55 @@ public class ParentDAO {
 		return -1;    //  DB 오류
 	}
 	
-	private int addPtoC(String parentID, String childKey) {    //  아이와 부모 연결
-		String sql = "insert into PtoC values(?, ?)";
+	private boolean checkAddPtoC(String parentID, String childKey) {
+		String sql = "select * from PtoC where ID = ? and ChildKey = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, parentID);    //  부모 아이디
-			pstmt.setString(2, childKey);    //  아이 식별값
-			return pstmt.executeUpdate();
-		} catch (SQLException e)  {
-			System.err.println("ParentDAO addPtoC SQLException error");
+			pstmt.setString(1, parentID);
+			pstmt.setString(2, childKey);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return false;
+			}
+			return true;
+		} catch (SQLException e) {
+			System.err.println("ParentDAO checkAddPtoC SQLException error");
 		} finally {
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
 			} catch(SQLException e) {
-				System.err.println("ParentDAO addPtoC close SQLException error");
+				System.err.println("ParentDAO checkAddPtoC close SQLException error");
 			}
 		}
-		return -1;
+		return false;
+	}
+	
+	private int addPtoC(String parentID, String childKey) {    //  아이와 부모 연결
+		if(checkAddPtoC(parentID, childKey)) {
+			String sql = "insert into PtoC values(?, ?)";
+			conn = dbConnector.getConnection();
+			PreparedStatement pstmt = null;
+			try {
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, parentID);    //  부모 아이디
+				pstmt.setString(2, childKey);    //  아이 식별값
+				return pstmt.executeUpdate();
+			} catch (SQLException e)  {
+				System.err.println("ParentDAO addPtoC SQLException error");
+			} finally {
+				try {
+					if(conn != null) {conn.close();}
+					if(pstmt != null) {pstmt.close();}
+				} catch(SQLException e) {
+					System.err.println("ParentDAO addPtoC close SQLException error");
+				}
+			}
+			return -1;
+		}
+		return -2;
 	}
 	
 	public int addChild(String parentID, String childKey, String password, String name, String birth, String img) {    //  아이 추가
