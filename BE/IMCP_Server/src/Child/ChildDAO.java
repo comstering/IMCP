@@ -1,9 +1,20 @@
 package Child;
 
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.json.simple.JSONObject;
 
 import DBConnect.DBConnector;
 
@@ -180,8 +191,83 @@ public class ChildDAO {
 		}
 	}
 	
+	private ArrayList<String> getParentsToken(String childKey) {    //  부모 fcm 토큰 값 획득
+		ArrayList<String> list = new ArrayList<String>();
+		String sql = "select Token from PARENT_INFO where ID in (select ID from PtoC where ChildKey = ?)";
+		conn = dbConnector.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, childKey);    //  아이 식별값
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				list.add(rs.getString(1));
+			}
+		} catch (SQLException e) {    //  예외처리
+			System.err.println("ChildDAO getParentsToken SQLExceptoin error");
+		} finally {    //  자원해제
+			try {
+				if(conn != null) {conn.close();}
+				if(pstmt != null) {pstmt.close();}
+				if(rs != null) {rs.close();}
+			} catch(SQLException e) {
+				System.err.println("ChildDAO getParentsToken close SQLException error");
+			}
+		}
+		return list;
+	}
+	
+	private int sendFCMSOS(ArrayList<String> list, boolean type) {    //  FCM 데이터 전송(SOS)
+		int result = -200;
+		
+		String fcmURL = "https://fcm.gooleapis.com/fcm/send";    //  데이터를 보낼 URL
+		String fcmApiKey = "serverKey";    //  FCM Setting -> Cloud Messaging
+		
+		try {
+			URL url = new URL(fcmURL);
+			for(int i = 0; i < list.size(); i++) {
+				HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
+				httpUrlConnection.setUseCaches(false);
+				httpUrlConnection.setDoInput(true);
+				httpUrlConnection.setDoOutput(true);
+				httpUrlConnection.setRequestMethod("POST");
+				httpUrlConnection.setRequestProperty("Authorization", "key=" + fcmApiKey);
+				httpUrlConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
+				
+				//  FCM으로 보낼 JSONObject
+				HashMap<String, Object> hashData = new HashMap<String, Object>();
+				hashData.put("title", "title");    //  Notification Title
+				hashData.put("body", "body");    //  Notification Body
+				hashData.put("data1", "data1");    //  Plus Data
+				JSONObject dataObject = new JSONObject(hashData);    //  HashMap을 JSONObject로 변환
+				
+				HashMap<String, Object> hashFCM = new HashMap<String, Object>();
+				hashFCM.put("to", list.get(0).toString());    //  보낼 기기의 토큰
+				hashFCM.put("data", dataObject);    //  기기에 보낼 데이터
+				JSONObject sendObject = new JSONObject(hashFCM);
+				
+				DataOutputStream dos = new DataOutputStream(httpUrlConnection.getOutputStream());
+				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(dos));
+				writer.write(sendObject.toJSONString());
+				writer.flush();
+				writer.close();
+				httpUrlConnection.connect();
+				result = httpUrlConnection.getResponseCode();
+			}
+		} catch (MalformedURLException e) {
+			System.err.println("ChildDAO sendFCMSOS MalformedURLException error");
+		} catch (IOException e) {
+			System.err.println("ChildDAO sendFCMSOS IOException error");
+		}
+		return result;
+	}
+	
 	public int childSOS(String childKey, boolean type) {    //  아이 SOS 여부 등록
 		if(checkChild(childKey)) {
+			int httpResult = sendFCMSOS(getParentsToken(childKey), type);
+			if(httpResult != 200) {
+				return httpResult;
+			}
 			String sql = "update CHILD_INFO set Help = ? where ChildKey = ?";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;

@@ -24,6 +24,8 @@
 		returns = "NoChildInfo";
 	} else if(result == -1) {
 		returns = "DBError";
+	} else {
+		returns = "httpError" + result;
 	}
 
 	out.clear();
