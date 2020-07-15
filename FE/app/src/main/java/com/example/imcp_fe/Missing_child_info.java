@@ -74,19 +74,20 @@ public class Missing_child_info extends AppCompatActivity implements OnMapReadyC
         birth = intent.getStringExtra("birth");
         phone = intent.getStringExtra("phone");
 
-        Picasso.with(getApplicationContext()).load(image).into(iv_missingchild_info_photo);
+        Picasso.with(getApplicationContext()).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/"+image).into(iv_missingchild_info_photo);
         tv_missingchild_info_name.setText(name);
         tv_missingchild_info_phone.setText(phone);
 
-        Calendar cal = null;
+        Calendar cal= Calendar.getInstance();
         SimpleDateFormat formats;
         formats = new SimpleDateFormat ( "yyyy");
 
-//Finalvar.birth_year의 값은 1950년 1월 20일
+    Log.e("missinginfo", (formats.format(cal.getTime())));
         int time2 = Integer.parseInt(formats.format(cal.getTime()));
+        Log.e("missinginfo", birth);
         int ageSum = Integer.parseInt(birth.substring(0,4));
 
-        tv_missingchild_info_age.setText(time2 - ageSum +1);
+        tv_missingchild_info_age.setText(Integer.toString(time2 - ageSum +1));
 
 
 
@@ -112,19 +113,15 @@ public class Missing_child_info extends AppCompatActivity implements OnMapReadyC
 
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
-
-        LatLng loaction = new LatLng(x, y);
-
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(loaction);
-        markerOptions.title("현재 위치");
-
-
-        mMap.addMarker(markerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(loaction));//카메라의 위도 경도를 설정, loaction으로 서버에서 위치를 받아온다.
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));//카메라 확대 기능, 숫자가 높을수록 가까워짐 1단계일 경우 세계지도수준
     }
 
+    public void drawmap(double x, double y) {
+        LatLng newlatlng = new LatLng(x, y);
+
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(newlatlng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newlatlng, 15));
+    }
 
     public void loactionRequest(String url) {
 
@@ -137,21 +134,20 @@ public class Missing_child_info extends AppCompatActivity implements OnMapReadyC
                         @Override
                         public void onResponse(String response) {
                             try {
-                                if(response.equals(null)==false) {
-                                    JSONArray jarray = new JSONArray(response);
-                                    int size = jarray.length();
-                                    for (int i = 0; i < size; i++) {
-                                        JSONObject row = jarray.getJSONObject(i);
-                                        x = row.getDouble("x"); // x, y 좌표를 받아옴.
-                                        y = row.getDouble("y");
-                                    }
-                                }else if(response.equals(null)==true){
+                                if (response.equals(null) == false) {
+
+                                    JSONObject row = new JSONObject(response);
+                                    x = row.getDouble("lati"); // x, y 좌표를 받아옴.
+                                    y = row.getDouble("longi");
+                                    drawmap(x, y);
+                                } else if (response.equals(null) == true) {
                                     Log.e("volley", response);
                                     Toast.makeText(Missing_child_info.this, "Error", Toast.LENGTH_SHORT).show();
                                 }
+                                Log.e("map", Double.toString(x));
+                                Log.e("map", "3");
                             } catch (JSONException e) {
                                 e.printStackTrace();
-
                             }
                         }
                     },

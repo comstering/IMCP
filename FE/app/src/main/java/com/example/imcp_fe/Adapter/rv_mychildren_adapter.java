@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
 
     public void onBindViewHolder(rv_mychildren_adapter.ViewHolder holder, final int position){
         final rv_mychildren_data item = mychildren.get(position);
-        Picasso.with(context).load(item.getRv_mychild_image()).into(holder.mychild_photo);
+        Picasso.with(context).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/"+item.getRv_mychild_image()).into(holder.mychild_photo);
         holder.mychild_name.setText(item.getRv_mychild_name());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

@@ -82,10 +82,15 @@ public class Missing_children extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("missing", response);
                         try {
-                          if(response.equals(null)){
+                          if(!response.equals(null)){
                             arrayList = new ArrayList<rv_missingchild_data>();
-                            JSONArray jarray = new JSONArray(response);
+                              layoutManager = new LinearLayoutManager(getApplicationContext());
+                              rv_missingchildren.setHasFixedSize(true);//일정한 크기의 아이템뷰를 만들어줌
+                              rv_missingchildren.setLayoutManager(layoutManager);//LinearLayout으로 리사이클러뷰 모양을 만듬.
+
+                              JSONArray jarray = new JSONArray(response);
                             int size = jarray.length();
                             for (int i = 0; i < size; i++) {
                                 JSONObject row = jarray.getJSONObject(i);
@@ -99,7 +104,7 @@ public class Missing_children extends AppCompatActivity {
                             }
                             rvMissingchildrenAdapter = new rv_missingchild_adapter(Missing_children.this, arrayList);
                             rv_missingchildren.setAdapter(rvMissingchildrenAdapter);//리사이클러뷰에 어댑터 연결
-                             }else if(response.equals(null)==true){
+                             }else if(response.equals(null)){
                               Log.e("missing", response);
                           }
                         } catch (JSONException e) {

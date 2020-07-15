@@ -89,7 +89,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         et_childinfo_name = findViewById(R.id.et_childinfo_name);
         et_childinfo_brithday = findViewById(R.id.et_childinfo_brithday);
 
-        Picasso.with(getApplicationContext()).load(image).into(iv_childinfo_photo);
+        Picasso.with(getApplicationContext()).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/"+image).into(iv_childinfo_photo);
         et_childinfo_name.setText(name);
         et_childinfo_brithday.setText(birth);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

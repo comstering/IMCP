@@ -58,7 +58,7 @@ public class rv_missingchild_adapter extends RecyclerView.Adapter<rv_missingchil
     public void onBindViewHolder(rv_missingchild_adapter.ViewHolder holder, final int postion){
         final rv_missingchild_data item = missingchild.get(postion);
 
-        Picasso.with(context).load(item.getRv_missingchild_image()).into(holder.missingchild_photo);
+        Picasso.with(context).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/"+item.getRv_missingchild_image()).into(holder.missingchild_photo);
         holder.missingchild_name.setText(item.getRv_missingchild_name());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

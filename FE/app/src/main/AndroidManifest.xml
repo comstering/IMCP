@@ -1,48 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.imcp_fe">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.ACECESS_BACKGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppCompat.NoActionBar"
+        android:usesCleartextTraffic="true">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCIlG1hd50PhKb1BbtP_Y2A3ucu4jCgRaw"/>
+            android:value="AIzaSyCIlG1hd50PhKb1BbtP_Y2A3ucu4jCgRaw" />
 
         <activity android:name=".Start">
             <intent-filter>
-                
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".Parents_main"/>
-        <activity android:name=".Add_child"/>
-        <activity android:name=".Add_child_check"/>
-        <activity android:name=".Child"/>
-        <activity android:name=".Child_main"/>
-        <activity android:name=".Child_info"/>
-        <activity android:name=".Parent_info"/>
-        <activity android:name=".Missing_children"/>
-        <activity android:name=".Missing_child_info"/>
-        <activity android:name=".Keypassword"/>
-        <activity android:name=".PrimaryKey"/>
-        <activity android:name=".ParentsLoginActivity"/>
-        <activity android:name=".ParentsSignup"/>
-        <activity android:name=".ParentsFindId"/>
-        <activity android:name=".ParentsFindPw"/>
-
+        <activity android:name=".Parents_main" />
+        <activity android:name=".Add_child" />
+        <activity android:name=".Add_child_check" />
+        <activity android:name=".Child" />
+        <activity android:name=".Child_main" />
+        <activity android:name=".Child_info" />
+        <activity android:name=".Parent_info" />
+        <activity android:name=".Missing_children" />
+        <activity android:name=".Missing_child_info" />
+        <activity android:name=".Keypassword" />
+        <activity android:name=".PrimaryKey" />
+        <activity android:name=".ParentsLoginActivity" />
+        <activity android:name=".ParentsSignup" />
+        <activity android:name=".ParentsFindId" />
+        <activity android:name=".ParentsFindPw" />
+        <service android:name="com.example.imcp_fe.GPS.GPStracker"
+            android:enabled="true"
+            android:exported="true"/>
+        <receiver android:name="com.example.imcp_fe.GPS.Restartservice"
+            android:enabled="true"
+            android:exported="false"
+            android:label="RestartService"
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="ACTION.RESTART.GPStracker"/>
+            </intent-filter>
+        </receiver>
     </application>
+
 
 </manifest>

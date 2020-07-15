@@ -89,6 +89,7 @@ public class Keypassword extends AppCompatActivity {
     }
 
     public void setkeyRequest(String url) {
+        Log.e("keypass", "1");
         final SharedPreferences.Editor editor = login_preference.edit();
         StringRequest request = new StringRequest(
                 Request.Method.POST,
@@ -96,6 +97,7 @@ public class Keypassword extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("keypass", response);
                         switch (response){
                             case "ChildRegisterSuccess":
                                 Toast.makeText(getApplicationContext(), "비밀번호가 새로 설정되었습니다.",Toast.LENGTH_SHORT).show();

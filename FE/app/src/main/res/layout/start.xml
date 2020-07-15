@@ -3,8 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/white">
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"></LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,12 +28,18 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"></LinearLayout>
+
         <ImageButton
             android:id="@+id/ib_Parents"
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="170dp"
-
+            android:background="@android:color/white"
             android:contentDescription="ok button"
             android:scaleType="centerInside"
             android:src="@drawable/parents">
@@ -44,12 +57,18 @@
             android:layout_width="0dp"
             android:layout_weight="2"
             android:layout_height="170dp"
-
+            android:background="@android:color/white"
             android:contentDescription="ok button"
             android:scaleType="centerInside"
             android:src="@drawable/children">
 
         </ImageButton>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"></LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -57,6 +76,12 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"></LinearLayout>
 
         <TextView
             android:id="@+id/tv_Parents"
@@ -90,7 +115,18 @@
             android:textSize="24dp"
             android:textStyle="bold"
             android:gravity="center"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"></LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"></LinearLayout>
 
 
 </LinearLayout>

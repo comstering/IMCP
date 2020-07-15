@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/child_layout"
+    android:background="@android:color/white"
     >
 
     <LinearLayout
@@ -84,7 +85,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_child_sos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 

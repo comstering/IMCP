@@ -3,7 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"></LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +26,8 @@
             android:gravity="center_horizontal|center_vertical"
             android:text="내 아이들"
             android:textSize="24dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
 
         <ImageButton
             android:id="@+id/iv_mypage"
@@ -79,4 +87,10 @@
             android:layout_weight="1"
             android:orientation="horizontal"></LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"></LinearLayout>
 </LinearLayout>

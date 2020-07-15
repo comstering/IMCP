@@ -3,7 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"></LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,20 +32,21 @@
             android:layout_weight="2"
             android:gravity="center_vertical|center_horizontal"
             android:text="실종아이 정보"
-            android:textSize="24dp" />
+            android:textSize="24dp"
+            android:textColor="@android:color/black"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_missingchild_info_photo"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:src="@drawable/children" />
 
         <TextView
@@ -47,7 +55,9 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:hint="이름"
+            android:textColorHint="@android:color/darker_gray"
             android:textSize="20dp"
+            android:layout_marginBottom="10dp"
              />
 
         <TextView
@@ -57,7 +67,9 @@
             android:layout_weight="1"
             android:hint="나이"
             android:textSize="20dp"
-             />
+            android:layout_marginBottom="10dp"
+            android:textColorHint="@android:color/darker_gray"
+            />
 
         <TextView
             android:id="@+id/tv_missingchild_info_phone"
@@ -66,16 +78,25 @@
             android:layout_weight="1"
             android:hint="전화번호"
             android:textSize="20dp"
+            android:layout_marginBottom="10dp"
+            android:textColorHint="@android:color/darker_gray"
              />
+        <fragment
+            android:id="@+id/mv_missingchild"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            />
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/mv_missingchild"
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        />
+        android:layout_weight="0.5"
+        android:orientation="horizontal"></LinearLayout>
 
 
 </LinearLayout>

@@ -62,6 +62,7 @@ public class Add_child extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_child);
+        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .permitDiskReads()
                 .permitDiskWrites()
@@ -229,7 +230,7 @@ public class Add_child extends AppCompatActivity {
             dos.writeBytes("Content-Disposition: form-data; name=\"id\""+ lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("dasdasd"+ lineEnd);
+            dos.writeBytes(login_preference.getString("id","")+ lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"" + fileName + "\"" + lineEnd);
@@ -275,6 +276,28 @@ public class Add_child extends AppCompatActivity {
             }
             is.close();
             Log.e("Test", "responese : "+b.toString());
+
+            switch (b.toString()){
+                case "PtoCError":
+                    Toast.makeText(getApplicationContext(),"아이 연결실패",Toast.LENGTH_SHORT).show();
+                    break;
+                case "AddSuccess":
+                    Toast.makeText(getApplicationContext(),"연결 성공",Toast.LENGTH_SHORT).show();
+                    break;
+                case "NoPrivateKey":
+                    Toast.makeText(getApplicationContext(),"등록된 키가 없습니다.",Toast.LENGTH_SHORT).show();
+                    break;
+                case "DBError":
+                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_SHORT).show();
+                    break;
+
+            }
+
+            if(b.toString().equals("AddSuccess")){
+                Log.e("Test", "suc ");
+                Intent intent = new Intent(getApplicationContext(), Parents_main.class);
+                startActivity(intent);
+            }
 
 
         } catch (Exception e) {
