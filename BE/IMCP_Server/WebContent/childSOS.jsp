@@ -25,7 +25,7 @@
 	} else if(result == -1) {
 		returns = "DBError";
 	} else {
-		returns = "httpError" + result;
+		returns = "HttpError" + result;
 	}
 
 	out.clear();

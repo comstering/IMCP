@@ -221,7 +221,7 @@ public class ChildDAO {
 		int result = -200;
 		
 	    //  데이터를 보낼 URL
-		String fcmURL = "https://fcm.gooleapis.com/fcm/send";
+		String fcmURL = "https://fcm.googleapis.com/fcm/send";
 	    //  FCM Setting -> Cloud Messaging
 		String fcmApiKey = "AAAAK-E7ezg:APA91bHMDCXaStMIhwELOcDylGkg-W8EuUPfl8Jt3d2T5B0kdp_o8-IxLvuf9zeCu_vV8KEbLn9Lu6C9XrAwE8ezlJR2kgcrgAz2G7LSgtYY8Gn24r85qR1zE3zno-xdJlhvdYAwY9sK";
 		
@@ -241,9 +241,13 @@ public class ChildDAO {
 
 			//  FCM으로 보낼 JSONObject
 			HashMap<String, Object> hashData = new HashMap<String, Object>();
-			hashData.put("title", "title");    //  Notification Title
-			hashData.put("body", "body");    //  Notification Body
-			hashData.put("data1", "data1");    //  Plus Data
+			hashData.put("title", "SOS");    //  Notification Title
+			hashData.put("body", "아이가 위험합니다.");    //  Notification Body
+			if(type) {
+				hashData.put("SOS", "on");    //  아이가 도움요청 상태
+			} else {
+				hashData.put("SOS", "off");    //  아이 도움 요청 상태 해결
+			}
 			JSONObject dataObject = new JSONObject(hashData);    //  HashMap을 JSONObject로 변환
 
 			//  FCM으로 알림 받을 대상 JSONObject
@@ -278,7 +282,8 @@ public class ChildDAO {
 	
 	public int childSOS(String childKey, boolean type) {    //  아이 SOS 여부 등록
 		if(checkChild(childKey)) {
-			int httpResult = sendFCMSOS(getParentsToken(childKey), type);
+			ArrayList<String> list = getParentsToken(childKey);
+			int httpResult = sendFCMSOS(list, type);
 			if(httpResult != 200) {
 				return httpResult;
 			}
