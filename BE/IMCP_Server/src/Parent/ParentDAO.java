@@ -273,6 +273,28 @@ public class ParentDAO {
 		return "";    //  DB 오류
 	}
 	
+	public int setFCMToken(String id, String token) {
+		String sql = "insert into PARENT_TOKEN values(?, ?)";
+		conn = dbConnector.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			pstmt.setString(2, token);
+			return pstmt.executeUpdate();
+		} catch (SQLException e) {    //  예외처리
+			System.err.println("ParentDAO checkFCMToken SQLExceptoin error");
+		} finally {    //  자원해제
+			try {
+				if(conn != null) {conn.close();}
+				if(pstmt != null) {pstmt.close();}
+			} catch(SQLException e) {
+				System.err.println("PatentDAO checkFCMToken close SQLException error");
+			}
+		}
+		return -1;    //  DB 오류
+	}
+	
 	private int checkParentGPS(String id) {    //  부모의 위치 정보가 저장되어 있는지 확인
 		String sql = "select * from PARENT_GPS where ID = ?";
 		conn = dbConnector.getConnection();

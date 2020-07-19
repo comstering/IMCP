@@ -193,7 +193,7 @@ public class ChildDAO {
 	
 	private ArrayList<String> getParentsToken(String childKey) {    //  부모 fcm 토큰 값 획득
 		ArrayList<String> list = new ArrayList<String>();
-		String sql = "select Token from PARENT_INFO where ID in (select ID from PtoC where ChildKey = ?)";
+		String sql = "select Token from PARENT_TOKEN where ID in (select ID from PtoC where ChildKey = ?)";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
@@ -220,44 +220,58 @@ public class ChildDAO {
 	private int sendFCMSOS(ArrayList<String> list, boolean type) {    //  FCM 데이터 전송(SOS)
 		int result = -200;
 		
-		String fcmURL = "https://fcm.gooleapis.com/fcm/send";    //  데이터를 보낼 URL
-		String fcmApiKey = "serverKey";    //  FCM Setting -> Cloud Messaging
+	    //  데이터를 보낼 URL
+		String fcmURL = "https://fcm.gooleapis.com/fcm/send";
+	    //  FCM Setting -> Cloud Messaging
+		String fcmApiKey = "AAAAK-E7ezg:APA91bHMDCXaStMIhwELOcDylGkg-W8EuUPfl8Jt3d2T5B0kdp_o8-IxLvuf9zeCu_vV8KEbLn9Lu6C9XrAwE8ezlJR2kgcrgAz2G7LSgtYY8Gn24r85qR1zE3zno-xdJlhvdYAwY9sK";
+		
+		DataOutputStream dos = null;
+		OutputStreamWriter osw = null;
+		BufferedWriter writer = null;
 		
 		try {
 			URL url = new URL(fcmURL);
-			for(int i = 0; i < list.size(); i++) {
-				HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-				httpUrlConnection.setUseCaches(false);
-				httpUrlConnection.setDoInput(true);
-				httpUrlConnection.setDoOutput(true);
-				httpUrlConnection.setRequestMethod("POST");
-				httpUrlConnection.setRequestProperty("Authorization", "key=" + fcmApiKey);
-				httpUrlConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
-				
-				//  FCM으로 보낼 JSONObject
-				HashMap<String, Object> hashData = new HashMap<String, Object>();
-				hashData.put("title", "title");    //  Notification Title
-				hashData.put("body", "body");    //  Notification Body
-				hashData.put("data1", "data1");    //  Plus Data
-				JSONObject dataObject = new JSONObject(hashData);    //  HashMap을 JSONObject로 변환
-				
-				HashMap<String, Object> hashFCM = new HashMap<String, Object>();
-				hashFCM.put("to", list.get(0).toString());    //  보낼 기기의 토큰
-				hashFCM.put("data", dataObject);    //  기기에 보낼 데이터
-				JSONObject sendObject = new JSONObject(hashFCM);
-				
-				DataOutputStream dos = new DataOutputStream(httpUrlConnection.getOutputStream());
-				BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(dos));
-				writer.write(sendObject.toJSONString());
-				writer.flush();
-				writer.close();
-				httpUrlConnection.connect();
-				result = httpUrlConnection.getResponseCode();
-			}
+			HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
+			httpUrlConnection.setUseCaches(false);
+			httpUrlConnection.setDoInput(true);
+			httpUrlConnection.setDoOutput(true);
+			httpUrlConnection.setRequestMethod("POST");
+			httpUrlConnection.setRequestProperty("Authorization", "key=" + fcmApiKey);
+			httpUrlConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
+
+			//  FCM으로 보낼 JSONObject
+			HashMap<String, Object> hashData = new HashMap<String, Object>();
+			hashData.put("title", "title");    //  Notification Title
+			hashData.put("body", "body");    //  Notification Body
+			hashData.put("data1", "data1");    //  Plus Data
+			JSONObject dataObject = new JSONObject(hashData);    //  HashMap을 JSONObject로 변환
+
+			//  FCM으로 알림 받을 대상 JSONObject
+			HashMap<String, Object> hashFCM = new HashMap<String, Object>();
+			hashFCM.put("registration_ids", list);    //  보낼 기기들의 토큰
+			hashFCM.put("data", dataObject);    //  기기에 보낼 데이터
+			JSONObject sendObject = new JSONObject(hashFCM);    //  HashMap을 JSONObject로 변환
+
+			dos = new DataOutputStream(httpUrlConnection.getOutputStream());
+			osw = new OutputStreamWriter(dos);
+			writer = new BufferedWriter(osw);
+			writer.write(sendObject.toJSONString());
+			writer.flush();
+			httpUrlConnection.connect();
+			result = httpUrlConnection.getResponseCode();
 		} catch (MalformedURLException e) {
 			System.err.println("ChildDAO sendFCMSOS MalformedURLException error");
 		} catch (IOException e) {
 			System.err.println("ChildDAO sendFCMSOS IOException error");
+		} finally {
+			try {
+				if(dos != null) {dos.close();}
+				if(osw != null) {osw.close();}
+				if(writer != null) {writer.close();}
+			} catch (IOException e) {
+				System.err.println("ChildDAO sendFCMSOS close IOException error");
+			}
+			
 		}
 		return result;
 	}
