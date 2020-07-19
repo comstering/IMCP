@@ -50,21 +50,24 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/*
+아이정보 수정
+* */
 public class Child_info extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
 
-    private final int REQ_CODE_SELECT_IMAGE =100;//??
+    private final int REQ_CODE_SELECT_IMAGE = 100;//??
     private GoogleMap mMap;
-   private ArrayList<MarkerOptions> markerlist = new ArrayList<>();
-   private Button btn_childinfo_save;
-   private StringBuffer sendlocation=null;
-   private CircleImageView iv_childinfo_photo;
-   private EditText et_childinfo_name;
-   private EditText et_childinfo_brithday;
-   private String lati;
-   private String longi;
-   private String  gpsurl ="http://tomcat.comstering.synology.me/IMCP_Server/setChildGPSInitial.jsp";
-    private String infourl ="http://tomcat.comstering.synology.me/IMCP_Server/childModify.jsp";
+    private ArrayList<MarkerOptions> markerlist = new ArrayList<>();
+    private Button btn_childinfo_save;
+    private StringBuffer sendlocation = null;
+    private CircleImageView iv_childinfo_photo;
+    private EditText et_childinfo_name;
+    private EditText et_childinfo_brithday;
+    private String lati;
+    private String longi;
+    private String gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPSInitial.jsp";
+    private String infourl = "http://tomcat.comstering.synology.me/IMCP_Server/childModify.jsp";
     private String img_path = new String();
     private String imageName = null;
     private Bitmap image_bitmap = null;
@@ -74,22 +77,26 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     private String image;
     private String birth;
 
-
+    /*
+    엑티비티 생성 시 호출
+    사용자 인터페이스 설정
+    버튼 이벤트 설정
+    * */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chlid_info);
 
-        Intent intent =getIntent();
+        Intent intent = getIntent();
         key = intent.getStringExtra("key");
-       name = intent.getStringExtra("name");
-       image =intent.getStringExtra("image");
-       birth =intent.getStringExtra("birth");
+        name = intent.getStringExtra("name");
+        image = intent.getStringExtra("image");
+        birth = intent.getStringExtra("birth");
         btn_childinfo_save = (Button) findViewById(R.id.btn_childinfo_save);
         iv_childinfo_photo = (CircleImageView) findViewById(R.id.iv_childinfo_photo);
         et_childinfo_name = findViewById(R.id.et_childinfo_name);
         et_childinfo_brithday = findViewById(R.id.et_childinfo_brithday);
 
-        Picasso.with(getApplicationContext()).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/"+image).into(iv_childinfo_photo);
+        Picasso.with(getApplicationContext()).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/" + image).into(iv_childinfo_photo);
         et_childinfo_name.setText(name);
         et_childinfo_brithday.setText(birth);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -97,8 +104,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                 .permitDiskWrites()
                 .permitNetwork().build());
 
-
-
+        //이미지 변경
         iv_childinfo_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,30 +118,36 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         });
 
 
-       }
+    }
 
+    /*
+     * onCreate 종료 후 호출
+     * 버튼 이벤트 설정
+     * 구글맵 설정
+     * */
     @Override
     protected void onStart() {
         super.onStart();
-        sendlocation=new StringBuffer("[");
+        sendlocation = new StringBuffer("[");
+        //지정한 마커들의 좌표를 파라미터로 전송
         btn_childinfo_save.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {//지정한 마커들의 좌표를 파라미터로 전송?
-                if(markerlist.isEmpty() ==false){
-                    for(int i=0; i<markerlist.size();i++){
-                        sendlocation.append("{"+"\""+"lati"+"\""+":"+"\""+Double.toString(markerlist.get(i).getPosition().latitude)+"\""+","+"\""+"longi"+"\""+":"+"\""+Double.toString(markerlist.get(i).getPosition().longitude)+"\""+"},");
-                        Log.e("output" ,markerlist.get(i).getPosition().toString());
+            public void onClick(View view) {
+                if (markerlist.isEmpty() == false) {
+                    for (int i = 0; i < markerlist.size(); i++) {
+                        sendlocation.append("{" + "\"" + "lati" + "\"" + ":" + "\"" + Double.toString(markerlist.get(i).getPosition().latitude) + "\"" + "," + "\"" + "longi" + "\"" + ":" + "\"" + Double.toString(markerlist.get(i).getPosition().longitude) + "\"" + "},");
+                        Log.e("output", markerlist.get(i).getPosition().toString());
                     }
-                    sendlocation.delete(sendlocation.length()-1, sendlocation.length());
+                    sendlocation.delete(sendlocation.length() - 1, sendlocation.length());
                     sendlocation.append("]");
                     Log.e("output", sendlocation.toString());
-                }else if(markerlist.isEmpty()==true){
+                } else if (markerlist.isEmpty() == true) {
                     Log.e("output", "리스트 빔");
-                }else{
+                } else {
                     Log.e("output", "error");
                 }
                 Log.d("Test", "1");
-                DoFileUpload(infourl,img_path);
+                DoFileUpload(infourl, img_path);
                 Log.d("Test", "2");
                 loactionRequest(gpsurl);//주기적으로 업데이트가 가능해야함.
 
@@ -152,15 +164,14 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //지도타입 - 일반
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL); mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap = googleMap;
         LatLng loaction = new LatLng(37.52487, 126.92723);
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(loaction);
         markerOptions.title("현재 위치");
 
-
-       // mMap.addMarker(markerOptions).showInfoWindow();
         mMap.moveCamera(CameraUpdateFactory.newLatLng(loaction));//카메라의 위도 경도를 설정, loaction으로 서버에서 위치를 받아온다.
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));//카메라 확대 기능, 숫자가 높을수록 가까워짐 1단계일 경우 세계지도수준
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -168,10 +179,6 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             public void onMapLongClick(LatLng latLng) {
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerlist.add(markerOptions);//마커들을 리스트로 저장
-                // markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.))
-                //{"lati:"0.25", "longi":"1.24"}
-//                latLng.latitude; //위도
-//                latLng.longitude; //경도
                 markerOptions.position(latLng);
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.addMarker(markerOptions);
@@ -183,13 +190,14 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 
     }
 
+    //마커 클릭 이벤트 설정
     @Override
     public boolean onMarkerClick(Marker marker) {
-        for(int i=0; i<markerlist.size();i++){
-            if((markerlist.get(i).getPosition().toString()).equals(marker.getPosition().toString())){
+        for (int i = 0; i < markerlist.size(); i++) {
+            if ((markerlist.get(i).getPosition().toString()).equals(marker.getPosition().toString())) {
                 markerlist.remove(i);
                 break;
-            }else{
+            } else {
                 Log.e("output", "else문");
             }
         }
@@ -198,6 +206,10 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         return false;
     }
 
+    /*
+     * 설정한 이미지를 비트맵으로 변환, URI를 얻어 경로값을 반환
+     * getImagePathToUri 메소드 이용
+     * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -228,6 +240,10 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         super.onActivityResult(requestCode, resultCode, data);
     }//end of onActivityResult()
 
+
+    /*
+     * 이미지 경로, 이름 값 설정
+     * */
     public String getImagePathToUri(Uri data) {
         //사용자가 선택한 이미지의 정보를 받아옴
         String[] proj = {MediaStore.Images.Media.DATA};
@@ -256,11 +272,14 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     String twoHyphens = "--";
     String boundary = "*****";
 
+    /*
+    http 통신
+    * */
     public void HttpFileUpload(String urlString, String params, String fileName) {
         try {
             Log.d("Test", urlString);
             File file = new File(fileName);
-            Log.d("Test","name : "+ fileName);
+            Log.d("Test", "name : " + fileName);
 
             FileInputStream mFileInputStream = new FileInputStream(file);
             Log.e("Test", "1");
@@ -277,12 +296,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-         /*   conn.setRequestProperty("name", "1");
-            conn.setRequestProperty("key", "2");
-            conn.setRequestProperty("password", "3");
-            conn.setRequestProperty("birth", "4");
-            conn.setRequestProperty("ID", "5");
-           */ Log.e("Test", "3");
+            Log.e("Test", "3");
 
 
             // write data
@@ -291,41 +305,40 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"name\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"name\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("awd"+ lineEnd);
+            dos.writeBytes("awd" + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"key\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"key\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("123dka"+ lineEnd);
+            dos.writeBytes("123dka" + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"password\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"password\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("eod93"+ lineEnd);
+            dos.writeBytes("eod93" + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"birth\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"birth\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("2020-06-05"+ lineEnd);
+            dos.writeBytes("2020-06-05" + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"id\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"id\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("dasdasd"+ lineEnd);
+            dos.writeBytes("dasdasd" + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"" + fileName + "\"" + lineEnd);
             dos.writeBytes(("Content-Type: " + URLConnection.guessContentTypeFromName(file.getName())) + lineEnd);
-            dos.writeBytes("Content-Transfer-Encoding: binary"+lineEnd);
+            dos.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
             dos.writeBytes(lineEnd);
-
 
 
             int bytesAvailable = mFileInputStream.available();
@@ -363,7 +376,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                 b.append((char) ch);
             }
             is.close();
-            Log.e("Test", "responese : "+b.toString());
+            Log.e("Test", "responese : " + b.toString());
 
 
         } catch (Exception e) {
@@ -382,33 +395,32 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                     @Override
                     public void onResponse(String response) {
 
-                        Log.e("volley", "response : "+response);
-                        //                        switch (response){
-//                            case "InitialSucess":
-//                                Log.e("volley", "response : "+response);
-//                                break;
-//                            case "NoChildInfo":
-//                                Log.e("volley","response : "+ response);
-//                                break;
-//                            case "DBError":
-//                                Log.e("volley","response : "+ response);
-//                                break;
-//                            case "JSONError":
-//                                Log.e("volley", "response : "+response);
-//                                break;
-//                            case "DeleteError":
-//                                Log.e("volley", "response : "+response);
-//                                break;
-//                            default:
-//                                Log.e("volley", "response : "+response);
-//                                break;
-//                        }
+                        switch (response) {
+                            case "InitialSucess":
+                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                break;
+                            case "NoChildInfo":
+                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                break;
+                            case "DBError":
+                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                break;
+                            case "JSONError":
+                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                break;
+                            case "DeleteError":
+                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                break;
+                        }
                     }
                 },
                 new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("volley", "error : "+error.toString());
+                        Log.e("volley", "error : " + error.toString());
                     }
                 }
         ) {
@@ -416,7 +428,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("childKey", key);
-              //  Log.e("volley", "sned"+sendlocation.toString());
+                //  Log.e("volley", "sned"+sendlocation.toString());
                 params.put("gps", sendlocation.toString());
 
                 return params;

@@ -1,5 +1,6 @@
 package com.example.imcp_fe;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -23,6 +24,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+* 부모 계정 마이페이지
+* */
 public class Parent_info extends AppCompatActivity {
     private TextView tv_parentinfo_id;
     private TextView tv_parentinfo_name;
@@ -30,11 +34,16 @@ public class Parent_info extends AppCompatActivity {
     private TextView tv_parentinfo_email;
     private Button btn_parentinfo_logout;
     private String url ="http://tomcat.comstering.synology.me/IMCP_Server/getParentInfo.jsp";
+    private SharedPreferences login_preference;
 
 
 
 
-
+    /*
+* 엑티비티 생성 시 호출
+* 사용자 인터페이스 설정
+* volley 호출
+* */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.parent_info);
@@ -48,7 +57,11 @@ public class Parent_info extends AppCompatActivity {
          mypageRequest(url);
     }
 
-
+/*
+* volley 호출
+* 마이페이지 정보 받기
+* ID를 파라미터로 전달
+* */
     public void mypageRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -88,6 +101,7 @@ public class Parent_info extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("ID", login_preference.getString("id",""));
                 return params;
             }
         };

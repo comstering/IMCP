@@ -24,6 +24,9 @@ import com.example.imcp_fe.Network.AppHelper;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * 부모 로그인
+ * */
 public class ParentsLoginActivity extends AppCompatActivity {
 
     private String id;
@@ -36,7 +39,11 @@ public class ParentsLoginActivity extends AppCompatActivity {
     private long backKeyPressedTime = 0;
     private Toast toast;
 
-    // 부모 로그인 창
+    /*
+     * 엑티비티 생성 시 호출
+     * 사용자 인터페이스 설정
+     * 버튼 이벤트 설정
+     * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +107,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
         });
     }
 
+    // 뒤로가기 버튼 2회 입력 시 종료
     @Override
     public void onBackPressed() {
 
@@ -117,6 +125,23 @@ public class ParentsLoginActivity extends AppCompatActivity {
         }
     }
 
+    /* 아이디 패스워드 sharedpreference로 저장
+    * 부모 메인 화면으로 전환
+    * */
+    public void LoginPass() {
+        final SharedPreferences.Editor editor = login_preference.edit();
+        editor.putString("id", String.valueOf(id));
+        editor.putString("pw", String.valueOf(pw));
+        editor.commit();
+        intent = new Intent(getApplicationContext(), Parents_main.class);
+        startActivity(intent);
+    }
+
+    /*
+     * volley 호출
+     * 로그인 성공 여부
+     * 아이디 패스워드 파라미터로 전송
+     * */
     public void LoginRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -171,12 +196,5 @@ public class ParentsLoginActivity extends AppCompatActivity {
         AppHelper.requestQueue.add(request);
     }
 
-    public void LoginPass() {
-        final SharedPreferences.Editor editor = login_preference.edit();
-        editor.putString("id", String.valueOf(id));
-        editor.putString("pw", String.valueOf(pw));
-        editor.commit();
-        intent = new Intent(getApplicationContext(), Parents_main.class);
-        startActivity(intent);
-    }
+
 }

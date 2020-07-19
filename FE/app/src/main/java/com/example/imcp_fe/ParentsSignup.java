@@ -28,6 +28,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * 부모 회원가입
+ * */
 public class ParentsSignup extends AppCompatActivity {
 
     private EditText et_parentsignup_id;
@@ -46,7 +49,11 @@ public class ParentsSignup extends AppCompatActivity {
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentJoin.jsp";
     private SharedPreferences login_preference;
 
-
+    /*
+     * 엑티비티 생성 시 호출
+     * 사용자 인터페이스 설정
+     * 버튼 이벤트 설정
+     * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +101,27 @@ public class ParentsSignup extends AppCompatActivity {
 
     }
 
+    /*
+     * sharedprefence로 아이디 패스워드 이메일 저장
+     * 로그인 엑티비티로 전환
+     * */
+    public void setLogininfo() {
+        final SharedPreferences.Editor editor = login_preference.edit();
+        editor.putString("id", String.valueOf(id));
+        editor.putString("pw", String.valueOf(pw));
+        editor.putString("email", String.valueOf(email));
+        editor.commit();
+        Toast.makeText(getApplicationContext(), "회원가입 되었습니다.", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), ParentsLoginActivity.class);
+        startActivity(intent);
+    }
+
+
+    /*
+     * volley 호출
+     * 가입 성공 여부
+     * 아이디 비밀번호 이름 폰번호 이메일 파라미터로 전송
+     * */
     public void signRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -144,17 +172,6 @@ public class ParentsSignup extends AppCompatActivity {
         AppHelper.requestQueue.add(request);
     }
 
-
-    public void setLogininfo() {
-        final SharedPreferences.Editor editor = login_preference.edit();
-        editor.putString("id", String.valueOf(id));
-        editor.putString("pw", String.valueOf(pw));
-        editor.putString("email", String.valueOf(email));
-        editor.commit();
-        Toast.makeText(getApplicationContext(), "회원가입 되었습니다.", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getApplicationContext(), ParentsLoginActivity.class);
-        startActivity(intent);
-    }
 
 }
 

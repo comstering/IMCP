@@ -28,7 +28,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+/*
+* 실종 아동 리스트
+* */
 public class Missing_children extends AppCompatActivity {
     private RecyclerView rv_missingchildren = null;
     private LinearLayoutManager layoutManager = null;
@@ -39,7 +41,12 @@ public class Missing_children extends AppCompatActivity {
     public Bitmap test =null;
     private String url ="http://tomcat.comstering.synology.me/IMCP_Server/getMissingList.jsp";
 
-
+/*
+* 엑티비티 생성 시 호출
+* 사용자 인터페이스 설정
+* 버튼 이벤트 설정
+* volley 호출
+* */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.missing_children);
@@ -47,7 +54,7 @@ public class Missing_children extends AppCompatActivity {
         ib_missingchildren_back = (ImageButton) findViewById(R.id.btn_missingchilren_back);
         rv_missingchildren = (RecyclerView) findViewById(R.id.rv_missingchildren);
         test = BitmapFactory.decodeResource(getResources(),R.drawable.children);
-
+        //뒤로가기 시 전 엑비티비로 전환
         ib_missingchildren_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,26 +62,14 @@ public class Missing_children extends AppCompatActivity {
             }
         });
 
-        /*rvMissingchildrenData = new rv_missingchild_data(); //  리사이클러뷰 테스트용
-        arrayList = new ArrayList<rv_missingchild_data>();
-
-
-        layoutManager = new LinearLayoutManager(this);
-        rv_missingchildren = findViewById(R.id.rv_missingchildren);
-        rv_missingchildren.setHasFixedSize(true);//일정한 크기의 아이템뷰를 만들어줌
-        rv_missingchildren.setLayoutManager(layoutManager);//LinearLayout으로 리사이클러뷰 모양을 만듬.
-
-        rvMissingchildrenData.setRv_missingchild_image(test);
-        rvMissingchildrenData.setRv_missingchild_name("이민규");
-        arrayList.add(rvMissingchildrenData);
-        rvMissingchildrenAdapter = new rv_missingchild_adapter(this,arrayList);
-        rv_missingchildren.setAdapter(rvMissingchildrenAdapter);
-*/
         missingRequest(url);
     }
 
 
-
+/*volley호출
+* 리스트뷰 설정
+*
+* */
     public void missingRequest(String url) {
         StringRequest request = new StringRequest(
                 Request.Method.POST,

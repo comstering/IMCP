@@ -75,29 +75,12 @@
                 android:maxLength="5"
                 android:maxLines="1"
                 android:textColorHint="@android:color/darker_gray"
-                android:layout_marginBottom="10dp"/>
-
-            <EditText
-                android:id="@+id/etv_addchild_key"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="고유키"
-                android:maxLength="6"
-                android:maxLines="1"
-                android:textColorHint="@android:color/darker_gray"
                 android:layout_marginBottom="10dp"
-                />
+                android:textColor="@android:color/black"/>
 
 
-            <EditText
-                android:id="@+id/etv_addchild_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="비밀번호"
-                android:maxLines="1"
-                android:textColorHint="@android:color/darker_gray"
-                android:layout_marginBottom="10dp"
-                />
+
+      
 
             <EditText
                 android:id="@+id/etv_addchild_birthday"
@@ -107,6 +90,7 @@
                 android:maxLines="1"
                 android:textColorHint="@android:color/darker_gray"
                 android:layout_marginBottom="10dp"
+                android:textColor="@android:color/black"
                 />
         </LinearLayout>
 

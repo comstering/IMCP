@@ -41,27 +41,40 @@ import javax.net.ssl.HttpsURLConnection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/*
+ * 아이를 추가하는 기능 클래스
+ * http통신으로 이미지 파일과 정보를 서버로 전송
+ * 정보들은 직접 입력
+ * */
 public class Add_child extends AppCompatActivity {
 
-    private final int REQ_CODE_SELECT_IMAGE =100;//??
+    private final int REQ_CODE_SELECT_IMAGE = 100;//??
 
     private CircleImageView photo;
     private EditText name;
-    private EditText key;
-    private EditText password;
+    private String key;
+    private String password;
     private EditText birthday;
     private Button btn_addchild_add;
-    private  String url = "http://tomcat.comstering.synology.me/IMCP_Server/addChild.jsp";
+    private String url = "http://tomcat.comstering.synology.me/IMCP_Server/addChild.jsp";
     private String img_path = new String();
     private String imageName = null;
     private Bitmap image_bitmap = null;
     private Bitmap image_bitmap_copy = null;
     private SharedPreferences login_preference;
-//    private  final SharedPreferences.Editor editor = login_preference.edit();
 
+    /*
+     * 액티비티 생성 시 호출
+     * 인터페이스 초기화
+     * 버튼 클릭 시 이벤트 설정
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_child);
+        Intent intent = getIntent();
+        key = intent.getStringExtra("key");
+        password = intent.getStringExtra("password");
+
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .permitDiskReads()
@@ -69,13 +82,10 @@ public class Add_child extends AppCompatActivity {
                 .permitNetwork().build());
 
 
-
-        photo = (CircleImageView)findViewById(R.id.iv_addchild_photo);
-        name = (EditText)findViewById(R.id.etv_addchild_name);
-        key =(EditText)findViewById(R.id.etv_addchild_key);
-        password = (EditText)findViewById(R.id.etv_addchild_password);
-        birthday = (EditText)findViewById(R.id.etv_addchild_birthday);
-        btn_addchild_add = (Button)findViewById(R.id.btn_addchild_add);
+        photo = (CircleImageView) findViewById(R.id.iv_addchild_photo);
+        name = (EditText) findViewById(R.id.etv_addchild_name);
+        birthday = (EditText) findViewById(R.id.etv_addchild_birthday);
+        btn_addchild_add = (Button) findViewById(R.id.btn_addchild_add);
 
 
         photo.setOnClickListener(new View.OnClickListener() {
@@ -90,17 +100,17 @@ public class Add_child extends AppCompatActivity {
         });
 
 
-        btn_addchild_add.setOnClickListener(new View.OnClickListener(){
+        btn_addchild_add.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                Log.e("check","click check");
+                Log.e("check", "click check");
                 //edittext에 모두 값이 있는지 확인
-                if(name.getText().toString().length() ==0 ||key.getText().toString().length()==0||password.getText().toString().length()==0||birthday.getText().toString().length()==0) {
+                if (name.getText().toString().length() == 0 || birthday.getText().toString().length() == 0) {
                     Toast.makeText(getApplicationContext(), "공란 없이 채워주세요.", Toast.LENGTH_SHORT).show();
                     Log.e("check", "ddd");
-                }else{
-                    Log.d("Test", "DoFileUpload 전 : "+img_path);
+                } else {
+                    Log.d("Test", "DoFileUpload 전 : " + img_path);
                     DoFileUpload(url, img_path);
                     Toast.makeText(getApplicationContext(), "이미지 전송 성공", Toast.LENGTH_SHORT).show();
                     Log.e("check", "Success");
@@ -111,6 +121,10 @@ public class Add_child extends AppCompatActivity {
 
     }
 
+    /*
+     * 설정한 이미지를 비트맵으로 변환, URI를 얻어 경로값을 반환
+     * getImagePathToUri 메소드 이용
+     * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -141,6 +155,9 @@ public class Add_child extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }//end of onActivityResult()
 
+    /*
+     * 이미지 경로, 이름 값 설정
+     * */
     public String getImagePathToUri(Uri data) {
         //사용자가 선택한 이미지의 정보를 받아옴
         String[] proj = {MediaStore.Images.Media.DATA};
@@ -160,6 +177,9 @@ public class Add_child extends AppCompatActivity {
         return imgPath;
     }//end of getImagePathToUri()
 
+    /*
+     * HttpFileUpload 메소드 호출
+     * */
     public void DoFileUpload(String apiUrl, String absolutePath) {
         HttpFileUpload(apiUrl, "", absolutePath);
     }
@@ -168,11 +188,15 @@ public class Add_child extends AppCompatActivity {
     String twoHyphens = "--";
     String boundary = "*****";
 
+    /*
+     *Http 통신 이미지 파일 전송 및 정보 전송
+     *
+     */
     public void HttpFileUpload(String urlString, String params, String fileName) {
         try {
             Log.d("Test", urlString);
             File file = new File(fileName);
-            Log.d("Test","name : "+ fileName);
+            Log.d("Test", "name : " + fileName);
 
             FileInputStream mFileInputStream = new FileInputStream(file);
             Log.e("Test", "1");
@@ -189,12 +213,7 @@ public class Add_child extends AppCompatActivity {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-         /*   conn.setRequestProperty("name", "1");
-            conn.setRequestProperty("key", "2");
-            conn.setRequestProperty("password", "3");
-            conn.setRequestProperty("birth", "4");
-            conn.setRequestProperty("ID", "5");
-           */ Log.e("Test", "3");
+            Log.e("Test", "3");
 
 
             // write data
@@ -203,41 +222,40 @@ public class Add_child extends AppCompatActivity {
 
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"name\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"name\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("lmg"+ lineEnd);
+            dos.writeBytes("lmg" + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"key\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"key\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(key.getText().toString()+ lineEnd);
+            dos.writeBytes(key + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"password\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"password\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(password.getText().toString()+ lineEnd);
+            dos.writeBytes(password + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"birth\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"birth\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(birthday.getText().toString()+ lineEnd);
+            dos.writeBytes(birthday.getText().toString() + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"id\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"id\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(login_preference.getString("id","")+ lineEnd);
+            dos.writeBytes(login_preference.getString("id", "") + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"" + fileName + "\"" + lineEnd);
             dos.writeBytes(("Content-Type: " + URLConnection.guessContentTypeFromName(file.getName())) + lineEnd);
-            dos.writeBytes("Content-Transfer-Encoding: binary"+lineEnd);
+            dos.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
             dos.writeBytes(lineEnd);
-
 
 
             int bytesAvailable = mFileInputStream.available();
@@ -275,28 +293,24 @@ public class Add_child extends AppCompatActivity {
                 b.append((char) ch);
             }
             is.close();
-            Log.e("Test", "responese : "+b.toString());
+            Log.e("Test", "responese : " + b.toString());
 
-            switch (b.toString()){
+            switch (b.toString()) {
                 case "PtoCError":
-                    Toast.makeText(getApplicationContext(),"아이 연결실패",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "아이 연결실패", Toast.LENGTH_SHORT).show();
                     break;
                 case "AddSuccess":
-                    Toast.makeText(getApplicationContext(),"연결 성공",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "연결 성공", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), Parents_main.class);
+                    startActivity(intent);
                     break;
                 case "NoPrivateKey":
-                    Toast.makeText(getApplicationContext(),"등록된 키가 없습니다.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "등록된 키가 없습니다.", Toast.LENGTH_SHORT).show();
                     break;
                 case "DBError":
-                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                     break;
 
-            }
-
-            if(b.toString().equals("AddSuccess")){
-                Log.e("Test", "suc ");
-                Intent intent = new Intent(getApplicationContext(), Parents_main.class);
-                startActivity(intent);
             }
 
 
@@ -305,8 +319,6 @@ public class Add_child extends AppCompatActivity {
             // TODO: handle exception
         }
     } // end of HttpFileUpload()
-
-
 
 
 }

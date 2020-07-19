@@ -23,6 +23,9 @@ import com.example.imcp_fe.Network.AppHelper;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+아이 비밀번호 초기 설정
+* */
 public class Keypassword extends AppCompatActivity {
 
     private EditText et_children_new_pw, et_children_re_pw;
@@ -30,35 +33,37 @@ public class Keypassword extends AppCompatActivity {
     private String key;
     private Button btn_children_create_pw;
     private Intent intent;
-    private String url ="http://tomcat.comstering.synology.me/IMCP_Server/childRegister.jsp";
+    private String url = "http://tomcat.comstering.synology.me/IMCP_Server/childRegister.jsp";
     private SharedPreferences login_preference;
 
+    /*엑티비티 생성 시 호출
+     * 사용자 인터페이스 설정
+     * 버튼 이벤트 설정*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.key_password);
 
-        //
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         et_children_new_pw = (EditText) findViewById(R.id.et_children_new_pw);
         et_children_re_pw = (EditText) findViewById(R.id.et_children_re_pw);
         btn_children_create_pw = (Button) findViewById(R.id.btn_children_create_pw);
 
-
+//비밀번호 일치 확인, 일치 시 랜덤키 생성
         btn_children_create_pw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sNewPW = et_children_new_pw.getText().toString();
                 sRePW = et_children_re_pw.getText().toString();
 
-                if (sNewPW.equals(sRePW)==true) {
+                if (sNewPW.equals(sRePW) == true) {
                     // 비밀번호 일치
                     Toast.makeText(getApplicationContext(), "비밀번호 맞음", Toast.LENGTH_LONG).show();
                     getRamdomPassword();
-                    Log.e("key", "key : "+key);
+                    Log.e("key", "key : " + key);
                     // 고유키 발급 창
 
-                } else if(sNewPW.equals(sRePW)==false){
+                } else if (sNewPW.equals(sRePW) == false) {
                     // 비밀번호 불일치
                     Toast.makeText(getApplicationContext(), "비밀번호 틀림", Toast.LENGTH_LONG).show();
                 }
@@ -66,13 +71,13 @@ public class Keypassword extends AppCompatActivity {
         });
     }
 
-
+    //랜덤 키 생성
     public void getRamdomPassword() {
 
         char[] charSet = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-               +'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-               + '!', '@', '#', '$', '%', '&', '*'};
+                +'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+                + '!', '@', '#', '$', '%', '&', '*'};
         int idx = 0;
         StringBuffer sb = new StringBuffer();
         System.out.println("charSet.length :::: " + charSet.length);
@@ -83,11 +88,18 @@ public class Keypassword extends AppCompatActivity {
         key = sb.toString();
         setkeyRequest(url);
     }
-    public void Success(){
-        intent  = new Intent(getApplicationContext(), PrimaryKey.class);
+
+    // 고유키 확인 엑티비티로 전환
+    public void Success() {
+        intent = new Intent(getApplicationContext(), PrimaryKey.class);
         startActivity(intent);
     }
 
+    /*
+     * volley 호출
+     * 비밀번호 설정 여부 확인
+     * 랜덤키와 비밀번호 파리미터로 전달
+     * */
     public void setkeyRequest(String url) {
         Log.e("keypass", "1");
         final SharedPreferences.Editor editor = login_preference.edit();
@@ -98,16 +110,16 @@ public class Keypassword extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.e("keypass", response);
-                        switch (response){
+                        switch (response) {
                             case "ChildRegisterSuccess":
-                                Toast.makeText(getApplicationContext(), "비밀번호가 새로 설정되었습니다.",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "비밀번호가 새로 설정되었습니다.", Toast.LENGTH_SHORT).show();
                                 editor.putString("key", key);
                                 editor.commit();
                                 Log.e("key", key);
                                 Success();
                                 break;
                             case "SamePrivateKey":
-                                Toast.makeText(getApplicationContext(), "중복된 키입니다.",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "중복된 키입니다.", Toast.LENGTH_SHORT).show();
                                 getRamdomPassword();
                                 break;
                         }
@@ -124,7 +136,7 @@ public class Keypassword extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("childKey", key);
-                params.put("password",sNewPW);
+                params.put("password", sNewPW);
                 return params;
             }
         };
@@ -134,7 +146,6 @@ public class Keypassword extends AppCompatActivity {
         AppHelper.requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
     }
-
 
 
 }

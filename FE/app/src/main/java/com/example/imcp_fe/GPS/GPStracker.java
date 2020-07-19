@@ -54,8 +54,9 @@ public class GPStracker extends Service implements LocationListener {
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;//10;
     private static final long MIN_TIME_BW_UPDATES = 1000;  //* 60 * 1;
     protected LocationManager locationManager;
-    private String gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPS.jsp";
+    private String gpsurl;
     private String key;
+    private String id;
     private CountDownTimer countDownTimer;
     private final int M = 1000 * 1000;
     private final int C = 1000;
@@ -82,24 +83,18 @@ public class GPStracker extends Service implements LocationListener {
 
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel notificationChannel = new NotificationChannel("test_ch", "TQ", NotificationManager.IMPORTANCE_DEFAULT);
-            notificationChannel.setDescription("channel description");
-//            notificationChannel.enableLights(true);
-//            notificationChannel.setLightColor(Color.GREEN);
-//            notificationChannel.enableVibration(true);
-//            notificationChannel.setVibrationPattern(new long[]{100, 200, 100, 200});
-//            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            notificationManager.createNotificationChannel(notificationChannel);
-        }
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        createNotificationChannel();
-        key = login_preference.getString("key","");
+
+
+        key = login_preference.getString("key", "null");
+        id = login_preference.getString("id", "null");
+        if (id.equals("null")) {
+            gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPS.jsp";
+        } else if (key.equals("null")) {
+            gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setParentGPS.jsp";
+        }
 
         mContext = getApplicationContext();
         getLocation();
@@ -118,32 +113,15 @@ public class GPStracker extends Service implements LocationListener {
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
 //                        .setOngoing(true);
-        startForeground(1, notificationBuilder.build());
+
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-             String channelName = "Channel Name";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelName = "Channel Name";
             NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
-
-      //  notificationManager.notify(0, notificationBuilder.build());
-
-//
-//        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, GPStracker.class), PendingIntent.FLAG_UPDATE_CURRENT);
-//        Notification notification;
-//
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, "test_ch")
-//                    .setContentIntent(pendingIntent)
-//                    .setContentTitle("GPS 동작중")
-//                    .setContentText("테스트")
-//                    .setSmallIcon(R.drawable.children);
-//            notification = builder.build();
-//            nm.notify(startId, notification);
-//        }
+        startForeground(1, notificationBuilder.build());
 
 
         return super.onStartCommand(intent, flags, startId);
@@ -180,8 +158,11 @@ public class GPStracker extends Service implements LocationListener {
     //알림 매니저에 서비스 등록
     private void registerRestartAlarm() {
 
+
         Intent intent = new Intent(GPStracker.this, Restartservice.class);
         intent.setAction("ACTION.RESTART.GPStracker");
+
+
         PendingIntent sender = PendingIntent.getBroadcast(GPStracker.this, 0, intent, 0);
         long firstTime = SystemClock.elapsedRealtime();
         firstTime += 1 * 1000;
@@ -280,7 +261,7 @@ public class GPStracker extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
 
         GPSRequest(gpsurl, location.getLatitude(), location.getLongitude());
-        Toast.makeText(mContext, "위치가 변경되었습니다.", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mContext, "위치가 변경되었습니다.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -315,6 +296,7 @@ public class GPStracker extends Service implements LocationListener {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+
                         switch (response) {
                             case "SetGPSSuccess"://toast는 나중에 지워야함
                                 Toast.makeText(mContext, "위치가 변경되었습니다.", Toast.LENGTH_SHORT).show();
@@ -341,8 +323,12 @@ public class GPStracker extends Service implements LocationListener {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
+                if (id.equals("null")) {
+                    params.put("childKey", key);
+                } else if (key.equals("null")) {
+                    params.put("ID", id);
+                }
 
-                params.put("childKey", key);
                 params.put("lati", Double.toString(latitude));
                 params.put("longi", Double.toString(longitude));
 

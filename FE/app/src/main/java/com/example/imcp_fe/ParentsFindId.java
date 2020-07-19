@@ -24,18 +24,27 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * 아이디 찾기
+ * */
 public class ParentsFindId extends AppCompatActivity {
 
     private EditText et_findid_name;
-    private  EditText et_findid_email;
+    private EditText et_findid_email;
     private Button btn_findid_ok;
     private String name;
     private String email;
     private Intent intent;
-    private String url="http://tomcat.comstering.synology.me/IMCP_Server/parentFindID.jsp";
+    private String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentFindID.jsp";
 
+    /*
+     * 엑티비티 생성 시 호출
+     * 사용자 인터페이스 설정
+     * 버튼 이벤트 설정
+     * volley 호출
+     * */
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.find_id);
 
@@ -43,9 +52,9 @@ public class ParentsFindId extends AppCompatActivity {
         et_findid_email = findViewById(R.id.et_parents_findid_email);
         btn_findid_ok = findViewById(R.id.btn_parents_findid_ok);
 
-        name =et_findid_name.getText().toString();
-        email=et_findid_email.getText().toString();
-
+        name = et_findid_name.getText().toString();
+        email = et_findid_email.getText().toString();
+        //volley 호출
         btn_findid_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,7 +62,22 @@ public class ParentsFindId extends AppCompatActivity {
             }
         });
     }
+    /*
+    * 아이디 확인 엑티비티로 전환
+    * 아이디를 파라미터로 전달
+    * */
+    public void findID(String ID) {
 
+        intent = new Intent(getApplicationContext(), Get_id.class);
+        intent.putExtra("ID", ID);
+        startActivity(intent);
+    }
+
+    /*
+     * volley 호출
+     * 아이디 찾기
+     * 이름 이메일을 파라미터로 전송
+     * */
     public void findidRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -62,13 +86,13 @@ public class ParentsFindId extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response){
+                        switch (response) {
                             case "NoID":
-                                Toast.makeText(getApplicationContext(), "등록된 아이디가 아닙니다. ",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "등록된 아이디가 아닙니다. ", Toast.LENGTH_SHORT).show();
 
                                 break;
                             case "DBError":
-                                Toast.makeText(getApplicationContext(), "Error",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 findID(response);
@@ -86,8 +110,8 @@ public class ParentsFindId extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("Name",name);
-                params.put("Email",email);
+                params.put("Name", name);
+                params.put("Email", email);
                 return params;
             }
         };
@@ -95,11 +119,7 @@ public class ParentsFindId extends AppCompatActivity {
         request.setShouldCache(false);
         AppHelper.requestQueue.add(request);
     }
-    public void findID(String ID){
 
-        intent = new Intent(getApplicationContext(), Get_id.class);
-        intent.putExtra("ID", ID);
-        startActivity(intent);
-    }
+
 
 }

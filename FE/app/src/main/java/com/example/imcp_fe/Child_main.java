@@ -37,6 +37,8 @@ import com.example.imcp_fe.Network.AppHelper;
 import java.util.HashMap;
 import java.util.Map;
 
+/*아이 메인화면
+ * */
 public class Child_main extends AppCompatActivity {
 
     private EditText et_childmain_password;
@@ -47,9 +49,6 @@ public class Child_main extends AppCompatActivity {
     private Intent intent;
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/childLogin.jsp";
     private String gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPS.jsp";
-    private double latitude;
-    private double longitude;
-    private GPStracker gpsTracker;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -57,15 +56,15 @@ public class Child_main extends AppCompatActivity {
     private long backKeyPressedTime = 0;
     private Toast toast;
 
-
+/*
+* 엑티비티 생성 시 호출
+* 사용자 인터페이스 설정
+* 버튼 이벤트 설정
+* */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//       getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.child_main);
-
-
-        //  startService(new Intent(getApplicationContext(), Background.class));
 
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
 
@@ -73,7 +72,7 @@ public class Child_main extends AppCompatActivity {
         ib_childmain_sos = findViewById(R.id.ib_childmain_sos);
         btn_childmain_check = findViewById(R.id.btn_childmain_check);
 
-
+        //volley 호출
         btn_childmain_check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,7 +82,7 @@ public class Child_main extends AppCompatActivity {
 
             }
         });
-
+        //
         ib_childmain_sos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,23 +95,10 @@ public class Child_main extends AppCompatActivity {
         } else {
             checkRunTimePermission();
         }
-        initData();
+        initData();//실시간 위치전송
         Log.e("GPS", login_preference.getString("key", "error"));
-//        gpsTracker = new GPStracker();
-//        gpsTracker.setinfo(Child_main.this, login_preference.getString("key", ""));
-//        gpsTracker = new GPS(Child_main.this);
-//
-//        latitude = gpsTracker.getLatitude();
-//        longitude = gpsTracker.getLongitude();
-//
-//        GPSRequest(gpsurl);
-//        String address = getCurrentAddress(latitude, longitude);
-//        et_childmain_password.setText(address);
-//        Log.e("GPSchild", Double.toString(longitude));
-//        Log.e("GPSchild", address);
-
     }
-
+//뒤로 가기 버튼 2번 누를 시 종료
     @Override
     public void onBackPressed() {
 
@@ -129,6 +115,7 @@ public class Child_main extends AppCompatActivity {
 
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -146,7 +133,7 @@ public class Child_main extends AppCompatActivity {
         registerReceiver(restartservice, intentFilter);
         startService(intent);
     }
-
+//퍼미션 체크
     public void onRequestPermissionsResult(int permsRequestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grandResults) {
@@ -191,7 +178,7 @@ public class Child_main extends AppCompatActivity {
 
         }
     }
-
+//퍼미션 체크
     void checkRunTimePermission() {
 
         //런타임 퍼미션 처리
@@ -327,12 +314,15 @@ public class Child_main extends AppCompatActivity {
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-
+// primarykey 엑티비티로 전환
     public void Success() {
         intent = new Intent(getApplicationContext(), PrimaryKey.class);
         startActivity(intent);
     }
-
+/*
+volley 호츌 로그인 성공 여부
+고유키와 패스워드를 파라미터로 전송
+*/
     public void childRequest(String url) {
 
         StringRequest request = new StringRequest(

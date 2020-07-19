@@ -21,12 +21,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.imcp_fe.Network.AppHelper;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-
+/*
+*  아이 추가전 고유키와 비밀번호 확인
+* */
 public class Add_child_check extends AppCompatActivity {
 
 
@@ -39,7 +38,11 @@ public class Add_child_check extends AppCompatActivity {
     private SharedPreferences login_preference;
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/addChildCheck.jsp";
 
-
+/*
+엑티비티 생성 시 호출
+사용자 인터페이스 설정
+버튼 이벤트 설정
+* */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +69,22 @@ public class Add_child_check extends AppCompatActivity {
             }
         });
     }
-
+/*
+ Add_child 엑티비티로 넘어가는 클래스
+ key, password 값을 파라미터로 전달한다.
+* */
     public void addchild() {
         intent = new Intent(getApplicationContext(), Add_child.class);
+        intent.putExtra("key",key);
+        intent.putExtra("password", password);
         startActivity(intent);
     }
 
-
+/*
+*  volley 통신
+*  부모 ID, 아이 고유키, 패스워드를 파라미터로 보낸다.
+*
+* */
     public void childcheckRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -80,29 +92,19 @@ public class Add_child_check extends AppCompatActivity {
                 url,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
+                    public void onResponse(String response){
 
-                        Log.e("volley", "llll: " + response);
-//                        if(response.equals("AlreadyInfo")){
-//                            Log.e("volley", response);
-//                        }else if(response.equals("NoInfo")){
-//                            Log.e("volley", response);
-//                        }else if(response.equals("DBError")) {
-//                            Log.e("volley", response);
-//                        }else{
-//                            Log.e("volley","dasd : "+ response);
-//                        }
                         switch (response) {
 
                             case "AlreadyInfo":
-                                Toast.makeText(getApplicationContext(),"이미 있는 키입니다.",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "이미 있는 키입니다.", Toast.LENGTH_SHORT).show();
                                 break;
                             case "NoInfo":
-                                Toast.makeText(getApplicationContext(),"정보가 없습니다.",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "정보가 없습니다.", Toast.LENGTH_SHORT).show();
                                 addchild();
                                 break;
                             case "DBError":
-                                Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                                 break;
                             case "PtoCError":
                                 Toast.makeText(getApplicationContext(), "아이 연결실패", Toast.LENGTH_SHORT).show();

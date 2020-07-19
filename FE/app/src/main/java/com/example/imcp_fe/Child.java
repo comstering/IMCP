@@ -37,6 +37,10 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
+/*
+아이 리스트 확인
+* */
 public class Child extends AppCompatActivity implements OnMapReadyCallback {
 
     private ImageButton ib_child_back = null;
@@ -56,7 +60,10 @@ public class Child extends AppCompatActivity implements OnMapReadyCallback {
     private String birth;
     private String onoff = "off";
     private SharedPreferences login_preference;
-
+/*
+* 엑티비티 생성 시 호출
+* 사용자 인터페이스 설정
+* */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.child);
@@ -85,10 +92,18 @@ public class Child extends AppCompatActivity implements OnMapReadyCallback {
         locationRequest(locationurl);
     }
 
+    /*
+     onCreate 종료 후 호출
+     버튼 이벤트 설정
+     volley 호출로 좌표를 받음
+     구글맵 생성
+     */
     @Override
     protected void onStart() {
         super.onStart();
         locationRequest(locationurl);
+
+        //아이 정보 엑티비티로 전환, 고유키, 사진, 이름, 생일을 파라미터로 전달
         ib_child_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,12 +116,14 @@ public class Child extends AppCompatActivity implements OnMapReadyCallback {
                 startActivity(intent);
             }
         });
+        //전에 엑티비티로 전환
         ib_child_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+        //sos 버튼 on/off를 구분 후 sos volley 호출
         btn_child_sos.setOnClickListener(new View.OnClickListener() {
             final SharedPreferences.Editor editor = login_preference.edit();
 
@@ -131,12 +148,12 @@ public class Child extends AppCompatActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
     }
-
+    //구글맵 설정
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
     }
-
+    //맵 초기화 밑 카메라 설정
     public void drawmap(double x, double y) {
         LatLng newlatlng = new LatLng(x, y);
 
@@ -145,7 +162,10 @@ public class Child extends AppCompatActivity implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newlatlng, 15));
     }
 
-
+/*
+volley 호출
+키값을 파라미터로 전달 후 위도,경도값을 받음
+* */
     public void locationRequest(String url) {
         Log.e("map", "2");
         StringRequest request = new StringRequest(
@@ -194,7 +214,10 @@ public class Child extends AppCompatActivity implements OnMapReadyCallback {
         AppHelper.requestQueue.add(request);
     }
 
-
+/*
+volley 호출
+sos가 요청 on/off에 따라 파라미터값을 다르게 보냄
+* */
     public void SOSRequest(String url) {
 
         StringRequest request = new StringRequest(

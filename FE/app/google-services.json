@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "188462365496",
+    "firebase_url": "https://imcp-abb54.firebaseio.com",
+    "project_id": "imcp-abb54",
+    "storage_bucket": "imcp-abb54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188462365496:android:b9f3f6f2090804d66adfcd",
+        "android_client_info": {
+          "package_name": "com.example.imcp_fe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188462365496-3qrkth8ius0aoii4ld6tuurri1gm6mnm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.imcp_fe",
+            "certificate_hash": "0b6cfecb6cccea60b4fdf6ec6d3f52a1d4a6ddd7"
+          }
+        },
+        {
+          "client_id": "188462365496-6urssqd2anddelff96cgraqten2coi01.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjs7nmi_zVfUIzlteRfbmyIF0aOppfeX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188462365496-6urssqd2anddelff96cgraqten2coi01.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

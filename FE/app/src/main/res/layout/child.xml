@@ -58,6 +58,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:textSize="24dp"
+            android:textColor="@android:color/black"
             android:text="이름" />
 
         <TextView
@@ -66,6 +67,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:textSize="24dp"
+            android:textColor="@android:color/black"
             android:text="고유키" />
 
     </LinearLayout>

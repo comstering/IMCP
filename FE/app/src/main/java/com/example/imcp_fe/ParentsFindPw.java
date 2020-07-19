@@ -23,44 +23,52 @@ import com.example.imcp_fe.Network.AppHelper;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * 비밀번호 찾기
+ * */
 public class ParentsFindPw extends AppCompatActivity {
 
     private Button btn_parents_findpw;
     private EditText et_parents_findpw_name, et_parents_findpw_id, et_parents_findpw_email;
-    private  String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentFindPW.jsp";
+    private String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentFindPW.jsp";
     private String name;
     private String id;
     private String email;
     private Intent intent;
 
 
-
+    /*
+     * 엑티비티 생성 시 호출
+     * 사용자 인터페이스 설정
+     * 버튼 이벤트 설정
+     * */
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.find_password);
 
-        btn_parents_findpw = (Button)findViewById(R.id.btn_parents_findpw);
+        btn_parents_findpw = (Button) findViewById(R.id.btn_parents_findpw);
         et_parents_findpw_name = findViewById(R.id.et_parents_findpw_name);
         et_parents_findpw_id = findViewById(R.id.et_parents_findpw_id);
         et_parents_findpw_email = findViewById(R.id.et_parents_findpw_email);
 
+        //공란 확인 volley 호출
         btn_parents_findpw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                name= et_parents_findpw_name.getText().toString();
+                name = et_parents_findpw_name.getText().toString();
                 id = et_parents_findpw_id.getText().toString();
-                email  = et_parents_findpw_email.getText().toString();
+                email = et_parents_findpw_email.getText().toString();
 
-                if(TextUtils.isEmpty(String.valueOf(name))){
-                    Toast.makeText(getApplicationContext(),"이름을 입력해주세요.",Toast.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(String.valueOf(id))){
-                    Toast.makeText(getApplicationContext(),"아이디을 입력해주세요.",Toast.LENGTH_SHORT).show();
-                }else if(TextUtils.isEmpty(String.valueOf(email))){
-                    Toast.makeText(getApplicationContext(),"이메일을 입력해주세요.",Toast.LENGTH_SHORT).show();
-                }else {
+                if (TextUtils.isEmpty(String.valueOf(name))) {
+                    Toast.makeText(getApplicationContext(), "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(String.valueOf(id))) {
+                    Toast.makeText(getApplicationContext(), "아이디을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(String.valueOf(email))) {
+                    Toast.makeText(getApplicationContext(), "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                } else {
 
                     findpwRequest(url);
 
@@ -69,15 +77,20 @@ public class ParentsFindPw extends AppCompatActivity {
             }
         });
 
-        // 이름, 아이디, 이메일 서버에 저장된거랑 비교
-        //et_parents_findpw_id
-
-        // 재발급 신청 버튼 클릭 시
-        // 이메일로 임시비밀번호 발급
-
 
     }
 
+    //비밀번호 변경 엑티비티로 전환
+    public void changePW() {
+        intent = new Intent(getApplicationContext(), Change_password.class);
+        startActivity(intent);
+    }
+
+    /*
+     * volley 호출
+     * 비밀번호 찾기 성공 여부
+     * 아이디 이름 이메일 파라미터로 전송
+     * */
     public void findpwRequest(String url) {
         Log.e("volley", "1");
         StringRequest request = new StringRequest(
@@ -86,16 +99,16 @@ public class ParentsFindPw extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response){
+                        switch (response) {
                             case "FindSucess":
-                                Toast.makeText(getApplicationContext(), "Sucess",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Sucess", Toast.LENGTH_SHORT).show();
                                 changePW();
                                 break;
                             case "FindPWFail":
-                                Toast.makeText(getApplicationContext(), "Fail",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
                                 break;
                             case "DBError":
-                                Toast.makeText(getApplicationContext(), "Error",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 Log.e("volley", response);
@@ -114,8 +127,8 @@ public class ParentsFindPw extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("ID", id);
-                params.put("Name",name);
-                params.put("Email",email);
+                params.put("Name", name);
+                params.put("Email", email);
                 return params;
             }
         };
@@ -125,9 +138,6 @@ public class ParentsFindPw extends AppCompatActivity {
         AppHelper.requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
     }
-    public void changePW(){
-        intent = new Intent(getApplicationContext(), Change_password.class);
-        startActivity(intent);
-    }
+
 }
 

@@ -16,6 +16,9 @@ import androidx.core.content.ContextCompat;
 
 import java.util.Random;
 
+/*
+ * 고유키 확인
+ * */
 public class PrimaryKey extends AppCompatActivity {
 
     private TextView textView;
@@ -23,6 +26,10 @@ public class PrimaryKey extends AppCompatActivity {
     private long backKeyPressedTime = 0;
     private Toast toast;
 
+    /*
+     * 엑티비티 생성 시 호출
+     * 사용자 인터페이스 설정
+     *  */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +47,7 @@ public class PrimaryKey extends AppCompatActivity {
 
     }
 
+    //뒤로가기 2회 입력 시 종료
     @Override
     public void onBackPressed() {
 
