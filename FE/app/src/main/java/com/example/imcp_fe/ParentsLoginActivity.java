@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.AuthFailureError;
@@ -20,6 +21,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.imcp_fe.Network.AppHelper;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +40,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
     private SharedPreferences login_preference;
     private Button btn_parents_login, btn_parents_signup, btn_parents_findid, btn_parents_findpw;
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentLogin.jsp";
+    private String firebaseurl = "http://tomcat.comstering.synology.me/IMCP_Server/setFCMToken.jsp";
     private EditText sign_id, sign_pw;
     private long backKeyPressedTime = 0;
     private Toast toast;
@@ -57,6 +63,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
         btn_parents_findid = (Button) findViewById(R.id.btn_parents_findid);
         btn_parents_findpw = (Button) findViewById(R.id.btn_parents_findpw);
 
+
         //부모 로그인
         btn_parents_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +76,24 @@ public class ParentsLoginActivity extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(String.valueOf(pw))) {
                     Toast.makeText(getApplicationContext(), "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show();
                 } else if (!TextUtils.isEmpty(String.valueOf(pw)) && !TextUtils.isEmpty(String.valueOf(id))) {
+
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                    if (!task.isSuccessful()) {
+                                        Log.d("[FCM Service]", "getInstanceId failed", task.getException());
+                                        return;
+                                    }
+                                    String token = task.getResult().getToken();
+                                    FirebaseRequest(firebaseurl, token);
+                                    Log.d("[FCM Service]", "Token: " + token);
+                                }
+                            });
+
+
                     LoginRequest(url);
+
 
                 }
 
@@ -126,8 +150,8 @@ public class ParentsLoginActivity extends AppCompatActivity {
     }
 
     /* 아이디 패스워드 sharedpreference로 저장
-    * 부모 메인 화면으로 전환
-    * */
+     * 부모 메인 화면으로 전환
+     * */
     public void LoginPass() {
         final SharedPreferences.Editor editor = login_preference.edit();
         editor.putString("id", String.valueOf(id));
@@ -196,5 +220,49 @@ public class ParentsLoginActivity extends AppCompatActivity {
         AppHelper.requestQueue.add(request);
     }
 
+
+    public void FirebaseRequest(String url, final String token) {
+
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        switch (response) {
+
+
+                            case "SetFCMSuccess":
+                                Log.e("firebase", response);
+                                break;
+                            case "DBError":
+                                Log.e("firebase", response);
+                                break;
+                            default:
+                                Log.e("volley", response);
+                                break;
+                        }
+                    }
+                },
+                new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("ID", id.toString());
+                params.put("token", token);
+                return params;
+            }
+        };
+
+        request.setShouldCache(false);
+        AppHelper.requestQueue = Volley.newRequestQueue(this);
+        AppHelper.requestQueue.add(request);
+    }
 
 }

@@ -39,6 +39,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.imcp_fe.Child;
 import com.example.imcp_fe.Child_main;
 import com.example.imcp_fe.Network.AppHelper;
+import com.example.imcp_fe.Parents_main;
 import com.example.imcp_fe.R;
 
 import java.util.HashMap;
@@ -87,13 +88,17 @@ public class GPStracker extends Service implements LocationListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-
+        PendingIntent pendingIntent = null;
         key = login_preference.getString("key", "null");
         id = login_preference.getString("id", "null");
         if (id.equals("null")) {
             gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPS.jsp";
+           pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, Child_main.class), PendingIntent.FLAG_ONE_SHOT);
+
         } else if (key.equals("null")) {
             gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setParentGPS.jsp";
+            pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, Parents_main.class), PendingIntent.FLAG_ONE_SHOT);
+
         }
 
         mContext = getApplicationContext();
@@ -102,7 +107,6 @@ public class GPStracker extends Service implements LocationListener {
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, Child_main.class), PendingIntent.FLAG_ONE_SHOT);
         String channelId = "Channel ID";
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =

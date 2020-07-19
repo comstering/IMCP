@@ -48,19 +48,21 @@ public class Child_main extends AppCompatActivity {
     private String password;
     private Intent intent;
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/childLogin.jsp";
-    private String gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPS.jsp";
+    private String sosurl = "http://tomcat.comstering.synology.me/IMCP_Server/childSOS.jsp";
+
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private Restartservice restartservice;
     private long backKeyPressedTime = 0;
     private Toast toast;
+    private String onoff = "off";
 
-/*
-* 엑티비티 생성 시 호출
-* 사용자 인터페이스 설정
-* 버튼 이벤트 설정
-* */
+    /*
+     * 엑티비티 생성 시 호출
+     * 사용자 인터페이스 설정
+     * 버튼 이벤트 설정
+     * */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +88,20 @@ public class Child_main extends AppCompatActivity {
         ib_childmain_sos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                final SharedPreferences.Editor editor = login_preference.edit();
+                if (onoff.equals("off")) {
+                    onoff = "on";
+                    editor.putString("onoff", String.valueOf(onoff));
+                    editor.commit();
+                   ib_childmain_sos.setImageResource(R.drawable.ic_launcher_foreground);
+                    SOSRequest(sosurl);
+                } else if (onoff.equals("on")) {
+                    onoff = "off";
+                    editor.putString("onoff", String.valueOf(onoff));
+                    editor.commit();
+                    ib_childmain_sos.setImageResource(R.drawable.sos);
+                    SOSRequest(sosurl);
+                }
             }
         });
 
@@ -98,7 +113,8 @@ public class Child_main extends AppCompatActivity {
         initData();//실시간 위치전송
         Log.e("GPS", login_preference.getString("key", "error"));
     }
-//뒤로 가기 버튼 2번 누를 시 종료
+
+    //뒤로 가기 버튼 2번 누를 시 종료
     @Override
     public void onBackPressed() {
 
@@ -133,7 +149,8 @@ public class Child_main extends AppCompatActivity {
         registerReceiver(restartservice, intentFilter);
         startService(intent);
     }
-//퍼미션 체크
+
+    //퍼미션 체크
     public void onRequestPermissionsResult(int permsRequestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grandResults) {
@@ -178,7 +195,8 @@ public class Child_main extends AppCompatActivity {
 
         }
     }
-//퍼미션 체크
+
+    //퍼미션 체크
     void checkRunTimePermission() {
 
         //런타임 퍼미션 처리
@@ -314,15 +332,16 @@ public class Child_main extends AppCompatActivity {
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-// primarykey 엑티비티로 전환
+    // primarykey 엑티비티로 전환
     public void Success() {
         intent = new Intent(getApplicationContext(), PrimaryKey.class);
         startActivity(intent);
     }
-/*
-volley 호츌 로그인 성공 여부
-고유키와 패스워드를 파라미터로 전송
-*/
+
+    /*
+    volley 호츌 로그인 성공 여부
+    고유키와 패스워드를 파라미터로 전송
+    */
     public void childRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -370,5 +389,51 @@ volley 호츌 로그인 성공 여부
         AppHelper.requestQueue.add(request);
     }
 
+    public void SOSRequest(String url) {
 
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        switch (response) {
+                            case "SOSSetSuccess":
+                                Toast.makeText(getApplicationContext(), "SOS 요청됨", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "NoChildInfo":
+                                Toast.makeText(getApplicationContext(), "정보가 없습니다.", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "DBError":
+                                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("volley", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("childKey", login_preference.getString("key", ""));
+                Log.e("SOS", login_preference.getString("onoff", ""));
+                if (onoff.equals("on")) {
+                    params.put("sos", "helped");
+                } else if (onoff.equals("off")) {
+                    params.put("sos", "solution");
+                }
+                return params;
+            }
+        };
+
+        request.setShouldCache(false);
+        AppHelper.requestQueue = Volley.newRequestQueue(this);
+        AppHelper.requestQueue.add(request);
+    }
 }

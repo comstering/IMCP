@@ -225,7 +225,7 @@ public class Add_child extends AppCompatActivity {
             dos.writeBytes("Content-Disposition: form-data; name=\"name\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("lmg" + lineEnd);
+            dos.writeBytes(name + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"key\"" + lineEnd);
