@@ -12,18 +12,18 @@ import org.json.simple.JSONObject;
 import DBConnect.DBConnector;
 
 public class MissingDAO {
-	//  DB ¿¬°á º¯¼ö
+	//  DB ì—°ê²° ë³€ìˆ˜
 	private DBConnector dbConnector;
 	private Connection conn;
 	
-	//  SQL ÁúÀÇ °á°ú º¯¼ö
+	//  SQL ì§ˆì˜ ê²°ê³¼ ë³€ìˆ˜
 	private ResultSet rs;
 	
 	public MissingDAO() {
 		dbConnector = DBConnector.getInstance();
 	}
 	
-	public String getMissingList() {    //  ½ÇÁ¾ ¾Æµ¿ ¸ñ·Ï È¹µæ
+	public String getMissingList() {    //  ì‹¤ì¢… ì•„ë™ ëª©ë¡ íšë“
 		ArrayList<MissingDTO> list = new ArrayList<MissingDTO>();
 		String sql = "select ChildKey, Image, Name, Birth, Phone from MISSING_INFO";
 		conn = dbConnector.getConnection();
@@ -35,9 +35,9 @@ public class MissingDAO {
 				MissingDTO missingDTO = new MissingDTO(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
 				list.add(missingDTO);
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("MissingDAO getMissingList SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -47,45 +47,18 @@ public class MissingDAO {
 			}
 		}
 		
-		ArrayList<JSONObject> missingArray = new ArrayList<JSONObject>();    //  JSON µ¥ÀÌÅÍµéÀ» ´ãÀ» List
+		ArrayList<JSONObject> missingArray = new ArrayList<JSONObject>();    //  JSON ë°ë””í„°ë“¤ì„ ë‹´ì„ List
 		for(int i = 0; i < list.size(); i++) {
-			HashMap<String, Object> hashMap = new HashMap<String, Object>();    //  key¿Í value·Î ¹­±â
+			HashMap<String, Object> hashMap = new HashMap<String, Object>();    //  keyì™€ valueë¡œ ë¬¶ê¸°
 			hashMap.put("key", list.get(i).getChildKey());
 			hashMap.put("name", list.get(i).getName());
 			hashMap.put("birth", list.get(i).getBirth());
 			hashMap.put("image", list.get(i).getImg());
 			hashMap.put("parentPhone", list.get(i).getPrentPhone());
-			JSONObject childObject = new JSONObject(hashMap);    //  JSON µ¥ÀÌÅÍ·Î ¸¸µé±â
-			missingArray.add(childObject);    //  JSON List¿¡ Ãß°¡
+			JSONObject childObject = new JSONObject(hashMap);    //  JSON ë°ì´í„°ë¡œ ë§Œë“¤ê¸°
+			missingArray.add(childObject);    //  JSON Listì— ì¶”ê°€
 		}
 		
 		return missingArray.toString();
-	}
-	
-	public double[] getMissingGPS(String childKey) {    //  ½ÇÁ¾¾Æµ¿ À§Ä¡ È¹µæ
-		double[] gps = new double[2];
-		String sql = "select Latitude, Longitude from CHILD_GPS where ChildKey = ? order by Time desc limit 1 ";
-		conn = dbConnector.getConnection();
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
-			rs = pstmt.executeQuery();
-			if(rs.next()) {
-				gps[0] = rs.getDouble(1);    //  À§µµ
-				gps[1] = rs.getDouble(2);    //  °æµµ
-			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
-			System.err.println("MissingDAO getMissingGPS SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
-			try {
-				if(conn != null) {conn.close();}
-				if(pstmt != null) {pstmt.close();}
-				if(rs != null) {rs.close();}
-			} catch(SQLException e) {
-				System.err.println("MissingDAO getMissingGPS close SQLException error");
-			}
-		}
-		return gps;
 	}
 }

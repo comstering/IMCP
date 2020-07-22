@@ -16,33 +16,33 @@ import Child.*;
 import DBConnect.DBConnector;
 
 public class ParentDAO {
-	// DB ¿¬°á º¯¼ö
+	// DB ì—°ê²° ë³€ìˆ˜
 	private DBConnector dbConnector;
 	private Connection conn;
 	
-	//  SQL ÁúÀÇ °á°ú º¯¼ö
+	//  SQL ì§ˆì˜ ê²°ê³¼ ë³€ìˆ˜
 	private ResultSet rs;
 	
 	public ParentDAO() {
 		dbConnector = DBConnector.getInstance();
 	}
 	
-	private boolean checkID(String id) {    //  ¾ÆÀÌµğ Áßº¹È®ÀÎ
+	private boolean checkID(String id) {    //  ì•„ì´ë”” ì¤‘ë³µí™•ì¸
 		String sql = "select ID from PARENT_INFO where ID = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);    //  ¾ÆÀÌµğ
+			pstmt.setString(1, id);    //  ì•„ì´ë””
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return false;	//  ¾ÆÀÌµğ Áßº¹
+				return false;	//  ì•„ì´ë”” ì¤‘ë³µ
 			} else {
-				return true;    //  ¾ÆÀÌµğ »ç¿ë°¡´É
+				return true;    //  ì•„ì´ë”” ì‚¬ìš©ê°€ëŠ¥
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO checkID SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -51,25 +51,25 @@ public class ParentDAO {
 				System.err.println("PatentDAO checkID close SQLException error");
 			}
 		}
-		return false;    //  DB ¿À·ù
+		return false;    //  DB ì˜¤ë¥˜
 	}
 	
-	public int join(String id, String password, String name, String phone, String email) {    //  È¸¿ø°¡ÀÔ
+	public int join(String id, String password, String name, String phone, String email) {    //  íšŒì›ê°€ì…
 		if(checkID(id)) {
 			String sql = "insert into PARENT_INFO values(?, ?, ?, ?, ?)";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, id);    //  ¾ÆÀÌµğ
-				pstmt.setString(2, password);    //  ºñ¹Ğ¹øÈ£
-				pstmt.setString(3, name);    //  ÀÌ¸§
-				pstmt.setString(4, phone);    //  ÇÚµåÆù¹øÈ£
-				pstmt.setString(5, email);    //  ÀÌ¸ŞÀÏ
+				pstmt.setString(1, id);    //  ì•„ì´ë””
+				pstmt.setString(2, password);    //  ë¹„ë°€ë²ˆí˜¸
+				pstmt.setString(3, name);    //  ì´ë¦„
+				pstmt.setString(4, phone);    //  í•¸ë“œí°ë²ˆí˜¸
+				pstmt.setString(5, email);    //  ì´ë©”ì¼
 				return pstmt.executeUpdate();
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ParentDAO join SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -77,31 +77,31 @@ public class ParentDAO {
 					System.err.println("PatentDAO join close SQLException error");
 				}
 			}
-			return -1;    //  DB ¿À·ù
+			return -1;    //  DB ì˜¤ë¥˜
 		} else {
-			return 0;    //  ¾ÆÀÌµğ Áßº¹
+			return 0;    //  ì•„ì´ë”” ì¤‘ë³µ
 		}
 	}
 	
-	public String login(String id, String password) {    //  ·Î±×ÀÎ
+	public String login(String id, String password) {    //  ë¡œê·¸ì¸
 		String sql = "select Password from PARENT_INFO where ID = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);    //  ºÎ¸ğ ¾ÆÀÌµğ
+			pstmt.setString(1, id);    //  ë¶€ëª¨ ì•„ì´ë””
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				if(rs.getString(1).equals(password)) {
-					return "LoginSuccess";    //  ·Î±×ÀÎ ¼º°ø
+					return "LoginSuccess";    //  ë¡œê·¸ì¸ ì„±ê³µ
 				} else {
-					return "LoginFail";    //  ºñ¹Ğ¹øÈ£ ¿À·ù
+					return "LoginFail";    //  ë¹„ë°€ë²ˆí˜¸ ì˜¤ë¥˜
 				}
 			}
-			return "NoID";    //  ¾ÆÀÌµğ ¾øÀ½
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			return "NoID";    //  ì•„ì´ë”” ì—†ìŒ
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO login SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -110,25 +110,25 @@ public class ParentDAO {
 				System.err.println("PatentDAO login close SQLException error");
 			}
 		}
-		return "DBError";    //  DB ¿À·ù
+		return "DBError";    //  DB ì˜¤ë¥˜
 	}
 	
-	public String findID(String name, String email) {    //  ¾ÆÀÌµğ Ã£±â
+	public String findID(String name, String email) {    //  ì•„ì´ë”” ì°¾ê¸°
 		String sql = "select ID from PARENT_INFO where Name = ? and Email = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, name);    //  ºÎ¸ğ ÀÌ¸§
-			pstmt.setString(2, email);    //  ºÎ¸ğ ÀÌ¸ŞÀÏ
+			pstmt.setString(1, name);    //  ë¶€ëª¨ ì´ë¦„
+			pstmt.setString(2, email);    //  ë¶€ëª¨ ì´ë©”ì¼
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return rs.getString(1);    //  Ã£Àº ¾ÆÀÌµğ ¹İÈ¯
+				return rs.getString(1);    //  ì°¾ì€ ì•„ì´ë”” ë°˜í™˜
 			}
-			return "NoID";    //  ÇØ´çÇÏ´Â ¾Æ´Ïµğ ¾øÀ½
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			return "NoID";    //  í•´ë‹¹í•˜ëŠ” ì•„ì´ë”” ì—†ìŒ
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO findID SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -137,26 +137,26 @@ public class ParentDAO {
 				System.err.println("PatentDAO findID close SQLException error");
 			}
 		}
-		return "DBError";    //  DB ¿À·ù
+		return "DBError";    //  DB ì˜¤ë¥˜
 	}
 	
-	public String findPW(String id, String name, String email) {    //  ÆĞ½º¿öµå Ã£±â
+	public String findPW(String id, String name, String email) {    //  íŒ¨ìŠ¤ì›Œë“œ ì°¾ê¸°
 		String sql = "select ID from PARNET_INFO where ID = ? and Name = ? and Email = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);    //  ¾ÆÀÌµğ
-			pstmt.setString(2, name);    //  ÀÌ¸§
-			pstmt.setString(3, email);    //  ÇÚµåÆù¹øÈ£
+			pstmt.setString(1, id);    //  ì•„ì´ë””
+			pstmt.setString(2, name);    //  ì´ë¦„
+			pstmt.setString(3, email);    //  í•¸ë“œí°ë²ˆí˜¸
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return "FindPWSuccess";    //  ÇØ´ç¾ÆÀÌµğ È®ÀÎ ¼º°ø, ºñ¹Ğ¹øÈ£ º¯°æ °¡´É
+				return "FindPWSuccess";    //  í•´ë‹¹ì•„ì´ë”” í™•ì¸ ì„±ê³µ, ë¹„ë°€ë²ˆí˜¸ ë³€ê²½ ê°€ëŠ¥
 			}
-			return "FindPWFail";    //  ÇØ´ç¾ÆÀÌµğ È®ÀÎ ½ÇÆĞ, ºñ¹Ğ¹øÈ£ º¯°æ ºÒ°¡
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			return "FindPWFail";    //  í•´ë‹¹ì•„ì´ë”” í™•ì¸ ì‹¤íŒ¨, ë¹„ë°€ë²ˆí˜¸ ë³€ê²½ ë¶ˆê°€
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO findPW SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -165,22 +165,22 @@ public class ParentDAO {
 				System.err.println("PatentDAO findPW close SQLException error");
 			}
 		}
-		return "DBError";    //  DB ¿À·ù
+		return "DBError";    //  DB ì˜¤ë¥˜
 	}
 	
-	public int newPW(String id, String newPassword, String email) {    //  »õ·Î¿î ºñ¹Ğ¹øÈ£
+	public int newPW(String id, String newPassword, String email) {    //  ìƒˆë¡œìš´ ë¹„ë°€ë²ˆí˜¸ ë³€ê²½(ë¹„ë°€ë²ˆí˜¸ ìƒì–´ë²„ë ¸ì„ ë•Œ)
 		String sql = "update PARENT_INFO set password = ? where ID = ? and Email = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, newPassword);    //  »õ·Î¿î ºñ¹Ğ¹øÈ£
-			pstmt.setString(2, id);    //  ¾ÆÀÌµğ
-			pstmt.setString(3, email);    //  ÇÚµåÆù¹øÈ£
-			return pstmt.executeUpdate();    //  ºñ¹Ğ¹øÈ£ º¯°æ ¿Ï·á
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			pstmt.setString(1, newPassword);    //  ìƒˆë¡œìš´ ë¹„ë°€ë²ˆí˜¸
+			pstmt.setString(2, id);    //  ì•„ì´ë””
+			pstmt.setString(3, email);    //  í•¸ë“œí°ë²ˆí˜¸
+			return pstmt.executeUpdate();    //  ë¹„ë°€ë²ˆí˜¸ ë³€ê²½ ì™„ë£Œ
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO newPW SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -188,22 +188,22 @@ public class ParentDAO {
 				System.err.println("PatentDAO newPW close SQLException error");
 			}
 		}
-		return -1;    //  DB ¿À·ù
+		return -1;    //  DB ì˜¤ë¥˜
 	}
 	
-	public int changePW(String id, String password, String newPassword) {    //  ÆĞ½º¿öµå ¹Ù²Ù±â
+	public int changePW(String id, String password, String newPassword) {    //  íŒ¨ìŠ¤ì›Œë“œ ë°”ê¾¸ê¸°(ìœ ì €ê°€ ë¹„ë°€ë²ˆí˜¸ ë³€ê²½í•  ë•Œ)
 		String sql = "update PARENT_INFO set Password = ? where ID = ? and Password = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, newPassword);    //  »õ·Î¿î ºñ¹Ğ¹øÈ£
-			pstmt.setString(2, id);    //  ¾ÆÀÌµğ
-			pstmt.setString(3, password);    //  ÀÌÀü¹øÈ£
-			return pstmt.executeUpdate();    //  ºñ¹Ğ¹øÈ£ º¯°æ ¿Ï·á
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			pstmt.setString(1, newPassword);    //  ë°”ê¿€ ë¹„ë°€ë²ˆí˜¸
+			pstmt.setString(2, id);    //  ì•„ì´ë””
+			pstmt.setString(3, password);    //  ì´ì „ ë¹„ë°€ë²ˆí˜¸
+			return pstmt.executeUpdate();    //  ë¹„ë°€ë²ˆí˜¸ ë³€ê²½ ì™„ë£Œ
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO changePW SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -211,25 +211,25 @@ public class ParentDAO {
 				System.err.println("PatentDAO changePW close SQLException error");
 			}
 		}
-		return -1;    //  DB ¿À·ù
+		return -1;    //  DB ì˜¤ë¥˜
 	}
 	
-	public String getParentInfo(String parentID) {    //  ºÎ¸ğ Á¤º¸ È¹µæ
-		ParentDTO parentDTO = null;    //  ºÎ¸ğ Á¤º¸ ÀúÀå º¯¼ö
+	public String getParentInfo(String parentID) {    //  ë¶€ëª¨ ì •ë³´ íšë“
+		ParentDTO parentDTO = null;    //  ë¶€ëª¨ ì •ë³´ ì €ì¥ ë³€ìˆ˜
 		
 		String sql = "select ID, Name, Phone, Email from PARENT_INFO where ID = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, parentID);    //  ºÎ¸ğ ¾ÆÀÌµğ
+			pstmt.setString(1, parentID);    //  ë¶€ëª¨ ì•„ì´ë””
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				parentDTO = new ParentDTO(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO getParentInfo SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -239,17 +239,17 @@ public class ParentDAO {
 			}
 		}
 		
-		HashMap<String, Object> hashMap = new HashMap<String, Object>();    //  key¿Í value·Î ¹­±â
-		hashMap.put("id", parentDTO.getId());    //  ºÎ¸ğ ¾ÆÀÌµğ
-		hashMap.put("name", parentDTO.getName());    //  ºÎ¸ğ ÀÌ¸§
-		hashMap.put("phone", parentDTO.getPhone());    //  ºÎ¸ğ ÇÚµåÆù¹øÈ£
-		hashMap.put("email", parentDTO.getEmail());    //  ºÎ¸ğ ÀÌ¸ŞÀÏ
-		JSONObject parentObject = new JSONObject(hashMap);    //  JSONµ¥ÀÌÅÍ·Î ¸¸µé±â
+		HashMap<String, Object> hashMap = new HashMap<String, Object>();    //  keyì™€ valueë¡œ ë¬¶ê¸°
+		hashMap.put("id", parentDTO.getId());    //  ë¶€ëª¨ ì•„ì´ë””
+		hashMap.put("name", parentDTO.getName());    //  ë¶€ëª¨ ì´ë¦„
+		hashMap.put("phone", parentDTO.getPhone());    //  ë¶€ëª¨ í•¸ë“œí°ë²ˆí˜¸
+		hashMap.put("email", parentDTO.getEmail());    //  ë¶€ëª¨ ì´ë©”ì¼
+		JSONObject parentObject = new JSONObject(hashMap);    //  JSONë°ì´í„°ë¡œ ë§Œë“¤ê¸°
 		
-		return parentObject.toJSONString();    //  JSONµ¥ÀÌÅÍ StringÀ¸·Î º¯È¯ÇÏ¿© ¹İÈ¯
+		return parentObject.toJSONString();    //  JSONë°ì´í„° Stringìœ¼ë¡œ ë³€í™˜í•˜ì—¬ ë°˜í™˜
 	}
 	
-	private String getTime() {    //  ¼­¹ö ÇöÀç ½Ã°£ ±¸ÇÏ±â
+	private String getTime() {    //  ì„œë²„ í˜„ì¬ ì‹œê°„ êµ¬í•˜ê¸°
 		String sql = "select now()";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
@@ -259,9 +259,9 @@ public class ParentDAO {
 			if(rs.next()) {
 				return rs.getString(1);
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO getTime SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -270,21 +270,21 @@ public class ParentDAO {
 				System.err.println("ParentDAO getTime close SQLException error");
 			}
 		}
-		return "";    //  DB ¿À·ù
+		return "";    //  DB ì˜¤ë¥˜
 	}
 	
-	public int setFCMToken(String id, String token) {
+	public int setFCMToken(String id, String token) {    //  ë¶€ëª¨ í•¸ë“œí° FCM í† í°ê°’ ì €ì¥
 		String sql = "insert into PARENT_TOKEN values(?, ?)";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);
-			pstmt.setString(2, token);
+			pstmt.setString(1, id);    //  ë¶€ëª¨ ì•„ì´ë””
+			pstmt.setString(2, token);    //  FCM í† í°
 			return pstmt.executeUpdate();
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO checkFCMToken SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -292,24 +292,24 @@ public class ParentDAO {
 				System.err.println("PatentDAO checkFCMToken close SQLException error");
 			}
 		}
-		return -1;    //  DB ¿À·ù
+		return -1;    //  DB ì˜¤ë¥˜
 	}
 	
-	private int checkParentGPS(String id) {    //  ºÎ¸ğÀÇ À§Ä¡ Á¤º¸°¡ ÀúÀåµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+	private int checkParentGPS(String id) {    //  ë¶€ëª¨ì˜ ìœ„ì¹˜ ì •ë³´ê°€ ì €ì¥ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
 		String sql = "select * from PARENT_GPS where ID = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);    //  ºÎ¸ğ ¾ÆÀÌµğ
+			pstmt.setString(1, id);    //  ë¶€ëª¨ ì•„ì´ë””
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return 1;    //  ÀúÀåµÈ À§Ä¡ Á¤º¸°¡ ÀÖÀ» °æ¿ì
+				return 1;    //  ì €ì¥ëœ ìœ„ì¹˜ ì •ë³´ê°€ ìˆì„ ê²½ìš°
 			}
-			return 0;    //  ÀúÀåµÈ  À§Ä¡ Á¤º¸°¡ ¾øÀ» °æ¿ì
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			return 0;    //  ì €ì¥ëœ ìœ„ì¹˜ ì •ë³´ê°€ ì—†ì„ ê²½ìš°
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO checkParentGPS SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -318,38 +318,38 @@ public class ParentDAO {
 				System.err.println("PatentDAO checkParentGPS close SQLException error");
 			}
 		}
-		return -1;    //  DB ¿À·ù
+		return -1;    //  DB ì˜¤ë¥˜
 	}
 	
-	public int setParentGPS(String id, double lati, double longi) {    //  ºÎ¸ğ ÇöÀç À§Ä¡ ÀúÀå(´©Àû x, °»½Å o)
+	public int setParentGPS(String id, double lati, double longi) {    //  ë¶€ëª¨ í˜„ì¬ ìœ„ì¹˜ ì €ì¥(ëˆ„ì  x, ê°±ì‹  o)
 		int check = checkParentGPS(id);
 		String sql = "";
-		if(check == 1) {    //  ºÎ¸ğ À§Ä¡ ÀúÀå Á¤º¸°¡ ÀÖÀ» °æ¿ì
+		if(check == 1) {    //  ë¶€ëª¨ ìœ„ì¹˜ ì €ì¥ ì •ë³´ê°€ ìˆì„ ê²½ìš°
 			sql = "update PARENT_GPS set Time = ?, Latitude = ?, Longitude = ? where ID = ?";
-		} else if(check == 0){    //  ºÎ¸ğ À§Ä¡ ÀúÀå Á¤º¸°¡ ¾øÀ» °æ¿ì
+		} else if(check == 0){    //  ë¶€ëª¨ ìœ„ì¹˜ ì €ì¥ ì •ë³´ê°€ ì—†ì„ ê²½ìš°
 			sql = "insert into PARENT_GPS values(?, ?, ?, ?)";
 		} else {
-			return 0;    //  ºÎ¸ğ À§Ä¡ ÀúÀå Á¤º¸ Á¸Àç È®ÀÎ ¿À·ù
+			return 0;    //  ë¶€ëª¨ ìœ„ì¹˜ ì €ì¥ ì •ë³´ ì¡´ì¬ í™•ì¸ ì˜¤ë¥˜
 		}
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			if(check == 1) {    //  ºÎ¸ğ À§Ä¡ ÀúÀå Á¤º¸°¡ ÀÖÀ» °æ¿ì
-				pstmt.setString(1, getTime());    //  ¼­¹ö ½Ã°£
-				pstmt.setDouble(2, lati);    //  À§µµ
-				pstmt.setDouble(3, longi);    //  °æµµ
-				pstmt.setString(4, id);    //  ºÎ¸ğ ¾ÆÀÌµğ
-			} else {    //  ºÎ¸ğ À§Ä¡ ÀúÀå Á¤º¸°¡ ¾øÀ» °æ¿ì
-				pstmt.setString(1, id);    //  ºÎ¸ğ ¾ÆÀÌµğ
-				pstmt.setString(2, getTime());    //  ¼­¹ö ½Ã°£
-				pstmt.setDouble(3, lati);    //  À§µµ
-				pstmt.setDouble(4, longi);    //  °æµµ
+			if(check == 1) {    //  ë¶€ëª¨ ìœ„ì¹˜ ì €ì¥ ì •ë³´ê°€ ìˆì„ ê²½ìš°
+				pstmt.setString(1, getTime());    //  ì„œë²„ ì‹œê°„
+				pstmt.setDouble(2, lati);    //  ìœ„ë„
+				pstmt.setDouble(3, longi);    //  ê²½ë„
+				pstmt.setString(4, id);    //  ë¶€ëª¨ ì•„ì´ë””
+			} else {    //  ë¶€ëª¨ ìœ„ì¹˜ ì €ì¥ ì •ë³´ê°€ ì—†ì„ ê²½ìš°
+				pstmt.setString(1, id);    //  ë¶€ëª¨ ì•„ì´ë””
+				pstmt.setString(2, getTime());    //  ì„œë²„ ì‹œê°„
+				pstmt.setDouble(3, lati);    //  ìœ„ë„
+				pstmt.setDouble(4, longi);    //  ê²½ë„
 			}
 			return pstmt.executeUpdate();
-		}  catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		}  catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO setParentGPS SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -357,25 +357,25 @@ public class ParentDAO {
 				System.err.println("PatentDAO setParentGPS close SQLException error");
 			}
 		}
-		return -1;    //  DB ¿À·ù
+		return -1;    //  DB ì˜¤ë¥˜
 	}
 	
-	private int checkChildKey(String childKey, String password) {    //  ¾ÆÀÌ ½Äº°°ª Á¸Àç È®ÀÎ
+	private int checkChildKey(String childKey, String password) {    //  ì•„ì´ ì‹ë³„ê°’ ì¡´ì¬ í™•ì¸
 		String sql = "select ChildKey from PRIVATE_KEY where ChildKey = ? and Password = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
-			pstmt.setString(2, password);    //  ¾ÆÀÌ ½Äº°°ª È®ÀÎ ºñ¹Ğ¹øÈ£
+			pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
+			pstmt.setString(2, password);    //  ì•„ì´ ì‹ë³„ê°’ í™•ì¸ ë¹„ë°€ë²ˆí˜¸
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return 1;    //  ¾ÆÀÌ °íÀ¯Å° Á¤º¸ ÀÖÀ½, ºñ¹Ğ¹øÈ£µµ ÀÏÄ¡
+				return 1;    //  ì•„ì´ ê³ ìœ í‚¤ ì •ë³´ ìˆìŒ, ë¹„ë°€ë²ˆí˜¸ë„ ì¼ì¹˜
 			}
-			return 0;    //  ¾ÆÀÌ °íÀ¯Å° Á¤º¸ ¾øÀ½ ¶Ç´Â ºñ¹Ğ¹øÈ£ ºÒÀÏÄ¡
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			return 0;    //ì•„ì´ ê³ ìœ í‚¤ ì •ë³´ ì—†ìŒ ë˜ëŠ” ë¹„ë°€ë²ˆí˜¸ ë¶ˆì¼ì¹˜
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO checkChildKey SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -384,41 +384,41 @@ public class ParentDAO {
 				System.err.println("PatentDAO checkChildKey close SQLException error");
 			}
 		}
-		return -1;    //  DB ¿À·ù
+		return -1;    //  DB ì˜¤ë¥˜
 	}
 
-	private boolean checkChildInfo(String childKey) {    //  ¾ÆÀÌ Á¤º¸ À¯¹« È®ÀÎ
+	private boolean checkChildInfo(String childKey) {    //  ì•„ì´ ì •ë³´ ìœ ë¬´ í™•ì¸
 		ChildDAO childDAO = new ChildDAO();
 		return childDAO.checkChild(childKey);
 	}
 	
-	public int addChildCheck(String parentID, String childKey, String password) {    //  ¾ÆÀÌ Ãß°¡½Ã ¾ÆÀÌ Á¤º¸°¡ ÀúÀåµÇ¾î ÀÖ´ÂÁö È®ÀÎ
-		if(checkChildKey(childKey, password) == 1) {    //  ¾ÆÀÌ °íÀ¯Å° ÀÖ´ÂÁö È®ÀÎ
-			if(checkChildInfo(childKey)) {    //  ¾ÆÀÌ Á¤º¸ ÀÖÀ» °æ¿ì
-				return addPtoC(parentID, childKey);    //  ¾ÆÀÌ¿Í ºÎ¸ğ ¿¬°á
-			} else {    //  ¾ÆÀÌ Á¤º¸ ¾øÀ» °æ¿ì
+	public int addChildCheck(String parentID, String childKey, String password) {    //  ì•„ì´ ì¶”ê°€ì‹œ ì•„ì´ ì •ë³´ê°€ ì €ì¥ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
+		if(checkChildKey(childKey, password) == 1) {    //  ì•„ì´ ê³ ìœ í‚¤ê°€ ìˆëŠ”ì§€ í™•ì¸
+			if(checkChildInfo(childKey)) {    //  ì•„ì´ ì •ë³´ê°€ ìˆì„ ê²½ìš°
+				return addPtoC(parentID, childKey);    //  ì•„ì´ì™€ ë¶€ëª¨ ì—°ê²°
+			} else {    //  ì•„ì´ ì •ë³´ê°€ ì—†ì„ ê²½ìš°
 				return 0;
 			}
 		}
-		return -1;    //  DB ¿À·ù
+		return -1;    //  DB ï¿½ï¿½ï¿½ï¿½
 	}
 	
-	private boolean checkAddPtoC(String parentID, String childKey) {
+	private boolean checkAddPtoC(String parentID, String childKey) {    //  ì•„ì´ì™€ ë¶€ëª¨ ì—°ê²° í™•ì¸
 		String sql = "select * from PtoC where ID = ? and ChildKey = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, parentID);
-			pstmt.setString(2, childKey);
+			pstmt.setString(1, parentID);    //  ë¶€ëª¨ ì•„ì´ë””
+			pstmt.setString(2, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return false;
+				return false;    //  ë¶€ëª¨ì™€ ì•„ì´ê°€ ì´ë¯¸ ì—°ê²°ë˜ì–´ ìˆì„ ê²½ìš°
 			}
-			return true;
-		} catch (SQLException e) {
+			return true;    //  ë¶€ëª¨ì™€ ì•„ì´ ì—°ê²° í•„ìš”
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO checkAddPtoC SQLException error");
-		} finally {
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -426,22 +426,22 @@ public class ParentDAO {
 				System.err.println("ParentDAO checkAddPtoC close SQLException error");
 			}
 		}
-		return false;
+		return false;    //  DB ì˜¤ë¥˜
 	}
 	
-	private int addPtoC(String parentID, String childKey) {    //  ¾ÆÀÌ¿Í ºÎ¸ğ ¿¬°á
-		if(checkAddPtoC(parentID, childKey)) {
+	private int addPtoC(String parentID, String childKey) {    //  ì•„ì´ì™€ ë¶€ëª¨ ì—°ê²°
+		if(checkAddPtoC(parentID, childKey)) {    //  ì•„ì´ì™€ ì—°ê²°ì´ í•„ìš”í•œì§€ í™•ì¸
 			String sql = "insert into PtoC values(?, ?)";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, parentID);    //  ºÎ¸ğ ¾ÆÀÌµğ
-				pstmt.setString(2, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+				pstmt.setString(1, parentID);    //  ë¶€ëª¨ ì•„ì´ë””
+				pstmt.setString(2, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 				return pstmt.executeUpdate();
-			} catch (SQLException e)  {
+			} catch (SQLException e)  {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ParentDAO addPtoC SQLException error");
-			} finally {
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -449,29 +449,29 @@ public class ParentDAO {
 					System.err.println("ParentDAO addPtoC close SQLException error");
 				}
 			}
-			return -1;
+			return -1;    //  DB ì˜¤ë¥˜
 		}
-		return -2;
+		return -2;    //  ì•„ì´ì™€ ì—°ê²° ë¶ˆí•„ìš”
 	}
 	
-	public int addChild(String parentID, String childKey, String password, String name, String birth, String img) {    //  ¾ÆÀÌ Ãß°¡
-		if(checkChildKey(childKey, password) == 1) {    //  ¾ÆÀÌ ½Äº°°ªÀÌ ÀúÀåµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+	public int addChild(String parentID, String childKey, String password, String name, String birth, String img) {    //  ì•„ì´ ì¶”ê°€
+		if(checkChildKey(childKey, password) == 1) {    //  ì•„ì´ ì‹ë³„ê°’ì´ ì €ì¥ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
 			String sql = "insert into CHILD_INFO(ChildKey, Name, Birth, Image) values(?, ?, ?, ?)";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
-				pstmt.setString(2, name);    //  ¾ÆÀÌ ÀÌ¸§
-				pstmt.setString(3, birth);    //  ¾ÆÀÌ »ıÀÏ
-				pstmt.setString(4, img);    //  ¾ÆÀÌ »çÁøÆÄÀÏ °æ·Î
+				pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
+				pstmt.setString(2, name);    //  ì•„ì´ ì´ë¦„
+				pstmt.setString(3, birth);    //  ì•„ì´ ìƒì¼
+				pstmt.setString(4, img);    //  ì•„ì´ ì‚¬ì§„ íŒŒì¼ ê²½ë¡œ
 				int check = pstmt.executeUpdate();
-				if(check == 1) {    //  Á¤º¸ ÀúÀå ÈÄ ¼º°øÇÏ¸é ¾ÆÀÌ¿Í ºÎ¸ğ ¿¬°á
-					return addPtoC(parentID, childKey);    //  ¾ÆÀÌ¿Í ºÎ¸ğ ¿¬°á
+				if(check == 1) {    //  ì •ë³´ ì €ì¥ í›„ ì„±ê³µí•˜ë©´ ì•„ì´ì™€ ë¶€ëª¨ ì—°ê²°
+					return addPtoC(parentID, childKey);    //  ì•„ì´ì™€ ë¶€ëª¨ ì—°ê²°
 				}
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ParentDAO addChild SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -479,31 +479,31 @@ public class ParentDAO {
 					System.err.println("PatentDAO addChild close SQLException error");
 				}
 			}
-			return -1;    //  DB ¿À·ù
+			return -1;    //  DB ì˜¤ë¥˜
 		} else if(checkChildKey(childKey, password) == 0){
-			return 0;    //  ¾ÆÀÌ ½Äº°°ª ¿À·ù
+			return 0;    //  ì•„ì´ ì‹ë³„ê°’ ì˜¤ë¥˜
 		} else {
-			return -1;    //  ¾ÆÀÌ ½Äº°°ª check DB ¿À·ù
+			return -1;    //  ì•„ì´ ì‹ë³„ê°’ check DB ì˜¤ë¥˜
 		}
 	}
 	
-	public String getChildList(String parentID) {    //  ÇØ´ç ºÎ¸ğÀÇ ¾ÆÀÌµé ¸®½ºÆ® È¹µæ
-		ArrayList<ChildDTO> list = new ArrayList<ChildDTO>();    //  ¾ÆÀÌµé ¸®½ºÆ®¸¦ ÀúÀåÇÒ ¸®½ºÆ® º¯¼ö
+	public String getChildList(String parentID) {    //  í•´ë‹¹ ë¶€ëª¨ì˜ ì•„ì´ë“¤ ë¦¬ìŠ¤íŠ¸ íšë“
+		ArrayList<ChildDTO> list = new ArrayList<ChildDTO>();    //  ì•„ì´ë“¤ ë¦¬ìŠ¤íŠ¸ë¥¼ ì €ì¥í•  ë¦¬ìŠ¤íŠ¸ ë³€ìˆ˜
 		
 		String sql = "select ChildKey, Name, Birth, Image from CHILD_INFO where ChildKey in (select ChildKey from PtoC where ID = ?)";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, parentID);    //  ºÎ¸ğ ¾ÆÀÌµğ
+			pstmt.setString(1, parentID);    //  ë¶€ëª¨ ì•„ì´ë””
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				ChildDTO childDTO = new ChildDTO(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
 				list.add(childDTO);
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO getChildList SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -513,21 +513,21 @@ public class ParentDAO {
 			}
 		}
 		
-		ArrayList<JSONObject> childArray = new ArrayList<JSONObject>();    //  JSONµ¥ÀÌÅÍµéÀ» ´ãÀ» List
+		ArrayList<JSONObject> childArray = new ArrayList<JSONObject>();    //  JSONë°ì´í„°ë“¤ì„ ë‹´ì„ List
 		for(int i = 0; i < list.size(); i++) {
-			HashMap<String, Object> hashMap = new HashMap<String, Object>();    //  key¿Í value·Î ¹­±â
-			hashMap.put("key", list.get(i).getKey());    //  ¾ÆÀÌ ½Äº°°ª
-			hashMap.put("name", list.get(i).getName());    //  ¾ÆÀÌ ÀÌ¸§
-			hashMap.put("birth", list.get(i).getBirth());    //  ¾ÆÀÌ »ı³â¿ùÀÏ
-			hashMap.put("image", list.get(i).getImg());    //  ¾ÆÀÌ »çÁø °æ·Î
-			JSONObject childObject = new JSONObject(hashMap);    //  JSONµ¥ÀÌÅÍ·Î ¸¸µé±â
-			childArray.add(childObject);    //  JSON List¿¡ Ãß°¡
+			HashMap<String, Object> hashMap = new HashMap<String, Object>();    //  keyì™€ valueë¡œ ë¬¶ê¸°
+			hashMap.put("key", list.get(i).getKey());    //  ì•„ì´ ì‹ë³„ê°’
+			hashMap.put("name", list.get(i).getName());    //  ì•„ì´ ì´ë¦„
+			hashMap.put("birth", list.get(i).getBirth());    //  ì•„ì´ ìƒë…„ì›”ì¼
+			hashMap.put("image", list.get(i).getImg());    //  ì•„ì´ ì‚¬ì§„ ê²½ë¡œ
+			JSONObject childObject = new JSONObject(hashMap);    //  JSONë°ì´í„°ë¡œ ë§Œë“¤ê¸°
+			childArray.add(childObject);    //  JSON Listì— ì¶”ê°€
 		}
 		
 		return childArray.toString();
 	}
 	
-	public String getChildGPS(String childKey) {    //  ¾ÆÀÌ ÇöÀç À§Ä¡ È¹µæ
+	public String getChildGPS(String childKey) {    //  ì•„ì´ í˜„ì¬ ìœ„ì¹˜ íšë“
 		JSONObject gpsObject = new JSONObject();
 		if(checkChildInfo(childKey)) {
 			String sql = "select Latitude, Longitude from CHILD_GPS where ChildKey = ? order by Time desc limit 1";
@@ -535,17 +535,17 @@ public class ParentDAO {
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+				pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 				rs = pstmt.executeQuery();
 				if(rs.next()) {
-					HashMap<String, Object> hashMap = new HashMap<String, Object>();    //  key¿Í value·Î ¹­±â
-					hashMap.put("lati", rs.getDouble(1));    //  À§µµ
-					hashMap.put("longi", rs.getDouble(2));    //  °æµµ
-					gpsObject = new JSONObject(hashMap);    //  JSONµ¥ÀÌÅÍ·Î ¸¸µé±â
+					HashMap<String, Object> hashMap = new HashMap<String, Object>();    //  keyì™€ valueë¡œ ë¬¶ê¸°
+					hashMap.put("lati", rs.getDouble(1));    //  ìœ„ë„
+					hashMap.put("longi", rs.getDouble(2));    //  ê²½ë„
+					gpsObject = new JSONObject(hashMap);    //  JSONë°ì´í„°ë¡œ ë§Œë“¤ê¸°
 				}
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ParentDAO getChildGPS SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -555,53 +555,65 @@ public class ParentDAO {
 				}
 			}	
 		}
-		return gpsObject.toJSONString();    //  JSONµ¥ÀÌÅÍ StringÀ¸·Î º¯È¯ÇÏ¿© ¹İÈ¯
+		return gpsObject.toJSONString();    //  JSONë°ì´í„° Stringìœ¼ë¡œ ë³€í™˜í•˜ì—¬ ë°˜í™˜
 	}
 	
-	public int modifyChildInfo(String childKey, String childPassword, ChildDTO childDTO) {    //  ¾ÆÀÌ Á¤º¸ ¼öÁ¤
-		if(checkChildKey(childKey, childPassword) == 1) {
-			String sql = "update CHILD_INFO set ChildKey = ?, Name = ?, Birth = ?, Image = ? where ChildKey = ?";
-			conn = dbConnector.getConnection();
-			PreparedStatement pstmt = null;
-			try {
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, childDTO.getKey());    //  ¾ÆÀÌ ½Äº°°ª
-				pstmt.setString(2, childDTO.getName());    //  ¾ÆÀÌ ÀÌ¸§
-				pstmt.setString(3, childDTO.getBirth());    //  ¾ÆÀÌ »ı³â¿ùÀÏ
-				pstmt.setString(4, childDTO.getImg());    //  ¾ÆÀÌ »çÁø ÀúÀå °æ·Î
-				pstmt.setString(5, childKey);    //  ÀÌÀü ¾ÆÀÌ ½Äº°°ª(¾ÆÀÌ ÇÚµåÆùÀÌ³ª ±â±â°¡ º¯°æµÇ¾úÀ» °æ¿ì)
-				return pstmt.executeUpdate();
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
-				System.err.println("ParentDAO modifyChildInfo SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
-				try {
-					if(conn != null) {conn.close();}
-					if(pstmt != null) {pstmt.close();}
-				} catch(SQLException e) {
-					System.err.println("PatentDAO modifyChildInfo close SQLException error");
+	public int modifyChildInfo(String childKey, String childPassword, ChildDTO childDTO) {    //  ì•„ì´ ì •ë³´ ìˆ˜ì •
+		if(checkChildKey(childDTO.getKey(), childPassword) == 1) {    //  ìƒˆë¡œìš´ ì•„ì´ ê³ ìœ í‚¤ ìœ ë¬´ í™”ì¸
+			if(checkChildInfo(childKey)) {    //  ì•„ì´ ì •ë³´ê°€ ì €ì¥ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
+				String sql;
+				if(childDTO.getImg() != null) {    //  ì•„ì´ ì´ë¯¸ì§€ ê²½ë¡œ ê°’ì´ ìˆì„ ê²½ìš°
+					sql = "update CHILD_INFO set ChildKey = ?, Name = ?, Birth = ?, Image = ? where ChildKey = ?";
+				} else {    //  ì•„ì´ ì´ë¯¸ì§€ ê²½ë¡œ ê°’ì´ ì—†ì„ ê²½ìš°
+					sql = "update CHILD_INFO set ChildKey = ?, Name = ?, Birth = ? where ChildKey = ?";
 				}
+				conn = dbConnector.getConnection();
+				PreparedStatement pstmt = null;
+				try {
+					int count = 1;
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setString(count++, childDTO.getKey());    //  ì•„ì´ ì‹ë³„ê°’
+					pstmt.setString(count++, childDTO.getName());    //  ì•„ì´ ì´ë¦„
+					pstmt.setString(count++, childDTO.getBirth());    //  ì•„ì´ ìƒë…„ì›”ì¼
+					if(childDTO.getImg() != null) {
+						pstmt.setString(count++, childDTO.getImg());    //  ì•„ì´ ì‚¬ì§„ ì €ì¥ ê²½ë¡œ
+					}
+					pstmt.setString(count++, childKey);    //  ì•„ì´ ì´ì „ ì‹ë³„ê°’(ì•„ì´ í•¸ë“œí°ì´ë‚˜ ê¸°ê¸°ê°€ ë³€ê²½ë˜ì—ˆì„ ê²½ìš°)
+					return pstmt.executeUpdate();
+				} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
+					System.err.println("ParentDAO modifyChildInfo SQLExceptoin error");
+				} finally {    //  ìì›í•´ì œ
+					try {
+						if(conn != null) {conn.close();}
+						if(pstmt != null) {pstmt.close();}
+					} catch(SQLException e) {
+						System.err.println("PatentDAO modifyChildInfo close SQLException error");
+					}
+				}
+				return -1;    //  DB ì˜¤ë¥˜
+			} else {
+				return -2;    //  ì•„ì´ ì •ë³´ ì—†ìŒ
 			}
-			return -1;    //  DB ¿À·ù
 		} else {
-			return 0;    //  ¾ÆÀÌ ½Äº°°ª ¿À·ù
+			return 0;    //  ì•„ì´ ì‹ë³„ê°’ ì˜¤ë¥˜
 		}
 	}
 	
-	private boolean checkInitial(String childKey) {    //  ÃÊ±â ¾ÈÀü À§Ä¡ ÀúÀåµÈ °ªÀÌ ÀÖ´ÂÁö È®ÀÎ
+	private boolean checkInitial(String childKey) {    //  ì´ˆê¸° ì•ˆì „ ìœ„ì¹˜ ì €ì¥ëœ ê°’ì´ ìˆëŠ”ì§€ í™•ì¸
 		String sql = "select * from CHILD_GPS_INITIAL where ChildKey = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);
+			pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return true;
+				return true;    //  ì´ˆê¸° ì•ˆì „ìœ„ì¹˜ê°€ ì €ì¥ë˜ì–´ ìˆì„ ê²½ìš°
 			}
-			return false;
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			return false;    //  ì´ˆê¸° ì•ˆì „ìœ„ì¹˜ê°€ ì €ì¥ë˜ì–´ ìˆì§€ ì•Šì„ ê²½ìš°
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ParentDAO checkInitial SQLException error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -610,23 +622,23 @@ public class ParentDAO {
 				System.err.println("ParentDAO checkInitial SQLException error");
 			}
 		}
-		return false;
+		return false;    //  DB ì˜¤ë¥˜
 	}
 	
-	private boolean deleteInitial(String childKey) {    //  ÃÊ±â ¾ÈÀü À§Ä¡ µî·Ï½Ã ÀÌÀü¿¡ ÀúÀåµÈ Initial »èÁ¦
+	private boolean deleteInitial(String childKey) {    //  ì´ˆê¸° ì•ˆì „ ìœ„ì¹˜ ë“±ë¡ ì‹œ ì´ì „ì— ì €ì¥ëœ Initial ì‚­ì œ
 		int result = 0;
-		if(checkInitial(childKey)) {
+		if(checkInitial(childKey)) {    //  ì €ì¥ëœ ê°’ì´ ìˆëŠ”ì§€ í™•ì¸
 			String sql = "delete from CHILD_GPS_INITIAL where ChildKey = ?";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+				pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 				result = pstmt.executeUpdate();
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ParentDAO deleteInitial SQLException error");
-				result = -1;    //  DB ¿À·ù
-			} finally {    //  ÀÚ¿øÇØÁ¦
+				result = -1;    //  DB ì˜¤ë¥˜
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -636,15 +648,15 @@ public class ParentDAO {
 			}
 		}
 		if(result == 1 || result == 0) {
-			return true;    //  delete ¼º°ø½Ã
+			return true;    //  delete ì„±ê³µì‹œ
 		} else {
-			return false;    //  delete ½ÇÆĞ½Ã
+			return false;    //  delete ì‹¤íŒ¨ì‹œ
 		}
 	}
 	
-	public int setChildIntial(String childKey, String gpsData) {    //  ¾ÆÀÌ ÃÊ±â ¾ÈÀü À§Ä¡ ¼¼ÆÃ
+	public int setChildIntial(String childKey, String gpsData) {    //  ì•„ì´ ì´ˆê¸° ì•ˆì „ìœ„ì¹˜ ì„¸íŒ…
 		int result = 0;
-		if(checkChildInfo(childKey)) {
+		if(checkChildInfo(childKey)) {    //  ì•„ì´ ì •ë³´ê°€ ìˆëŠ” í™•ì¸
 			if(deleteInitial(childKey)) {
 				try {
 					JSONParser jsonParser = new JSONParser();
@@ -659,14 +671,14 @@ public class ParentDAO {
 						PreparedStatement pstmt = null;
 						try {
 							pstmt = conn.prepareStatement(sql);
-							pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
-							pstmt.setDouble(2, lati);    //  À§µµ
-							pstmt.setDouble(3, longi);    //  °æµµ
+							pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
+							pstmt.setDouble(2, lati);    //  ìœ„ë„
+							pstmt.setDouble(3, longi);    //  ê²½ë„
 							result = pstmt.executeUpdate();
-						} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+						} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 							System.err.println("ParentDAO setChildInitial SQLException error");
-							result = -1;    //  DB ¿À·ù
-						} finally {    //  ÀÚ¿øÇØÁ¦
+							result = -1;    //  DB ì˜¤ë¥˜
+						} finally {    //  ìì›í•´ì œ
 							try {
 								if(conn != null) {conn.close();}
 								if(pstmt != null) {pstmt.close();}
@@ -674,48 +686,48 @@ public class ParentDAO {
 								System.err.println("ParentDAO setChildInitial SQLException error");
 							}
 						}
-						if(result == -1) {
+						if(result == -1) {    //  ì¤‘ê°„ì— DB ì˜¤ë¥˜ê°€ ìƒê²¼ì„ ê²½ìš° ë°˜ë³µë¬¸ íƒˆì¶œ
 							break;
 						}
 					}
-				} catch (ParseException e) {    //  JSON ¿¹¿ÜÃ³¸®
+				} catch (ParseException e) {    //  JSON ì˜ˆì™¸ì²˜ë¦¬
 					System.err.println("ParentDAO setChildInitial ParseException error");
-					result = -2;    //  JSON ¿À·ù
+					result = -2;    //  JSON ì˜¤ë¥˜
 				}
 			} else {
-				result = -3;    //  ÃÊ±â À§Ä¡ »èÁ¦ ½ÇÆĞ
+				result = -3;    //  ì´ˆê¸° ì•ˆì „ ìœ„ì¹˜ ì‚­ì œ ì‹¤íŒ¨
 			}
 		}
 		/*
-		 * result = 0: ÀúÀåµÈ ¾ÆÀÌ Á¤º¸ ¾øÀ½
-		 * result = 1: À§Ä¡¼³Á¤ ¼º°ø
-		 * result = -1: DB ¿À·ù
-		 * result = -2: JSON ¿À·ù
-		 * result = -3: ¿ø·¡ ÀÖ´ø À§Ä¡ »èÁ¦ ¿À·ù
+		 * result = 0: ì €ì¥ëœ ì•„ì´ ì •ë³´ ì—†ìŒ
+		 * result = 1: ìœ„ì¹˜ ì„¤ì • ì„±ê³µ
+		 * result = -1: DB ì˜¤ë¥˜
+		 * result = -2: JSON ì˜¤ë¥˜
+		 * result = -3: ê¸°ì¡´ì— ì €ì¥ë˜ì–´ ìˆëŠ” ë°ì´í„° ì‚­ì œ ì˜¤ë¥˜
 		 */
 		return result;
 	}
 	
-	public String getChildInitial(String childKey) {    //  ¾ÆÀÌ ÃÊ±â ¾ÈÀü À§Ä¡ ¼¼ÆÃ°ª È¹µæ
+	public String getChildInitial(String childKey) {    //  ì•„ì´ ì´ˆê¸° ì•ˆì „ ìœ„ì¹˜ ì„¸íŒ…ê°’ íšë“
 		ArrayList<JSONObject> initialArray = new ArrayList<JSONObject>();
-		if(checkChildInfo(childKey)) {
+		if(checkChildInfo(childKey)) {    //  ì•„ì´ ì •ë³´ ìœ ë¬´ í™•ì¸
 			String sql = "select Latitude, Longitude from CHILD_GPS_INITIAL where ChildKey = ?";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+				pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 				rs = pstmt.executeQuery();
 				while(rs.next()) {
 					HashMap<String, Object> hashMap = new HashMap<String, Object>();
-					hashMap.put("lati", rs.getDouble(1));    //  À§µµ
-					hashMap.put("longi", rs.getDouble(2));    //  °æµµ
+					hashMap.put("lati", rs.getDouble(1));    //  ìœ„ë„
+					hashMap.put("longi", rs.getDouble(2));    //  ê²½ë„
 					JSONObject initialObject = new JSONObject(hashMap);
-					initialArray.add(initialObject);    //  JSON List¿¡ Ãß°¡
+					initialArray.add(initialObject);    //  JSON Listì— ì¶”ê°€
 				}
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ParentDAO getChildInitial SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -728,19 +740,19 @@ public class ParentDAO {
 		return initialArray.toString();
 	}
 	
-	public int childMissing(String childKey, boolean type) {    //  ¾ÆÀÌ ½ÇÁ¾¿©ºÎ µî·Ï
-		if(checkChildInfo(childKey)) {
+	public int childMissing(String childKey, boolean type) {    //  ì•„ì´ ì‹¤ì¢…ì—¬ë¶€ ë“±ë¡
+		if(checkChildInfo(childKey)) {    //  ì•„ì´ ì •ë³´ ìœ ë¬´ í™•ì¸
 			String sql = "update CHILD_INFO set Missing = ? where ChildKey = ?";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setBoolean(1, type);    //  ¾ÆÀÌ ½ÇÁ¾ ¿©ºÎ
-				pstmt.setString(2, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+				pstmt.setBoolean(1, type);    //  ì•„ì´ ì‹¤ì¢… ì—¬ë¶€
+				pstmt.setString(2, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 				return pstmt.executeUpdate();
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ParentDAO childMissing SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -748,8 +760,8 @@ public class ParentDAO {
 					System.err.println("ParentDAO childMissing close SQLException error");
 				}
 			}
-			return -1;    //  DB ¿À·ù
+			return -1;    //  DB ì˜¤ë¥˜
 		}
-		return 0;    //  ¾ÆÀÌ Á¤º¸°¡ ÀúÀåµÇ¾î ÀÖÁö ¾ÊÀ½
+		return 0;    //  ì•„ì´ ì •ë³´ê°€ ì €ì¥ë˜ì–´ ìˆì§€ ì•ŠìŒ
 	}
 }

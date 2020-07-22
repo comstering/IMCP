@@ -1,10 +1,10 @@
 package Child;
 
 public class ChildDTO {
-	private String key;    //  ¾ÆÀÌ °íÀ¯Å°
-	private String name;    //  ¾ÆÀÌ ÀÌ¸§
-	private String birth;    //  ¾ÆÀÌ »ı³â¿ùÀÏ
-	private String img;    //  ÀÌ¹ÌÁö ÀúÀå °æ·Î
+	private String key;    //  ì•„ì´ ê³ ìœ í‚¤
+	private String name;    //  ì•„ì´ ì´ë¦„
+	private String birth;    //  ì•„ì´ ìƒë…„ì›”ì¼
+	private String img;    //  ì´ë¯¸ì§€ ì €ì¥ ê²½ë¡œ
 	
 	public String getKey() {
 		return key;

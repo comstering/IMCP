@@ -27,18 +27,15 @@
 		String param = (String)params.nextElement();
 		values[i++] = multipartRequest.getParameter(param);
 	}
-	//  values[0]: password
-	//  values[1]: name
-	//  values[2]: key
-	//  values[3]: id
+	//  values[0]: new key
+	//  values[1]: password
+	//  values[2]: name
+	//  values[3]: old key
 	//  values[4]: birth
 	
-	String str = values[0] + values[1] + values[2] + values[3] + values[4] + img;
-	
-	
-	ChildDTO childDTO = new ChildDTO(values[2], values[1], values[4], img);
+	ChildDTO childDTO = new ChildDTO(values[0], values[2], values[4], img);
 	ParentDAO parentDAO = new ParentDAO();
-	int result = parentDAO.modifyChildInfo(values[2], values[0], childDTO);
+	int result = parentDAO.modifyChildInfo(values[3], values[1], childDTO);
 	
 	String returns = "";
 	
@@ -48,9 +45,10 @@
 		returns = "NoPrivateKey";
 	} else if(result == -1) {
 		returns = "DBError";
+	} else if(result == -2) {
+		returns = "NoChildInfo";
 	}
 	
-	returns = str;
 	out.clear();
 	out.println(returns);
 	out.flush();

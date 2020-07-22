@@ -19,33 +19,33 @@ import org.json.simple.JSONObject;
 import DBConnect.DBConnector;
 
 public class ChildDAO {
-	// DB ¿¬°á º¯¼ö
+	// DB ì—°ê²° ë³€ìˆ˜
 	private DBConnector dbConnector;
 	private Connection conn;
 	
-	//  SQL ÁúÀÇ °á°ú º¯¼ö
+	//  SQL ì§ˆì˜ ê²°ê³¼ ë³€ìˆ˜
 	private ResultSet rs;
 	
 	public ChildDAO() {
 		dbConnector = DBConnector.getInstance();
 	}
 	
-	private boolean checkKey(String childKey) {    //  ÀúÀåÇÒ °íÀ¯Å°°¡ Áßº¹µÇ´ÂÁö È®ÀÎ
+	private boolean checkKey(String childKey) {    //  ì €ì¥í•  ê³ ìœ í‚¤ê°€ ì¤‘ë³µë˜ëŠ”ì§€ í™•ì¸
 		String sql = "select ChildKey from PRIVATE_KEY where ChildKey=?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+			pstmt.setString(1, childKey);    // ì•„ì´ ì‹ë³„ê°’
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return false;	//	Å°°¡ Á¸ÀçÇÏ¿© ÀúÀåÀÌ ºÒ°¡´É ÇÒ ¶§
+				return false;	//  í‚¤ê°€ ì¡´ì¬í•˜ì—¬ ì €ì¥ì´ ë¶ˆê°€ëŠ¥ í•  ë•Œ
 			} else {
-				return true;    //  Å°°¡ Á¸ÀçÇÏÁö ¾Ê¾Æ ÀúÀåÀÌ °¡´ÉÇÒ ¶§
+				return true;    //  í‚¤ê°€ ì¡´ì¬í•˜ì§€ ì•Šì•„ ì €ì¥ì´ ê°€ëŠ¥í•  ë•Œ
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ChildDAO checkKey SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -54,22 +54,22 @@ public class ChildDAO {
 				System.err.println("ChildDAO checkKey close SQLException error");
 			}
 		}
-		return false;    //  DB ¿À·ù
+		return false;    //  DB ì˜¤ë¥˜
 	}
 	
-	public int childRegister(String childKey, String password) {    //  ¾ÆÀÌ °íÀ¯Å° ÀúÀå
-		if(checkKey(childKey)) {    //  Å°°¡ Á¸ÀçÇÏÁö ¾Ê¾Æ ÀúÀåÀÌ °¡´ÉÇÒ ¶§
+	public int childRegister(String childKey, String password) {    //  ì•„ì´ ê³ ìœ í‚¤ ì €ì¥
+		if(checkKey(childKey)) {    //  í‚¤ê°€ ì¡´ì¬í•˜ì§€ ì•Šì•„ ì €ì¥ì´ ê°€ëŠ¥í•  ë•Œ
 			String sql = "insert into PRIVATE_KEY values(?, ?)";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
-				pstmt.setString(2, password);    //  °íÀ¯Å° ºñ¹Ğ¹øÈ£
+				pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
+				pstmt.setString(2, password);    //  ê³ ìœ í‚¤ ë¹„ë°€ë²ˆí˜¸
 				return pstmt.executeUpdate();
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ChildDAO childRegister SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -77,29 +77,29 @@ public class ChildDAO {
 					System.err.println("ChildDAO childRegister close SQLException error");
 				}
 			}
-			return -1;    //  DB ¿À·ù
+			return -1;    //  DB ì˜¤ë¥˜
 		} else {
-			return 0;    //  Å°°¡ Á¸ÀçÇÏ¿© ÀúÀåÀÌ ºÒ°¡´ÉÇÒ ¶§
+			return 0;    //  í‚¤ê°€ ì¡´ì¬í•˜ì—¬ ì €ì¥ì´ ë¶ˆê°€ëŠ¥í•  ë•Œ
 		}
 	}
 	
-	public String childLogin(String childKey, String password) {    //  ¾ÆÀÌ °íÀ¯Å° È®ÀÎÀ» À§ÇÑ ·Î±×ÀÎ
+	public String childLogin(String childKey, String password) {    //  ì•„ì´ ê³ ìœ í‚¤ í™•ì¸ì„ ìœ„í•œ ë¡œê·¸ì¸
 		String sql = "select ChildKey from PRIVATE_KEY where ChildKey = ? and Password = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
-			pstmt.setString(2, password);    //  °íÀ¯Å° ºñ¹Ğ¹øÈ£
+			pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
+			pstmt.setString(2, password);    //  ê³ ìœ í‚¤ ë¹„ë°€ë²ˆí˜¸
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return "ChildLoginSuccess";    //  ·Î±×ÀÎ ¼º°ø
+				return "ChildLoginSuccess";    //  ë¡œê·¸ì¸ ì„±ê³µ
 			} else {
-				return "ChildLoginFail";    //  ·Î±×ÀÎ ½ÇÆĞ
+				return "ChildLoginFail";    //  ë¡œê·¸ì¸ ì‹¤íŒ¨
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ChildDAO childLogin SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -108,25 +108,25 @@ public class ChildDAO {
 				System.err.println("ChildDAO childLogin close SQLException error");
 			}
 		}
-		return "DBError";    //  DB ¿À·ù
+		return "DBError";    //  DB ì˜¤ë¥˜
 	}
 	
-	public boolean checkChild(String childKey) {    //  ¾ÆÀÌÁ¤º¸°¡ ÀúÀåµÇ¾ú´ÂÁö È®ÀÎ
+	public boolean checkChild(String childKey) {    //  ì•„ì´ì •ë³´ê°€ ì €ì¥ë˜ì—ˆëŠ”ì§€ í™•ì¸
 		String sql = "select ChildKey from CHILD_INFO where ChildKey = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+			pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return true;    //  ¾ÆÀÌ Á¤º¸°¡ ÀúÀåÀÌ µÇ¾î ÀÖÀ½
+				return true;    //  ì•„ì´ ì •ë³´ê°€ ì €ì¥ë˜ì–´ ìˆìŒ
 			} else {
-				return false;    //  ¾ÆÀÌ Á¤º¸°¡ ÀúÀåµÇ¾î ÀÖÁö ¾ÊÀ½
+				return false;    //  ì•„ì´ ì •ë³´ê°€ ì €ì¥ë˜ì–´ ìˆì§€ ì•ŠìŒ
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ChildDAO checkChild SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -135,10 +135,10 @@ public class ChildDAO {
 				System.err.println("ChildDAO checkChild close SQLException error");
 			}
 		}
-		return false;    //  DB ¿À·ù
+		return false;    //  DB ì˜¤ë¥˜
 	}
 	
-	private String getTime() {    //  ¼­¹ö ÇöÀç ½Ã°£ ±¸ÇÏ±â
+	private String getTime() {    //  ì„œë²„ í˜„ì¬ ì‹œê°„ êµ¬í•˜ê¸°
 		String sql = "select now()";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
@@ -148,9 +148,9 @@ public class ChildDAO {
 			if(rs.next()) {
 				return rs.getString(1);
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ChildDAO getTime SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -159,24 +159,24 @@ public class ChildDAO {
 				System.err.println("ChildDAO getTime close SQLException error");
 			}
 		}
-		return "";    //  DB ¿À·ù
+		return "";    //  DB ì˜¤ë¥˜
 	}
 	
-	public int setChildGPS(String childKey, double lati, double longi) {    //  ¾ÆÀÌ ÇöÀç À§Ä¡ µî·Ï
+	public int setChildGPS(String childKey, double lati, double longi) {    //  ì•„ì´ í˜„ì¬ ìœ„ì¹˜ ë“±ë¡
 		if(checkChild(childKey)) {
 			String sql = "insert into CHILD_GPS values(?, ?, ?, ?);";
 			conn = dbConnector.getConnection();
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
-				pstmt.setString(2, getTime());    //  ¼­¹ö ÇöÀç½Ã°£
-				pstmt.setDouble(3, lati);    //  À§µµ
-				pstmt.setDouble(4, longi);    //  °æµµ
+				pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
+				pstmt.setString(2, getTime());    //  ì„œë²„ í˜„ì¬ì‹œê°„
+				pstmt.setDouble(3, lati);    //  ìœ„ë„
+				pstmt.setDouble(4, longi);    //  ê²½ë„
 				return pstmt.executeUpdate();
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ChildDAO setChildGPS SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -184,28 +184,28 @@ public class ChildDAO {
 					System.err.println("ChildDAO setChildGPS close SQLException error");
 				}
 			}
-			return -1;    //  DB ¿À·ù	
+			return -1;    //  DB ì˜¤ë¥˜
 		}
 		else {
-			return 0;    //  ¾ÆÀÌ Á¤º¸°¡ ÀúÀåµÇ¾î ÀÖÁö ¾ÊÀ½
+			return 0;    //  ì•„ì´ ì •ë³´ê°€ ì €ì¥ë˜ì–´ ìˆì§€ ì•ŠìŒ
 		}
 	}
 	
-	private ArrayList<String> getParentsToken(String childKey) {    //  ºÎ¸ğ fcm ÅäÅ« °ª È¹µæ
+	private ArrayList<String> getParentsToken(String childKey) {    //  ë¶€ëª¨ fcm í† í° ê°’ íšë“
 		ArrayList<String> list = new ArrayList<String>();
 		String sql = "select Token from PARENT_TOKEN where ID in (select ID from PtoC where ChildKey = ?)";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+			pstmt.setString(1, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
 				list.add(rs.getString(1));
 			}
-		} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+		} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ChildDAO getParentsToken SQLExceptoin error");
-		} finally {    //  ÀÚ¿øÇØÁ¦
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(conn != null) {conn.close();}
 				if(pstmt != null) {pstmt.close();}
@@ -217,10 +217,10 @@ public class ChildDAO {
 		return list;
 	}
 	
-	private int sendFCMSOS(ArrayList<String> list, boolean type) {    //  FCM µ¥ÀÌÅÍ Àü¼Û(SOS)
+	private int sendFCMSOS(ArrayList<String> list, boolean type) {    //  FCM ë°ì´í„° ì „ì†¡(SOS)
 		int result = -200;
 		
-	    //  µ¥ÀÌÅÍ¸¦ º¸³¾ URL
+	    //  ë°ì´í„°ë¥¼ ë³´ë‚¼ URL
 		String fcmURL = "https://fcm.googleapis.com/fcm/send";
 	    //  FCM Setting -> Cloud Messaging
 		String fcmApiKey = "AAAAK-E7ezg:APA91bHMDCXaStMIhwELOcDylGkg-W8EuUPfl8Jt3d2T5B0kdp_o8-IxLvuf9zeCu_vV8KEbLn9Lu6C9XrAwE8ezlJR2kgcrgAz2G7LSgtYY8Gn24r85qR1zE3zno-xdJlhvdYAwY9sK";
@@ -239,22 +239,22 @@ public class ChildDAO {
 			httpUrlConnection.setRequestProperty("Authorization", "key=" + fcmApiKey);
 			httpUrlConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
 
-			//  FCMÀ¸·Î º¸³¾ JSONObject
+			//  FCMìœ¼ë¡œ ë³´ë‚¼ JSONObject
 			HashMap<String, Object> hashData = new HashMap<String, Object>();
 			hashData.put("title", "SOS");    //  Notification Title
-			hashData.put("body", "¾ÆÀÌ°¡ À§ÇèÇÕ´Ï´Ù.");    //  Notification Body
+			hashData.put("body", "ì•„ì´ê°€ ìœ„í—˜í•©ë‹ˆë‹¤.");    //  Notification Body
 			if(type) {
-				hashData.put("SOS", "on");    //  ¾ÆÀÌ°¡ µµ¿ò¿äÃ» »óÅÂ
+				hashData.put("SOS", "on");    //  ì•„ì´ ë„ì›€ìš”ì²­ ìƒíƒœ
 			} else {
-				hashData.put("SOS", "off");    //  ¾ÆÀÌ µµ¿ò ¿äÃ» »óÅÂ ÇØ°á
+				hashData.put("SOS", "off");    //  ì•„ì´ ë„ì›€ìš”ì²­ ìƒíƒœ í•´ê²°
 			}
-			JSONObject dataObject = new JSONObject(hashData);    //  HashMapÀ» JSONObject·Î º¯È¯
+			JSONObject dataObject = new JSONObject(hashData);    //  HashMapì„ JSONObjectë¡œ ë³€í™˜
 
-			//  FCMÀ¸·Î ¾Ë¸² ¹ŞÀ» ´ë»ó JSONObject
+			//  FCMìœ¼ë¡œ ì•Œë¦¼ ë°›ì„ ëŒ€ìƒ JSONObject
 			HashMap<String, Object> hashFCM = new HashMap<String, Object>();
-			hashFCM.put("registration_ids", list);    //  º¸³¾ ±â±âµéÀÇ ÅäÅ«
-			hashFCM.put("data", dataObject);    //  ±â±â¿¡ º¸³¾ µ¥ÀÌÅÍ
-			JSONObject sendObject = new JSONObject(hashFCM);    //  HashMapÀ» JSONObject·Î º¯È¯
+			hashFCM.put("registration_ids", list);    //  ë³´ë‚¼ ê¸°ê¸°ë“¤ì˜ í† í°
+			hashFCM.put("data", dataObject);    //  ê¸°ê¸°ì— ë³´ë‚¼ ë°ì´í„°
+			JSONObject sendObject = new JSONObject(hashFCM);    //  HashMapì„ JSONObjectë¡œ ë³€í™˜
 
 			dos = new DataOutputStream(httpUrlConnection.getOutputStream());
 			osw = new OutputStreamWriter(dos);
@@ -263,11 +263,11 @@ public class ChildDAO {
 			writer.flush();
 			httpUrlConnection.connect();
 			result = httpUrlConnection.getResponseCode();
-		} catch (MalformedURLException e) {
+		} catch (MalformedURLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 			System.err.println("ChildDAO sendFCMSOS MalformedURLException error");
 		} catch (IOException e) {
 			System.err.println("ChildDAO sendFCMSOS IOException error");
-		} finally {
+		} finally {    //  ìì›í•´ì œ
 			try {
 				if(dos != null) {dos.close();}
 				if(osw != null) {osw.close();}
@@ -280,7 +280,7 @@ public class ChildDAO {
 		return result;
 	}
 	
-	public int childSOS(String childKey, boolean type) {    //  ¾ÆÀÌ SOS ¿©ºÎ µî·Ï
+	public int childSOS(String childKey, boolean type) {    //  ì•„ì´ SOS ì—¬ë¶€ ë“±ë¡
 		if(checkChild(childKey)) {
 			ArrayList<String> list = getParentsToken(childKey);
 			int httpResult = sendFCMSOS(list, type);
@@ -292,12 +292,12 @@ public class ChildDAO {
 			PreparedStatement pstmt = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setBoolean(1, type);    //  SOS ¿©ºÎ
-				pstmt.setString(2, childKey);    //  ¾ÆÀÌ ½Äº°°ª
+				pstmt.setBoolean(1, type);    //  SOS ì—¬ë¶€
+				pstmt.setString(2, childKey);    //  ì•„ì´ ì‹ë³„ê°’
 				return pstmt.executeUpdate();
-			} catch (SQLException e) {    //  ¿¹¿ÜÃ³¸®
+			} catch (SQLException e) {    //  ì˜ˆì™¸ì²˜ë¦¬
 				System.err.println("ChildDAO childSOS SQLExceptoin error");
-			} finally {    //  ÀÚ¿øÇØÁ¦
+			} finally {    //  ìì›í•´ì œ
 				try {
 					if(conn != null) {conn.close();}
 					if(pstmt != null) {pstmt.close();}
@@ -305,8 +305,8 @@ public class ChildDAO {
 					System.err.println("ChildDAO childSOS close SQLException error");
 				}
 			}
-			return -1;    //  DB ¿À·ù
+			return -1;    //  DB ì˜¤ë¥˜
 		}
-		return 0;    //  ¾ÆÀÌ Á¤º¸°¡ ÀúÀåµÇ¾î ÀÖÁö ¾ÊÀ½
+		return 0;    //  ì•„ì´ ì •ë³´ê°€ ì €ì¥ë˜ì–´ ìˆì§€ ì•ŠìŒ
 	}
 }

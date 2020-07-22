@@ -11,7 +11,7 @@
 	int maxSize = 5 * 1024 * 1024;    //  최대용량 5MB
 	
 	//  MultipartRequest 사용즉시  서버에 파일을 받는다
-	MultipartRequest multipartRequest = new MultipartRequest(request, directory, maxSize, "utf-8", new DefaultFileRenamePolicy());
+	MultipartRequest multipartRequest = new MultipartRequest(request, directory, maxSize, "UTF-8", new DefaultFileRenamePolicy());
 	
 	//  시스템에 저장된 파일명
 	String img = multipartRequest.getFilesystemName("image");

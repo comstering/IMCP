@@ -1,10 +1,10 @@
 package Parent;
 
 public class ParentDTO {
-	private String id;
-	private String name;
-	private String phone;
-	private String email;
+	private String id;    //  아이디
+	private String name;    //  이름
+	private String phone;    //  핸드폰번호
+	private String email;    //  이메일
 	
 	public String getId() {
 		return id;
