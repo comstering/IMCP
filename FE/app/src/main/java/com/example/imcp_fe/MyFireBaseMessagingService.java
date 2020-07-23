@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -13,17 +14,32 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.imcp_fe.Network.AppHelper;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MyFireBaseMessagingService extends FirebaseMessagingService {
     protected static final String FCM_TAG = "[FCM Service]";
+    private String url = "http://tomcat.comstering.synology.me/IMCP_Server/setFCMToken.jsp";
+    private SharedPreferences login_preference;
+
 
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
+        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         Log.d(FCM_TAG, "New Token: " + s);
         //volley 추가
+        FirebaseRequest(url, s);
     }
 
     @Override
@@ -95,4 +111,49 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
 
     }
+
+    public void FirebaseRequest(String url, final String token) {
+
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        switch (response) {
+
+
+                            case "SetFCMSuccess":
+                                Log.e("firebase", response);
+                                break;
+                            case "DBError":
+                                Log.e("firebase", response);
+                                break;
+                            default:
+                                Log.e("volley", response);
+                                break;
+                        }
+                    }
+                },
+                new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("ID", login_preference.getString("id",""));
+                params.put("token", token);
+                return params;
+            }
+        };
+
+        request.setShouldCache(false);
+        AppHelper.requestQueue = Volley.newRequestQueue(this);
+        AppHelper.requestQueue.add(request);
+    }
+
 }

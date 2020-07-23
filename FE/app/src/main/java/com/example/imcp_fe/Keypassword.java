@@ -42,12 +42,21 @@ public class Keypassword extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.key_password);
 
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
+        if (!login_preference.getString("key", "null").equals("null")) {
+            intent = new Intent(getApplicationContext(), Child_main.class);
+            startActivity(intent);
+        }
+
+        setContentView(R.layout.key_password);
         et_children_new_pw = (EditText) findViewById(R.id.et_children_new_pw);
         et_children_re_pw = (EditText) findViewById(R.id.et_children_re_pw);
         btn_children_create_pw = (Button) findViewById(R.id.btn_children_create_pw);
+
+
+
+
 
 //비밀번호 일치 확인, 일치 시 랜덤키 생성
         btn_children_create_pw.setOnClickListener(new View.OnClickListener() {

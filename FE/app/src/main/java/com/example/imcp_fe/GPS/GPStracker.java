@@ -42,58 +42,54 @@ import com.example.imcp_fe.Network.AppHelper;
 import com.example.imcp_fe.Parents_main;
 import com.example.imcp_fe.R;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class GPStracker extends Service implements LocationListener {
-
+    public static Intent serviceIntent = null;
     private Context mContext;
-    Location location;
+    private Location location;
     double latitude;
     double longitude;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;//10;
-    private static final long MIN_TIME_BW_UPDATES = 1000;  //* 60 * 1;
-    protected LocationManager locationManager;
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;//1분
+    protected LocationManager locationManager =null;
     private String gpsurl;
     private String key;
     private String id;
-    private CountDownTimer countDownTimer;
+
     private final int M = 1000 * 1000;
     private final int C = 1000;
     private SharedPreferences login_preference;
     private Restartservice restartservice;
-//    public GPStracker(Context context, String key) {
-//        this.key =key;
-//        this.mContext = context;
-//        getLocation();
-////    }
-
-//    public void setinfo(Intent intent,Context context, String key) {
-//        this.key = key;
-//        this.mContext = context;
-//        getLocation();
-//    }
-
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
-
-
-    }
+    private Thread mThread;
+    private int mCount = 0;
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        PendingIntent pendingIntent = null;
+        serviceIntent = intent;
+        initializeNotification();
+
+        getLocation();
+
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void initializeNotification() {
+
+        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
+        mContext = getApplicationContext();
         key = login_preference.getString("key", "null");
         id = login_preference.getString("id", "null");
+        PendingIntent pendingIntent = null;
         if (id.equals("null")) {
             gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPS.jsp";
-           pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, Child_main.class), PendingIntent.FLAG_ONE_SHOT);
+            pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, Child_main.class), PendingIntent.FLAG_ONE_SHOT);
 
         } else if (key.equals("null")) {
             gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setParentGPS.jsp";
@@ -101,93 +97,85 @@ public class GPStracker extends Service implements LocationListener {
 
         }
 
-        mContext = getApplicationContext();
-        getLocation();
-        intent = new Intent(this, Child_main.class);
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        String channelId = "Channel ID";
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("IMCP")
-                        .setContentText("gps 동작중")
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
-//                        .setOngoing(true);
-
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1");
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
+        style.bigText("설정을 보려면 누르세요.");
+        style.setBigContentTitle(null);
+        style.setSummaryText("서비스 동작중");
+        builder.setContentText(null);
+        builder.setContentTitle(null);
+        builder.setOngoing(true);
+        builder.setStyle(style);
+        builder.setWhen(0);
+        builder.setShowWhen(false);
+        builder.setContentIntent(pendingIntent);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String channelName = "Channel Name";
-            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
-            notificationManager.createNotificationChannel(channel);
+            manager.createNotificationChannel(new NotificationChannel("1", "undead_service", NotificationManager.IMPORTANCE_NONE));
         }
-        startForeground(1, notificationBuilder.build());
+        Notification notification = builder.build();
+        startForeground(1, notification);
 
 
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        unregisterReceiver(restartservice);
-//    }
+//        Intent intent = new Intent(this, Child_main.class);
 //
-//    private void initData() {
-//        restartservice = new Restartservice();
-//        Intent intent = new Intent(GPStracker.this, GPStracker.class);
-//        IntentFilter intentFilter = new IntentFilter(".GPS.GPStracker");
-//        registerReceiver(restartservice,intentFilter);
-//        startService(intent);
-//    }
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//
+//        String channelId = "Channel ID";
+//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        NotificationCompat.Builder notificationBuilder =
+//                new NotificationCompat.Builder(this, channelId)
+//                        .setSmallIcon(R.mipmap.ic_launcher)
+//                        .setContentTitle("IMCP")
+//                        .setContentText("gps 동작중")
+//                        .setSound(defaultSoundUri)
+//                        .setContentIntent(pendingIntent);
+////                        .setOngoing(true);
+//
+//
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            String channelName = "Channel Name";
+//            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+//            notificationManager.createNotificationChannel(channel);
+//        }
 
-    public void countDownTimer() {
-        countDownTimer = new CountDownTimer(M, C) {
-            @Override
-            public void onTick(long l) {
 
-            }
-
-            @Override
-            public void onFinish() {
-
-            }
-        };
     }
 
-    //알림 매니저에 서비스 등록
-    private void registerRestartAlarm() {
-
-
-        Intent intent = new Intent(GPStracker.this, Restartservice.class);
-        intent.setAction("ACTION.RESTART.GPStracker");
-
-
-        PendingIntent sender = PendingIntent.getBroadcast(GPStracker.this, 0, intent, 0);
-        long firstTime = SystemClock.elapsedRealtime();
-        firstTime += 1 * 1000;
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 1 * 1000, sender);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        locationManager.removeUpdates(this);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 3);
+        Intent intent = new Intent(this, Restartservice.class);
+        PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
     }
 
-    //알림 매니저에 서비스 해제
-    private void unregisterRestartAlarm() {
-        Intent intent = new Intent(GPStracker.this, Restartservice.class);
-        intent.setAction("ACTION.RESTART.GPStracker");
-        PendingIntent sender = PendingIntent.getBroadcast(GPStracker.this, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        alarmManager.cancel(sender);
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        locationManager.removeUpdates(this);
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 3);
+        Intent intent = new Intent(this, Restartservice.class);
+        PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
     }
 
 
     public Location getLocation() {
+        Log.e("thread", "1");
         try {
+            Log.e("thread", "2");
             locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
             boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -196,7 +184,6 @@ public class GPStracker extends Service implements LocationListener {
             if (!isGPSEnabled && !isNetworkEnabled) {
 
             } else {
-
                 int hasFineLocationPermission = ContextCompat.checkSelfPermission(mContext,
                         Manifest.permission.ACCESS_FINE_LOCATION);
                 int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(mContext,
@@ -206,15 +193,13 @@ public class GPStracker extends Service implements LocationListener {
                 if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                         hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
 
-                    ;
+
                 } else
                     return null;
 
 
                 if (isNetworkEnabled) {
-
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         if (location != null) {
@@ -223,8 +208,6 @@ public class GPStracker extends Service implements LocationListener {
                         }
                     }
                 }
-
-
                 if (isGPSEnabled) {
                     if (location == null) {
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
@@ -245,27 +228,13 @@ public class GPStracker extends Service implements LocationListener {
         return location;
     }
 
-    public double getLatitude() {
-        if (location != null) {
-            latitude = location.getLatitude();
-        }
-
-        return latitude;
-    }
-
-    public double getLongitude() {
-        if (location != null) {
-            longitude = location.getLongitude();
-        }
-
-        return longitude;
-    }
-
     @Override
     public void onLocationChanged(Location location) {
 
         GPSRequest(gpsurl, location.getLatitude(), location.getLongitude());
-//        Toast.makeText(mContext, "위치가 변경되었습니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "위치가 변경되었습니다.", Toast.LENGTH_SHORT).show();
+        Log.e("gps", location.toString());
+
     }
 
     @Override

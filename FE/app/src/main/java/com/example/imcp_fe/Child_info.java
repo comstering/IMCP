@@ -2,6 +2,7 @@ package com.example.imcp_fe;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -56,7 +57,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Child_info extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
 
-    private final int REQ_CODE_SELECT_IMAGE = 100;//??
+    private final int REQ_CODE_SELECT_IMAGE = 100;
     private GoogleMap mMap;
     private ArrayList<MarkerOptions> markerlist = new ArrayList<>();
     private Button btn_childinfo_save;
@@ -64,18 +65,24 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     private CircleImageView iv_childinfo_photo;
     private EditText et_childinfo_name;
     private EditText et_childinfo_brithday;
-    private String lati;
-    private String longi;
+    private EditText et_childinfo_key;
+    private EditText et_childinfo_pw;
+
     private String gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPSInitial.jsp";
     private String infourl = "http://tomcat.comstering.synology.me/IMCP_Server/childModify.jsp";
     private String img_path = new String();
     private String imageName = null;
     private Bitmap image_bitmap = null;
     private Bitmap image_bitmap_copy = null;
+
+    private String password;
+    private String newkey;
     private String key;
     private String name;
     private String image;
     private String birth;
+
+    private SharedPreferences login_preference;
 
     /*
     엑티비티 생성 시 호출
@@ -85,20 +92,27 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chlid_info);
-
+        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         Intent intent = getIntent();
         key = intent.getStringExtra("key");
         name = intent.getStringExtra("name");
         image = intent.getStringExtra("image");
         birth = intent.getStringExtra("birth");
         btn_childinfo_save = (Button) findViewById(R.id.btn_childinfo_save);
+
+
+
         iv_childinfo_photo = (CircleImageView) findViewById(R.id.iv_childinfo_photo);
         et_childinfo_name = findViewById(R.id.et_childinfo_name);
         et_childinfo_brithday = findViewById(R.id.et_childinfo_brithday);
+        et_childinfo_key = findViewById(R.id.et_childinfo_key);
+        et_childinfo_pw = findViewById(R.id.et_childinfo_password);
 
-        Picasso.with(getApplicationContext()).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/" + image).into(iv_childinfo_photo);
         et_childinfo_name.setText(name);
         et_childinfo_brithday.setText(birth);
+        et_childinfo_key.setText(key);
+
+        Picasso.with(getApplicationContext()).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/" + image).into(iv_childinfo_photo);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .permitDiskReads()
                 .permitDiskWrites()
@@ -112,7 +126,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
-                Log.d("Test", img_path);
+
 
             }
         });
@@ -133,23 +147,32 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         btn_childinfo_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (markerlist.isEmpty() == false) {
+
+                name = et_childinfo_name.getText().toString();
+                birth =et_childinfo_brithday.getText().toString();
+                newkey=et_childinfo_key.getText().toString();
+                password = et_childinfo_pw.getText().toString();
+
+                Log.e("TT", name+birth+key+password);
+
+
+                if (!markerlist.isEmpty()) {
                     for (int i = 0; i < markerlist.size(); i++) {
                         sendlocation.append("{" + "\"" + "lati" + "\"" + ":" + "\"" + Double.toString(markerlist.get(i).getPosition().latitude) + "\"" + "," + "\"" + "longi" + "\"" + ":" + "\"" + Double.toString(markerlist.get(i).getPosition().longitude) + "\"" + "},");
                         Log.e("output", markerlist.get(i).getPosition().toString());
                     }
                     sendlocation.delete(sendlocation.length() - 1, sendlocation.length());
                     sendlocation.append("]");
-                    Log.e("output", sendlocation.toString());
-                } else if (markerlist.isEmpty() == true) {
+                    DoFileUpload(infourl, img_path);
+                    loactionRequest(gpsurl);//주기적으로 업데이트가 가능해야함.
+
+                } else if (markerlist.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "마커를 지정해주세요.", Toast.LENGTH_SHORT).show();
                     Log.e("output", "리스트 빔");
                 } else {
                     Log.e("output", "error");
                 }
-                Log.d("Test", "1");
-                DoFileUpload(infourl, img_path);
-                Log.d("Test", "2");
-                loactionRequest(gpsurl);//주기적으로 업데이트가 가능해야함.
+
 
             }
         });
@@ -253,7 +276,6 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 
         //이미지의 경로 값
         String imgPath = cursor.getString(column_index);
-        Log.d("test", imgPath);
 
         //이미지의 이름 값
         String imgName = imgPath.substring(imgPath.lastIndexOf("/") + 1);
@@ -264,7 +286,6 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     }//end of getImagePathToUri()
 
     public void DoFileUpload(String apiUrl, String absolutePath) {
-        Log.d("Test", "3");
         HttpFileUpload(apiUrl, "", absolutePath);
     }
 
@@ -277,16 +298,16 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     * */
     public void HttpFileUpload(String urlString, String params, String fileName) {
         try {
-            Log.d("Test", urlString);
+
             File file = new File(fileName);
-            Log.d("Test", "name : " + fileName);
+
 
             FileInputStream mFileInputStream = new FileInputStream(file);
-            Log.e("Test", "1");
-            URL connectUrl = new URL(urlString);
-            Log.e("Test", "2");
 
-            Log.d("Test", "mFileInputStream  is " + mFileInputStream);
+            URL connectUrl = new URL(urlString);
+
+
+
 
             // HttpURLConnection 통신
             HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
@@ -296,7 +317,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-            Log.e("Test", "3");
+
 
 
             // write data
@@ -308,31 +329,40 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             dos.writeBytes("Content-Disposition: form-data; name=\"name\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("awd" + lineEnd);
+            dos.writeUTF(name + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"key\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("123dka" + lineEnd);
+            dos.writeBytes(key + lineEnd);
+
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"newkey\"" + lineEnd);
+            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(newkey + lineEnd);
+
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"password\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("eod93" + lineEnd);
+            dos.writeBytes(password + lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"birth\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes("2020-06-05" + lineEnd);
+            dos.writeBytes(birth + lineEnd);
 
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"id\"" + lineEnd);
-            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes("dasdasd" + lineEnd);
+//            dos.writeBytes(twoHyphens + boundary + lineEnd);
+//            dos.writeBytes("Content-Disposition: form-data; name=\"id\"" + lineEnd);
+//            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
+//            dos.writeBytes(lineEnd);
+//            dos.writeBytes(login_preference.getString("id","") + lineEnd);
+
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"" + fileName + "\"" + lineEnd);
@@ -348,7 +378,6 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             byte[] buffer = new byte[bufferSize];
             int bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
 
-            Log.d("Test", "image byte is " + bytesRead);
 
             // read image
             while (bytesRead > 0) {
@@ -377,6 +406,18 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             }
             is.close();
             Log.e("Test", "responese : " + b.toString());
+            switch (b.toString()) {
+                case "ModifySuccess":
+                    Toast.makeText(getApplicationContext(), "수정 성공", Toast.LENGTH_SHORT).show();
+                    break;
+                case "NoPrivateKey":
+                    Toast.makeText(getApplicationContext(), "등록된 키가 없습니다.", Toast.LENGTH_SHORT).show();
+                    break;
+                case "DBError":
+                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                    break;
+
+            }
 
 
         } catch (Exception e) {
@@ -387,7 +428,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 
 
     public void loactionRequest(String url) {
-        Log.d("Test", "4");
+
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
