@@ -400,7 +400,7 @@ public class ParentDAO {
 				return 0;
 			}
 		}
-		return -1;    //  DB ����
+		return -1;    //  DB 오류
 	}
 	
 	private boolean checkAddPtoC(String parentID, String childKey) {    //  아이와 부모 연결 확인
@@ -647,7 +647,7 @@ public class ParentDAO {
 				}
 			}
 		}
-		if(result == 1 || result == 0) {
+		if(result != -1) {
 			return true;    //  delete 성공시
 		} else {
 			return false;    //  delete 실패시
