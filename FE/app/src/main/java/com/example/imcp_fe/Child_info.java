@@ -1,6 +1,7 @@
 package com.example.imcp_fe;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -67,10 +68,12 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     private EditText et_childinfo_brithday;
     private EditText et_childinfo_key;
     private EditText et_childinfo_pw;
-
+    private Double x = 0.0;
+    private Double y = 0.0;
     private String gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPSInitial.jsp";
     private String infourl = "http://tomcat.comstering.synology.me/IMCP_Server/childModify.jsp";
-    private String img_path = new String();
+    private String getlocationurl = "http://tomcat.comstering.synology.me/IMCP_Server/getChildInitial.jsp";
+    private String img_path = null;
     private String imageName = null;
     private Bitmap image_bitmap = null;
     private Bitmap image_bitmap_copy = null;
@@ -81,7 +84,6 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     private String name;
     private String image;
     private String birth;
-
     private SharedPreferences login_preference;
 
     /*
@@ -101,7 +103,6 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         btn_childinfo_save = (Button) findViewById(R.id.btn_childinfo_save);
 
 
-
         iv_childinfo_photo = (CircleImageView) findViewById(R.id.iv_childinfo_photo);
         et_childinfo_name = findViewById(R.id.et_childinfo_name);
         et_childinfo_brithday = findViewById(R.id.et_childinfo_brithday);
@@ -110,7 +111,10 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 
         et_childinfo_name.setText(name);
         et_childinfo_brithday.setText(birth);
+        Log.e("asd", img_path + "");
+        Log.e("key", key);
         et_childinfo_key.setText(key);
+
 
         Picasso.with(getApplicationContext()).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/" + image).into(iv_childinfo_photo);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -144,31 +148,43 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         super.onStart();
         sendlocation = new StringBuffer("[");
         //지정한 마커들의 좌표를 파라미터로 전송
+        getlocationRequest(getlocationurl);
+
         btn_childinfo_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 name = et_childinfo_name.getText().toString();
-                birth =et_childinfo_brithday.getText().toString();
-                newkey=et_childinfo_key.getText().toString();
+                birth = et_childinfo_brithday.getText().toString();
+                newkey = et_childinfo_key.getText().toString();
                 password = et_childinfo_pw.getText().toString();
 
-                Log.e("TT", name+birth+key+password);
+                Log.e("TT", name + birth + key + password);
 
 
                 if (!markerlist.isEmpty()) {
+
                     for (int i = 0; i < markerlist.size(); i++) {
                         sendlocation.append("{" + "\"" + "lati" + "\"" + ":" + "\"" + Double.toString(markerlist.get(i).getPosition().latitude) + "\"" + "," + "\"" + "longi" + "\"" + ":" + "\"" + Double.toString(markerlist.get(i).getPosition().longitude) + "\"" + "},");
                         Log.e("output", markerlist.get(i).getPosition().toString());
                     }
                     sendlocation.delete(sendlocation.length() - 1, sendlocation.length());
                     sendlocation.append("]");
+
                     DoFileUpload(infourl, img_path);
-                    loactionRequest(gpsurl);//주기적으로 업데이트가 가능해야함.
+                    locationRequest(gpsurl);//주기적으로 업데이트가 가능해야함.
 
                 } else if (markerlist.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "마커를 지정해주세요.", Toast.LENGTH_SHORT).show();
-                    Log.e("output", "리스트 빔");
+                    if (sendlocation.length() >= 10) {
+                        sendlocation.delete(sendlocation.length() - 1, sendlocation.length());
+                        sendlocation.append("]");
+                        DoFileUpload(infourl, img_path);
+                        locationRequest(gpsurl);//주기적으로 업데이트가 가능해야함.
+                    } else {
+                        Toast.makeText(getApplicationContext(), "마커를 지정해주세요.", Toast.LENGTH_SHORT).show();
+                        Log.e("output", "리스트 빔");
+
+                    }
                 } else {
                     Log.e("output", "error");
                 }
@@ -187,16 +203,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //지도타입 - 일반
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap = googleMap;
-        LatLng loaction = new LatLng(37.52487, 126.92723);
 
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(loaction);
-        markerOptions.title("현재 위치");
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(loaction));//카메라의 위도 경도를 설정, loaction으로 서버에서 위치를 받아온다.
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));//카메라 확대 기능, 숫자가 높을수록 가까워짐 1단계일 경우 세계지도수준
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
@@ -211,6 +218,14 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         mMap.setOnMarkerClickListener(this);
 
 
+    }
+
+    public void drawmap(double x, double y) {
+        LatLng newlatlng = new LatLng(x, y);
+
+
+        mMap.addMarker(new MarkerOptions().position(newlatlng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newlatlng, 15));
     }
 
     //마커 클릭 이벤트 설정
@@ -299,14 +314,11 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     public void HttpFileUpload(String urlString, String params, String fileName) {
         try {
 
-            File file = new File(fileName);
-
-
-            FileInputStream mFileInputStream = new FileInputStream(file);
+            Log.e("errorCheck", "1" + fileName);
+            Log.e("errorCheck", "1");
 
             URL connectUrl = new URL(urlString);
-
-
+            Log.e("errorCheck", "2");
 
 
             // HttpURLConnection 통신
@@ -318,6 +330,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
+            Log.e("errorCheck", "3");
 
 
             // write data
@@ -329,7 +342,8 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             dos.writeBytes("Content-Disposition: form-data; name=\"name\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeUTF(name + lineEnd);
+            dos.writeUTF(name);
+            dos.writeBytes(lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"key\"" + lineEnd);
@@ -356,6 +370,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
             dos.writeBytes(birth + lineEnd);
+            Log.e("errorCheck", "4");
 
 //            dos.writeBytes(twoHyphens + boundary + lineEnd);
 //            dos.writeBytes("Content-Disposition: form-data; name=\"id\"" + lineEnd);
@@ -363,52 +378,71 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 //            dos.writeBytes(lineEnd);
 //            dos.writeBytes(login_preference.getString("id","") + lineEnd);
 
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"" + fileName + "\"" + lineEnd);
-            dos.writeBytes(("Content-Type: " + URLConnection.guessContentTypeFromName(file.getName())) + lineEnd);
-            dos.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
-            dos.writeBytes(lineEnd);
+            if (fileName != null) {
+                Log.e("errorCheck", "5");
+                File file = new File(fileName);
 
 
-            int bytesAvailable = mFileInputStream.available();
-            int maxBufferSize = 1024;//?1024
-            int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                FileInputStream mFileInputStream = new FileInputStream(file);
 
-            byte[] buffer = new byte[bufferSize];
-            int bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
+                Log.e("file", file.getName());
+//            if(file.getName().equals(null))
+                dos.writeBytes(twoHyphens + boundary + lineEnd);
+                dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"" + fileName + "\"" + lineEnd);
+                dos.writeBytes(("Content-Type: " + URLConnection.guessContentTypeFromName(file.getName())) + lineEnd);
+                dos.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
+                dos.writeBytes(lineEnd);
 
 
-            // read image
-            while (bytesRead > 0) {
-                dos.write(buffer, 0, bufferSize);
-                bytesAvailable = mFileInputStream.available();
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
+                int bytesAvailable = mFileInputStream.available();
+                int maxBufferSize = 1024;//?1024
+                int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+
+                byte[] buffer = new byte[bufferSize];
+                int bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
+
+
+                // read image
+                while (bytesRead > 0) {
+                    dos.write(buffer, 0, bufferSize);
+                    bytesAvailable = mFileInputStream.available();
+                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
+                }
+
+                // close streams
+                Log.e("Test", "File is written");
+                mFileInputStream.close();
             }
-
+            Log.e("errorCheck", "6");
             dos.writeBytes(lineEnd);
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
-            // close streams
-            Log.e("Test", "File is written");
-            mFileInputStream.close();
-
+            Log.e("errorCheck", "7");
             dos.flush();
             // finish upload...
+            Log.e("errorCheck", "8");
 
             // get response
             InputStream is = conn.getInputStream();
 
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             for (int ch = 0; (ch = is.read()) != -1; ) {
                 b.append((char) ch);
             }
             is.close();
+
             Log.e("Test", "responese : " + b.toString());
-            switch (b.toString()) {
+
+//            String C = "ModifySuccess";
+//            if(b.toString().contains("ModifySuccess")){
+//                Log.e("sfsdf", "ssss");
+//                Success();
+//            }
+            switch (b.toString().trim()) {
                 case "ModifySuccess":
                     Toast.makeText(getApplicationContext(), "수정 성공", Toast.LENGTH_SHORT).show();
+                    Success();
                     break;
                 case "NoPrivateKey":
                     Toast.makeText(getApplicationContext(), "등록된 키가 없습니다.", Toast.LENGTH_SHORT).show();
@@ -416,7 +450,6 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                 case "DBError":
                     Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                     break;
-
             }
 
 
@@ -427,7 +460,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     } // end of HttpFileUpload()
 
 
-    public void loactionRequest(String url) {
+    public void locationRequest(String url) {
 
         StringRequest request = new StringRequest(
                 Request.Method.POST,
@@ -436,25 +469,23 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                     @Override
                     public void onResponse(String response) {
 
-                        switch (response) {
+                        switch (response.trim()) {
                             case "InitialSucess":
-                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                                 break;
                             case "NoChildInfo":
-                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                                 break;
                             case "DBError":
-                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                                 break;
                             case "JSONError":
-                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                                 break;
                             case "DeleteError":
-                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                                 break;
-                            default:
-                                Toast.makeText(getApplicationContext(),response, Toast.LENGTH_SHORT).show();
-                                break;
+
                         }
                     }
                 },
@@ -479,6 +510,66 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         request.setShouldCache(false);
         AppHelper.requestQueue = Volley.newRequestQueue(this);
         AppHelper.requestQueue.add(request);
+    }
+
+    public void getlocationRequest(String url) {
+
+        Log.e("map", "2");
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("map", "위도 경도 : " + response);
+                        try {
+                            if (response.equals(null) == false) {
+
+                                JSONArray jarray = new JSONArray(response);
+                                int size = jarray.length();
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject row = jarray.getJSONObject(i);
+                                    x = row.getDouble("lati"); // x, y 좌표를 받아옴.
+                                    y = row.getDouble("longi");
+                                    drawmap(x, y);
+                                    sendlocation.append("{" + "\"" + "lati" + "\"" + ":" + "\"" + Double.toString(x) + "\"" + "," + "\"" + "longi" + "\"" + ":" + "\"" + Double.toString(y) + "\"" + "},");
+
+                                }
+                            } else if (response.equals(null) == true) {
+                                Log.e("volley", response);
+                                Toast.makeText(Child_info.this, "Error", Toast.LENGTH_SHORT).show();
+                            }
+                            Log.e("map", Double.toString(x));
+                            Log.e("map", "3");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() { //에러발생시 호출될 리스너 객체
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("volley", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("childKey", key);
+                return params;
+            }
+        };
+
+        request.setShouldCache(false);
+        AppHelper.requestQueue = Volley.newRequestQueue(this);
+        AppHelper.requestQueue.add(request);
+    }
+
+    public void Success() {
+        Intent intent = new Intent(getApplicationContext(), Parents_main.class);
+        startActivity(intent);
     }
 }
 

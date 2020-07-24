@@ -76,6 +76,10 @@ public class Child_main extends AppCompatActivity {
         ib_childmain_sos = findViewById(R.id.ib_childmain_sos);
         btn_childmain_check = findViewById(R.id.btn_childmain_check);
 
+        if (!login_preference.getString("onoff", "null").equals("null")) {
+            onoff = login_preference.getString("onoff", "");
+        }
+
         //volley 호출
         btn_childmain_check.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +99,7 @@ public class Child_main extends AppCompatActivity {
                     onoff = "on";
                     editor.putString("onoff", String.valueOf(onoff));
                     editor.commit();
-                   ib_childmain_sos.setImageResource(R.drawable.ic_launcher_foreground);
+                    ib_childmain_sos.setImageResource(R.drawable.ic_launcher_foreground);
                     SOSRequest(sosurl);
                 } else if (onoff.equals("on")) {
                     onoff = "off";
@@ -122,7 +126,11 @@ public class Child_main extends AppCompatActivity {
         }
         Log.e("GPS", login_preference.getString("key", "error"));
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+        et_childmain_password.setText("");
+    }
     //뒤로 가기 버튼 2번 누를 시 종료
     @Override
     public void onBackPressed() {
@@ -182,7 +190,7 @@ public class Child_main extends AppCompatActivity {
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
                         || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])
-                            || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[2])) {
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[2])) {
 
                     Toast.makeText(Child_main.this, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.", Toast.LENGTH_LONG).show();
                     finish();
@@ -213,7 +221,7 @@ public class Child_main extends AppCompatActivity {
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                    hasBackgroundLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                hasBackgroundLocationPermission == PackageManager.PERMISSION_GRANTED) {
 
             // 2. 이미 퍼미션을 가지고 있다면
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
@@ -355,7 +363,7 @@ public class Child_main extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response) {
+                        switch (response.trim()) {
                             case "ChildLoginSuccess":
                                 Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
                                 Success();

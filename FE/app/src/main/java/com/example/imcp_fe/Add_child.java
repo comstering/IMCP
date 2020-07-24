@@ -226,7 +226,8 @@ public class Add_child extends AppCompatActivity {
             dos.writeBytes("Content-Disposition: form-data; name=\"name\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeUTF(name.getText().toString() + lineEnd);
+            dos.writeUTF(name.getText().toString());
+            dos.writeBytes(lineEnd);
 
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
@@ -298,13 +299,12 @@ public class Add_child extends AppCompatActivity {
 
             Log.e("Test", "responese : " + b.toString());
 
-            switch (b.toString()) {
+            switch (b.toString().trim()) {
                 case "PtoCError":
                     Toast.makeText(getApplicationContext(), "아이 연결실패", Toast.LENGTH_SHORT).show();
                     break;
                 case "AddSuccess":
                     Toast.makeText(getApplicationContext(), "연결 성공", Toast.LENGTH_SHORT).show();
-                    Log.e("Test", "왜안됨");
                     Success();
                     break;
                 case "NoPrivateKey":

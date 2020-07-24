@@ -186,7 +186,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.e("volley", "asdsad : " + response);
 
-                        switch (response) {
+                        switch (response.trim()) {
 
 
                             case "LoginSuccess":

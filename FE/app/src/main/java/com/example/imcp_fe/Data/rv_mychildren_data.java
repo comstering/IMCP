@@ -17,7 +17,7 @@ rv_mychildren_data {
     public void setRv_mychild_image(String rv_mychild_image){ this.rv_mychild_image = rv_mychild_image; }
 
     public void setRv_mychild_name(String rv_mychild_name){
-        this.rv_mychild_name =rv_mychild_name;
+        this.rv_mychild_name =rv_mychild_name.trim();
     }
     public void setkey(String key){
         this.key =key;

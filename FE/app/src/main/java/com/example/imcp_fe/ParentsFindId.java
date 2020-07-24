@@ -86,7 +86,7 @@ public class ParentsFindId extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response) {
+                        switch (response.trim()) {
                             case "NoID":
                                 Toast.makeText(getApplicationContext(), "등록된 아이디가 아닙니다. ", Toast.LENGTH_SHORT).show();
 

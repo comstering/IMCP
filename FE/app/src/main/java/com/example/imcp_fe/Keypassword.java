@@ -119,7 +119,7 @@ public class Keypassword extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.e("keypass", response);
-                        switch (response) {
+                        switch (response.trim()) {
                             case "ChildRegisterSuccess":
                                 Toast.makeText(getApplicationContext(), "비밀번호가 새로 설정되었습니다.", Toast.LENGTH_SHORT).show();
                                 editor.putString("key", key);

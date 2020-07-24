@@ -99,7 +99,7 @@ public class ParentsFindPw extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response) {
+                        switch (response.trim()) {
                             case "FindSucess":
                                 Toast.makeText(getApplicationContext(), "Sucess", Toast.LENGTH_SHORT).show();
                                 changePW();

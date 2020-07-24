@@ -13,7 +13,7 @@ public class rv_missingchild_data {
     public void setRv_missingchild_image(String rv_missingchild_image){ this.rv_missingchild_image = rv_missingchild_image; }
 
     public void setRv_missingchild_name(String rv_missingchild_name){
-        this.rv_missingchild_name =rv_missingchild_name;
+        this.rv_missingchild_name =rv_missingchild_name.trim();
     }
     public void setRv_missingchild_key(String key){
         this.key = key;

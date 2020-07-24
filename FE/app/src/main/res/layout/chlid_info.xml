@@ -43,20 +43,22 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="2"
+            android:layout_gravity="center"
             android:src="@drawable/children" />
 
         <EditText
             android:id="@+id/et_childinfo_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:hint="이름"
+            android:lines="1"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/darker_gray" />
 
         <EditText
             android:id="@+id/et_childinfo_key"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:hint="고유키"
@@ -65,7 +67,7 @@
 
         <EditText
             android:id="@+id/et_childinfo_password"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:hint="비밀번호"
@@ -74,7 +76,7 @@
 
         <EditText
             android:id="@+id/et_childinfo_brithday"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
 

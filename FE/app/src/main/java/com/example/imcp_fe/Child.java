@@ -226,7 +226,7 @@ sos가 요청 on/off에 따라 파라미터값을 다르게 보냄
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response){
+                        switch (response.trim()){
                             case "MissingSetSuccess":
                                 Toast.makeText(getApplicationContext(),"SOS 요청됨", Toast.LENGTH_SHORT).show();
                                 break;

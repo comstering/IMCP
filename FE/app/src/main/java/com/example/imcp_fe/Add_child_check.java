@@ -94,7 +94,7 @@ public class Add_child_check extends AppCompatActivity {
                     @Override
                     public void onResponse(String response){
 
-                        switch (response) {
+                        switch (response.trim()) {
 
                             case "AlreadyInfo":
                                 Toast.makeText(getApplicationContext(), "이미 있는 키입니다.", Toast.LENGTH_SHORT).show();

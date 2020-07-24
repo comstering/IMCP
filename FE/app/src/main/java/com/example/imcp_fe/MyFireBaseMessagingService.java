@@ -120,7 +120,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response) {
+                        switch (response.trim()) {
 
 
                             case "SetFCMSuccess":
