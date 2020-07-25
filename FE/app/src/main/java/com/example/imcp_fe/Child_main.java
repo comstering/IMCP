@@ -363,7 +363,7 @@ public class Child_main extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response.trim()) {
+                        switch (response) {
                             case "ChildLoginSuccess":
                                 Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
                                 Success();

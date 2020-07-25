@@ -439,7 +439,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 //                Log.e("sfsdf", "ssss");
 //                Success();
 //            }
-            switch (b.toString().trim()) {
+            switch (b.toString()) {
                 case "ModifySuccess":
                     Toast.makeText(getApplicationContext(), "수정 성공", Toast.LENGTH_SHORT).show();
                     Success();
@@ -469,21 +469,29 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                     @Override
                     public void onResponse(String response) {
 
-                        switch (response.trim()) {
-                            case "InitialSucess":
+                        switch (response) {
+                            case "InitailSuccess":
                                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                                Log.e("gpsgps", "1");
                                 break;
                             case "NoChildInfo":
                                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                                Log.e("gpsgps", "2");
                                 break;
                             case "DBError":
                                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                                Log.e("gpsgps", "3");
                                 break;
                             case "JSONError":
                                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                                Log.e("gpsgps", "4");
                                 break;
                             case "DeleteError":
                                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                                Log.e("gpsgps", "5");
+                                break;
+                            default:
+                                Log.e("gpsgps", "6");
                                 break;
 
                         }

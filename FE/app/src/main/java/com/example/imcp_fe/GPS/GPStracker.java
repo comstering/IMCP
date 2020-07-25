@@ -273,12 +273,15 @@ public class GPStracker extends Service implements LocationListener {
                         switch (response) {
                             case "SetGPSSuccess"://toast는 나중에 지워야함
                                 Toast.makeText(mContext, "위치가 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                                Log.e("gpsgps", response);
                                 break;
                             case "NoChildInfo":
                                 Toast.makeText(mContext, "아이정보 없음", Toast.LENGTH_SHORT).show();
+                                Log.e("gpsgps", response);
                                 break;
                             case "DBError":
                                 Toast.makeText(mContext, "Error", Toast.LENGTH_SHORT).show();
+                                Log.e("gpsgps", response);
                                 break;
                             default:
                                 Log.e("childgps", response);

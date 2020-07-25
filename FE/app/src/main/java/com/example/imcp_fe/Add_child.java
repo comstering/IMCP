@@ -299,7 +299,7 @@ public class Add_child extends AppCompatActivity {
 
             Log.e("Test", "responese : " + b.toString());
 
-            switch (b.toString().trim()) {
+            switch (b.toString()) {
                 case "PtoCError":
                     Toast.makeText(getApplicationContext(), "아이 연결실패", Toast.LENGTH_SHORT).show();
                     break;

@@ -130,7 +130,7 @@ public class ParentsSignup extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response.trim()) {
+                        switch (response) {
                             case "JoinSuccess":
                                 Toast.makeText(getApplicationContext(), "가입 성공", Toast.LENGTH_SHORT).show();
                                 setLogininfo();

@@ -85,7 +85,7 @@ public class ParentsChangePassword extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response.trim()) {
+                        switch (response) {
                             case "NewPWSuccess":
                                 Toast.makeText(getApplicationContext(), "변경 성공", Toast.LENGTH_SHORT).show();
 

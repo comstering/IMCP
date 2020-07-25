@@ -101,7 +101,7 @@ public class Change_password extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        switch (response.trim()) {
+                        switch (response) {
                             case "NewPWSucess":
                                 Toast.makeText(getApplicationContext(), "비밀번호가 새로 설정되었습니다.", Toast.LENGTH_SHORT).show();
                                 setPW();
