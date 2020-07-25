@@ -2,6 +2,7 @@ package com.example.imcp_fe;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -41,6 +42,7 @@ import java.util.Map;
  * */
 public class Child_main extends AppCompatActivity {
 
+    private Intent foregroundIntent;
     private EditText et_childmain_password;
     private ImageButton ib_childmain_sos;
     private Button btn_childmain_check;
@@ -52,7 +54,7 @@ public class Child_main extends AppCompatActivity {
 
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
-    private String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+    private String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
     private Restartservice restartservice;
     private long backKeyPressedTime = 0;
     private Toast toast;
@@ -74,6 +76,10 @@ public class Child_main extends AppCompatActivity {
         ib_childmain_sos = findViewById(R.id.ib_childmain_sos);
         btn_childmain_check = findViewById(R.id.btn_childmain_check);
 
+        if (!login_preference.getString("onoff", "null").equals("null")) {
+            onoff = login_preference.getString("onoff", "");
+        }
+
         //volley 호출
         btn_childmain_check.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +99,7 @@ public class Child_main extends AppCompatActivity {
                     onoff = "on";
                     editor.putString("onoff", String.valueOf(onoff));
                     editor.commit();
-                   ib_childmain_sos.setImageResource(R.drawable.ic_launcher_foreground);
+                    ib_childmain_sos.setImageResource(R.drawable.ic_launcher_foreground);
                     SOSRequest(sosurl);
                 } else if (onoff.equals("on")) {
                     onoff = "off";
@@ -110,10 +116,21 @@ public class Child_main extends AppCompatActivity {
         } else {
             checkRunTimePermission();
         }
-        initData();//실시간 위치전송
+        if (GPStracker.serviceIntent == null) {
+            foregroundIntent = new Intent(this, GPStracker.class);
+            startService(foregroundIntent);
+            Toast.makeText(getApplicationContext(), "Start service", Toast.LENGTH_SHORT).show();
+        } else {
+            foregroundIntent = GPStracker.serviceIntent;
+            Toast.makeText(getApplicationContext(), "already", Toast.LENGTH_SHORT).show();
+        }
         Log.e("GPS", login_preference.getString("key", "error"));
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+        et_childmain_password.setText("");
+    }
     //뒤로 가기 버튼 2번 누를 시 종료
     @Override
     public void onBackPressed() {
@@ -135,20 +152,12 @@ public class Child_main extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("restart", "브로드 캐스트 해제");
-        unregisterReceiver(restartservice);
+        if (null != foregroundIntent) {
+            stopService(foregroundIntent);
+            foregroundIntent = null;
+        }
     }
 
-    private void initData() {
-
-        Log.e("restart", "설정?");
-
-        restartservice = new Restartservice();
-        intent = new Intent(Child_main.this, GPStracker.class);
-        IntentFilter intentFilter = new IntentFilter("com.example.imcp_fe.GPS.GPStracker");
-        registerReceiver(restartservice, intentFilter);
-        startService(intent);
-    }
 
     //퍼미션 체크
     public void onRequestPermissionsResult(int permsRequestCode,
@@ -180,7 +189,8 @@ public class Child_main extends AppCompatActivity {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])) {
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[2])) {
 
                     Toast.makeText(Child_main.this, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.", Toast.LENGTH_LONG).show();
                     finish();
@@ -205,10 +215,13 @@ public class Child_main extends AppCompatActivity {
                 Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(Child_main.this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
+        int hasBackgroundLocationPermission = ContextCompat.checkSelfPermission(Child_main.this,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
+                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                hasBackgroundLocationPermission == PackageManager.PERMISSION_GRANTED) {
 
             // 2. 이미 퍼미션을 가지고 있다면
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)

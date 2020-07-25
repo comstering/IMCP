@@ -34,6 +34,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -189,7 +190,7 @@ public class Add_child extends AppCompatActivity {
     String boundary = "*****";
 
     /*
-     *Http 통신 이미지 파일 전송 및 정보 전송
+     * Http 통신 이미지 파일 전송 및 정보 전송
      *
      */
     public void HttpFileUpload(String urlString, String params, String fileName) {
@@ -223,9 +224,11 @@ public class Add_child extends AppCompatActivity {
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"name\"" + lineEnd);
-            dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
+            dos.writeBytes("Content-Type: text/plain; UTF-8" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(name + lineEnd);
+            dos.writeUTF(name.getText().toString());
+            dos.writeBytes(lineEnd);
+
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"key\"" + lineEnd);
@@ -293,6 +296,7 @@ public class Add_child extends AppCompatActivity {
                 b.append((char) ch);
             }
             is.close();
+
             Log.e("Test", "responese : " + b.toString());
 
             switch (b.toString()) {
@@ -301,8 +305,7 @@ public class Add_child extends AppCompatActivity {
                     break;
                 case "AddSuccess":
                     Toast.makeText(getApplicationContext(), "연결 성공", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), Parents_main.class);
-                    startActivity(intent);
+                    Success();
                     break;
                 case "NoPrivateKey":
                     Toast.makeText(getApplicationContext(), "등록된 키가 없습니다.", Toast.LENGTH_SHORT).show();
@@ -320,5 +323,8 @@ public class Add_child extends AppCompatActivity {
         }
     } // end of HttpFileUpload()
 
-
+    public void Success() {
+        Intent intent = new Intent(getApplicationContext(), Parents_main.class);
+        startActivity(intent);
+    }
 }

@@ -51,6 +51,7 @@ import android.widget.Toast;
  * */
 public class Parents_main extends AppCompatActivity {
 
+    private Intent foregroundIntent;
     private RecyclerView rv_mychildren;
     private LinearLayoutManager layoutManager = null;
     private rv_mychildren_adapter rvMychildrenAdapter = null;
@@ -66,9 +67,11 @@ public class Parents_main extends AppCompatActivity {
     private SharedPreferences login_preference;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
-    private String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+    private String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
     private Restartservice restartservice;
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/getChildList.jsp";
+    private long backKeyPressedTime = 0;
+    private Toast toast;
 
     /*
      * 엑티비티 생성 시 호출
@@ -116,28 +119,49 @@ public class Parents_main extends AppCompatActivity {
         } else {
             checkRunTimePermission();
         }
-        initData();//실시간 위치정보 전송
+
+        if (GPStracker.serviceIntent == null) {
+            foregroundIntent = new Intent(this, GPStracker.class);
+            startService(foregroundIntent);
+            Toast.makeText(getApplicationContext(), "Start service", Toast.LENGTH_SHORT).show();
+        } else {
+            foregroundIntent = GPStracker.serviceIntent;
+            Toast.makeText(getApplicationContext(), "already", Toast.LENGTH_SHORT).show();
+        }
         childlistRequest(url);
 
     }
 
+
+    // 뒤로가기 버튼 2회 입력 시 종료
+    @Override
+    public void onBackPressed() {
+
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            toast = Toast.makeText(getApplicationContext(), "뒤로 버튼을 한번 더 누르면 종료합니다.", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+            moveTaskToBack(true);
+            finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+            toast.cancel();
+
+        }
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("restart", "브로드 캐스트 해제");
-        unregisterReceiver(restartservice);
+        if (null != foregroundIntent) {
+            stopService(foregroundIntent);
+            foregroundIntent = null;
+        }
     }
 
-    private void initData() {
-
-        Log.e("restart", "설정?");
-
-        restartservice = new Restartservice();
-        intent = new Intent(Parents_main.this, GPStracker.class);
-        IntentFilter intentFilter = new IntentFilter("com.example.imcp_fe.GPS.GPStracker");
-        registerReceiver(restartservice, intentFilter);
-        startService(intent);
-    }
 
     public void onRequestPermissionsResult(int permsRequestCode,
                                            @NonNull String[] permissions,
@@ -168,7 +192,9 @@ public class Parents_main extends AppCompatActivity {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
-                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])) {
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])
+                        ||ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[2]))
+                 {
 
                     Toast.makeText(Parents_main.this, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.", Toast.LENGTH_LONG).show();
                     finish();
@@ -186,17 +212,21 @@ public class Parents_main extends AppCompatActivity {
 
     void checkRunTimePermission() {
 
+
+
+
         //런타임 퍼미션 처리
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(Parents_main.this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(Parents_main.this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
-
+        int hasBackGROUNDLocationPermission =ContextCompat.checkSelfPermission(Parents_main.this,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
-
+                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED &&
+            hasBackGROUNDLocationPermission == PackageManager.PERMISSION_GRANTED){
             // 2. 이미 퍼미션을 가지고 있다면
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
 
@@ -291,10 +321,10 @@ public class Parents_main extends AppCompatActivity {
     }
 
     /*
-    * volley 호출
-    * 아이 리스트 리사이클러뷰 정보 받기
-    * ID를 파라미터로 전송
-    * */
+     * volley 호출
+     * 아이 리스트 리사이클러뷰 정보 받기
+     * ID를 파라미터로 전송
+     * */
     public void childlistRequest(String url) {
 
         StringRequest request = new StringRequest(

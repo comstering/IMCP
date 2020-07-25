@@ -39,7 +39,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
     private Intent intent;
     private SharedPreferences login_preference;
     private Button btn_parents_login, btn_parents_signup, btn_parents_findid, btn_parents_findpw;
-    private String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentLogin.jsp";
+    private String loginurl = "http://tomcat.comstering.synology.me/IMCP_Server/parentLogin.jsp";
     private String firebaseurl = "http://tomcat.comstering.synology.me/IMCP_Server/setFCMToken.jsp";
     private EditText sign_id, sign_pw;
     private long backKeyPressedTime = 0;
@@ -53,15 +53,24 @@ public class ParentsLoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
+        if (!login_preference.getString("id", "null").equals("null") && !login_preference.getString("pw", "null").equals("null")) {
+            id = login_preference.getString("id", "");
+            pw = login_preference.getString("pw", "");
+            LoginRequest(loginurl);
+        }
+
         setContentView(R.layout.parents_login);
 
-        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
+
         sign_id = findViewById(R.id.et_parents_id);
         sign_pw = findViewById(R.id.et_parents_pw);
         btn_parents_login = (Button) findViewById(R.id.btn_parents_login);
         btn_parents_signup = (Button) findViewById(R.id.btn_parents_signup);
         btn_parents_findid = (Button) findViewById(R.id.btn_parents_findid);
         btn_parents_findpw = (Button) findViewById(R.id.btn_parents_findpw);
+
+
 
 
         //부모 로그인
@@ -92,7 +101,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
                             });
 
 
-                    LoginRequest(url);
+                    LoginRequest(loginurl);
 
 
                 }
@@ -144,6 +153,7 @@ public class ParentsLoginActivity extends AppCompatActivity {
         if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
             moveTaskToBack(true);
             finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
             toast.cancel();
 
         }
