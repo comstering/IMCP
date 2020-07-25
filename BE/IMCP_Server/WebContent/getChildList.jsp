@@ -9,6 +9,6 @@
 	ParentDAO parentDAO = new ParentDAO();
 	
 	out.clear();
-	out.println(parentDAO.getChildList(parentID));
+	out.print(parentDAO.getChildList(parentID));
 	out.flush();
 %>

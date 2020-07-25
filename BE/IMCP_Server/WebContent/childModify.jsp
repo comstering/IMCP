@@ -50,6 +50,6 @@
 	}
 	
 	out.clear();
-	out.println(returns);
+	out.print(returns);
 	out.flush();
 %>

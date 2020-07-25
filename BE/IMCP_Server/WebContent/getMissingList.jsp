@@ -8,6 +8,6 @@
 	MissingDAO missingDAO = new MissingDAO();
 	
 	out.clear();
-	out.println(missingDAO.getMissingList());
+	out.print(missingDAO.getMissingList());
 	out.flush();
 %>

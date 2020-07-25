@@ -9,6 +9,6 @@
 	ParentDAO parentDAO = new ParentDAO();
 	
 	out.clear();
-	out.println(parentDAO.getChildGPS(childKey));
+	out.print(parentDAO.getChildGPS(childKey));
 	out.flush();
 %>
