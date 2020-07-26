@@ -217,7 +217,7 @@ public class ChildDAO {
 		return list;
 	}
 	
-	private int sendFCMSOS(ArrayList<String> list, boolean type) {    //  FCM 데이터 전송(SOS)
+	private int sendFCMSOS(ArrayList<String> list, String childKey, boolean type) {    //  FCM 데이터 전송(SOS)
 		int result = -200;
 		
 	    //  데이터를 보낼 URL
@@ -243,6 +243,7 @@ public class ChildDAO {
 			HashMap<String, Object> hashData = new HashMap<String, Object>();
 			hashData.put("title", "SOS");    //  Notification Title
 			hashData.put("body", "아이가 위험합니다.");    //  Notification Body
+			hashData.put("childKey", childKey);    //  아이 식별값
 			if(type) {
 				hashData.put("SOS", "on");    //  아이 도움요청 상태
 			} else {
@@ -283,7 +284,7 @@ public class ChildDAO {
 	public int childSOS(String childKey, boolean type) {    //  아이 SOS 여부 등록
 		if(checkChild(childKey)) {
 			ArrayList<String> list = getParentsToken(childKey);
-			int httpResult = sendFCMSOS(list, type);
+			int httpResult = sendFCMSOS(list, childKey, type);
 			if(httpResult != 200) {
 				return httpResult;
 			}
