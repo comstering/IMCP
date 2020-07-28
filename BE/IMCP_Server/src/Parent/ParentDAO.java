@@ -148,7 +148,7 @@ public class ParentDAO {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);    //  아이디
 			pstmt.setString(2, name);    //  이름
-			pstmt.setString(3, email);    //  핸드폰번호
+			pstmt.setString(3, email);    //  부모이메일
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				return "FindPWSuccess";    //  해당아이디 확인 성공, 비밀번호 변경 가능
@@ -169,14 +169,14 @@ public class ParentDAO {
 	}
 	
 	public int newPW(String id, String newPassword, String email) {    //  새로운 비밀번호 변경(비밀번호 잃어버렸을 때)
-		String sql = "update PARENT_INFO set password = ? where ID = ? and Email = ?";
+		String sql = "update PARENT_INFO set Password = ? where ID = ? and Email = ?";
 		conn = dbConnector.getConnection();
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, newPassword);    //  새로운 비밀번호
 			pstmt.setString(2, id);    //  아이디
-			pstmt.setString(3, email);    //  핸드폰번호
+			pstmt.setString(3, email);    //  부모이메일
 			return pstmt.executeUpdate();    //  비밀번호 변경 완료
 		} catch (SQLException e) {    //  예외처리
 			System.err.println("ParentDAO newPW SQLExceptoin error");
