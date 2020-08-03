@@ -191,6 +191,14 @@ public class ChildDAO {
 		}
 	}
 	
+	public void checkChildDanger(String childKey) {    //  아이 위험상황 확인 인공지능 파이썬 파일 실행
+		try {
+			Process process = Runtime.getRuntime().exec("python dangerCheck.py " + childKey);
+		} catch (IOException e) {
+			System.err.println("ChildDAO checkChildDanger IOException");
+		}
+	}
+	
 	private ArrayList<String> getParentsToken(String childKey) {    //  부모 fcm 토큰 값 획득
 		ArrayList<String> list = new ArrayList<String>();
 		String sql = "select Token from PARENT_TOKEN where ID in (select ID from PtoC where ChildKey = ?)";

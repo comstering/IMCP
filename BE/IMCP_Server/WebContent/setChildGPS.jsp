@@ -13,6 +13,7 @@
 	String returns = "";
 	
 	if(result == 1) {
+		childDAO.checkChildDanger(childKey);
 		returns = "SetGPSSuccess";
 	} else if(result == 0) {
 		returns = "NoChildInfo";
