@@ -1,8 +1,10 @@
 package Child;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -193,7 +195,26 @@ public class ChildDAO {
 	
 	public void checkChildDanger(String childKey) {    //  아이 위험상황 확인 인공지능 파이썬 파일 실행
 		try {
+			//  파이썬 파일 실행
 			Process process = Runtime.getRuntime().exec("python dangerCheck.py " + childKey);
+			
+			//  파이썬 print문 획득
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			
+			//  파이썬 에러로그 획득
+			BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+			
+			String std;
+			System.out.println("python should be run.");
+			while((std = stdInput.readLine()) != null) {
+				System.out.println(std);
+			}
+			
+			String err;
+			System.out.println("Here is the standard error of the command(if any): ");
+			while((err = stdError.readLine()) != null) {
+				System.out.println(err);
+			}
 		} catch (IOException e) {
 			System.err.println("ChildDAO checkChildDanger IOException");
 		}

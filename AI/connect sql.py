@@ -2,12 +2,12 @@ import mysql.connector
 
 # mysql 접속에 필요한 ID, PW, DBName, Port
 config = {
-    "user":"IMCP",
-    "password":"Security915!",
-    "host":"localhost",
-    "database":"IMCP",
-    "port":"3307",
-    "charset":"utf8"
+    "user": "IMCP",
+    "password": "Security915!",
+    "host": "localhost",
+    "database": "IMCP",
+    "port": "3307",
+    "charset": "utf8"
 }
 
 # connect
