@@ -1,8 +1,9 @@
 # harver.py, connect sql.py 모두 합친 것
 import sys
-import datetime
 import mysql.connector
 from haversine import haversine
+import json
+import requests
 
 # ChildKey 얻어오기
 argvList = str(sys.argv)
@@ -17,6 +18,7 @@ config = {
     "charset": "utf8"
 }
 
+
 # connect
 def connectionDB(sql, param):
     conn = mysql.connector.connect(**config)
@@ -28,10 +30,11 @@ def connectionDB(sql, param):
     curs.close()
     return rows
 
+
 # 아이 현재 위치 구하기
 def getNowChildGPS(childKey):
     sql = "select * from CHILD_GPS where ChildKey = %s order by Time desc limit 1"
-    reChildKey = (childKey, )
+    reChildKey = (childKey,)
     result = connectionDB(sql, reChildKey)
 
     # gps_info[1]: Time
@@ -39,66 +42,104 @@ def getNowChildGPS(childKey):
     # gps_info[3]: Longitude
     return result
 
+
 # 부모 아이디 구하기
 def getParentID(childKey):
     sql = "select ID from PtoC where ChildKey = %s"
-    reChildKey = (childKey, )
+    reChildKey = (childKey,)
     result = connectionDB(sql, reChildKey)
     return result
+
 
 # 부모 위치 구하기
 def getParentGPS(ID):
     sql = "select * from PARENT_GPS where ID = %s"
-    result = connectionDB(sql, ID)
+    reID = (ID,)
+    result = connectionDB(sql, reID)
     return result
+
 
 # 초기 안전 위치 구하기
 def getInitialGPS(childKey):
     sql = "select * from CHILD_GPS_INITIAL where ChildKey = %s"
-    reChildKey = (childKey, )
+    reChildKey = (childKey,)
     result = connectionDB(sql, reChildKey)
     return result
 
-# 요일별 시간별 나누기
-def splittime(hour):
-    # dayofseek(Time)
-    # 1: 일요일
-    # 2: 월요일
-    # 3: 화요일
-    # 4: 수요일
-    # 5: 목요일
-    # 6: 금요일
-    # 7: 토요일
-    # dayofseek(now()): 오늘에 해당하는 요일
-    # hour(Time): 시간만 추출
-    if 7 <= hour <= 9:
-        return "dayofweek(Time) = dayofweek(now()) and hour(Time) >= 7 and hour(Time) <= 9"
-    elif 10 <= hour <= 12:
-        return "dayofweek(Time) = dayofweek(now()) and hour(Time) >= 10 and hour(Time) <= 12"
-    elif 13 <= hour <= 15:
-        return "dayofweek(Time) = dayofweek(now()) and hour(Time) >= 13 and hour(Time) <= 15"
-    elif 16 <= hour <= 18:
-        return "dayofweek(Time) = dayofweek(now()) and hour(Time) >= 16 and hour(Time) <= 18"
-    elif 19 <= hour <= 21:
-        return "dayofweek(Time) = dayofweek(now()) and hour(Time) >= 19 and hour(Time) <= 21"
-    elif 22 <= hour <= 23:
-        return "(dayofweek(Time) = dayofweek(now()) and hour(Time) >= 22) or (dayofweek(Time) = dayofweek(now()) + 1 " \
-               "and hour(Time) <= 6) "
+
+# 초기 안전위치와 아이 현재위치 비교
+def compareInitial(childLocation, initialData):
+    count = len(initialData)
+    for i in initialData:
+        inidata = list(i)
+        iniLocation = inidata[1], inidata[2]
+        interval = haversine(childLocation, iniLocation)
+        if interval <= 0.05:
+            break
+        count -= 1
+
+    if count == 0:
+        return False
     else:
-        return "(dayofweek(Time) = dayofweek(now()) - 1 and hour(Time) >= 22) or (dayofweek(Time) = dayofweek(now()) " \
-               "and hour(Time) <= 6) "
+        return True
 
-# 아이 요일별 시간별 나눈 데이터 추출
-def getChildGPSData(childKey):
-    now = datetime.datetime.now()
-    hour = now.hour
-    subSQL = splittime(hour)
 
-    sql = "select * from Child_GPS where ChildKey = %s and (%s) order by Time desc"
-    param = (childKey, subSQL)
-    result = connectionDB(sql, param)
+# 아이 빅데이터 구하기
+def getChildData(childKey):
+    sql = "select * from CHILD_DATA where ChildKey = %s"
+    reChildKey = (childKey,)
+    result = connectionDB(sql, reChildKey)
     return result
 
+
+# 부모 토큰값 얻기
+def getParentToken(childKey):
+    ID = getParentID(childKey)
+    sql = "select Token from PARENT_TOKEN where ID = %s or ID = %s"
+    result = connectionDB(sql, ID)
+    return result
+
+
+# FCM 보내기
+def sendFCM(childKey):
+    server_key='AAAAK-E7ezg:APA91bHMDCXaStMIhwELOcDylGkg-W8EuUPfl8Jt3d2T5B0kdp_o8-IxLvuf9zeCu_vV8KEbLn9Lu6C9XrAwE8ezlJR2kgcrgAz2G7LSgtYY8Gn24r85qR1zE3zno-xdJlhvdYAwY9sK'
+    token = getParentToken()
+    headers = {
+        'Authorization': 'key= ' + server_key,
+        'Content-Type': 'application/json; UTF-8'
+    }
+
+    data = {
+        'registration_ids': token,
+        'data': {
+            'title': 'IMCP',
+            'body': '아이가 위험해요',
+            'danger': 'on'
+        }
+    }
+
+    response = requests.post('https://fcm.googleapis.com/fcm/send', headers=headers, data=json.dumps(data))
+    print(response)
+
+
+child = argvList[1]
+childGPS = getNowChildGPS(child)
+childGPS = list(childGPS[0])
+childLocation = childGPS[2], childGPS[3]
+
+parent = getParentID(child)
+parentGPS = getParentGPS(parent)
+parentGPS = list(parentGPS[0])
+parentLocation = parentGPS[2], parentGPS[3]
+
+PtoC = haversine(childLocation, parentLocation)
+
+if PtoC < 0.5:
+    exit()
+elif compareInitial(childLocation, getInitialGPS(child)):
+    exit()
+else:
+    print("aaa")
 
 """
 # gps_info[1]: Time
