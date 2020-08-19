@@ -6,7 +6,7 @@ import json
 import requests
 
 # ChildKey 얻어오기
-argvList = str(sys.argv)
+argvList = sys.argv
 
 # mysql 접속에 필요한 ID, PW, DBName, Port
 config = {
@@ -92,6 +92,54 @@ def getChildData(childKey):
     return result
 
 
+# 아이 현재 위치와 빅데이터 비교
+def compareData(location):
+    if True:
+        return True
+    else:
+        return False
+
+
+# 영역밖 확인
+def outCheck(childKey):
+    sql = "select * from CHILD_GPS where ChildKey = %s order by Time desc limit 30"
+    reChildKey = (childKey,)
+    result = connectionDB(sql, reChildKey)
+    count = 0
+    # 영역밖 30번 카운트
+    for i in result:
+        location = (i[2], i[3])
+        if compareData(location):
+            break
+        count += 1
+
+    if count == 30:
+        return True
+    else:
+        return False
+
+
+# 같은 위치 30번 체크
+def similarLocationCheck(childKey):
+    sql = "select * from CHILD_GPS where ChildKey = %s order by Time desc limit 30"
+    reChildKey = (childKey,)
+    result = connectionDB(sql, reChildKey)
+    nowGPS = getNowChildGPS(childKey)
+    nowLocation = (nowGPS[2], nowGPS[3])
+    count = 0
+    for i in result:
+        location = (i[2], i[3])
+        interval = haversine(nowLocation, location)
+        if interval > 0.05:
+            break
+        count += 1
+
+    if count == 30:
+        return True
+    else:
+        return False
+
+
 # 부모 토큰값 얻기
 def getParentToken(childKey):
     ID = getParentID(childKey)
@@ -103,7 +151,10 @@ def getParentToken(childKey):
 # FCM 보내기
 def sendFCM(childKey):
     server_key='AAAAK-E7ezg:APA91bHMDCXaStMIhwELOcDylGkg-W8EuUPfl8Jt3d2T5B0kdp_o8-IxLvuf9zeCu_vV8KEbLn9Lu6C9XrAwE8ezlJR2kgcrgAz2G7LSgtYY8Gn24r85qR1zE3zno-xdJlhvdYAwY9sK'
-    token = getParentToken()
+    tupleToken = getParentToken(childKey)
+    token = []
+    for i in tupleToken:
+        token.append(i[0])
     headers = {
         'Authorization': 'key= ' + server_key,
         'Content-Type': 'application/json; UTF-8'
@@ -114,6 +165,7 @@ def sendFCM(childKey):
         'data': {
             'title': 'IMCP',
             'body': '아이가 위험해요',
+            'childKey': childKey,
             'danger': 'on'
         }
     }
@@ -134,16 +186,15 @@ parentLocation = parentGPS[2], parentGPS[3]
 
 PtoC = haversine(childLocation, parentLocation)
 
-if PtoC < 0.5:
+if PtoC < 0.05:
+    # 부모와 가까이 있을 경우
     exit()
 elif compareInitial(childLocation, getInitialGPS(child)):
+    # 부모가 설정한 초기 안전위치내에 있을 경우
     exit()
+elif outCheck(child):
+    sendFCM(child)
+elif similarLocationCheck(child):
+    sendFCM(child)
 else:
-    print("aaa")
-
-"""
-# gps_info[1]: Time
-# gps_info[2]: Latitude
-# gps_info[3]: Longitude
-gps_info = list(rows[0])
-"""
+    exit()
