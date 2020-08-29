@@ -1,0 +1,5 @@
+경도 1km가 약 0.011200 정도
+위도 1km가 약 0.009000 정도
+
+참고:
+https://junpyopark.github.io/road-network-construction-1/	: 도로 네트워크
