@@ -18,5 +18,5 @@ def doDbscan(df):
     for i, row in coord.iterrows():
         if row['cluster'] == -1:
             coord.drop(i, inplace=True)
-
-    return coord
+    result = coord[['latitude', 'longitude']]
+    return result
