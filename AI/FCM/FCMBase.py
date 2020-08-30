@@ -17,7 +17,7 @@ def main(server_key, to, message_title, message_body):
             'title':'IMCP',
             'body': '아이가 위험합니다',
             'childKey': 'fA%XRq',
-            'danger':'off'
+            'danger':'on'
         }
     }
 

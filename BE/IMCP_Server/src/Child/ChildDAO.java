@@ -196,7 +196,7 @@ public class ChildDAO {
 	public void checkChildDanger(String childKey) {    //  아이 위험상황 확인 인공지능 파이썬 파일 실행
 		try {
 			//  파이썬 파일 실행
-			Process process = Runtime.getRuntime().exec("python3 var/packages/Tomcat7/target/src/webapps/IMCP_Server/WEB-INF/classes/Child/dangerCheck.py " + childKey);
+			Process process = Runtime.getRuntime().exec("python3 /dangerCheck.py " + childKey);
 			
 			//  파이썬 print문 획득
 			BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
