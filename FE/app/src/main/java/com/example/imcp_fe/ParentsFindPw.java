@@ -29,24 +29,25 @@ import java.util.Map;
 public class ParentsFindPw extends AppCompatActivity {
 
     private Button btn_parents_findpw;
+
+    //edittexet 변수
     private EditText et_parents_findpw_name, et_parents_findpw_id, et_parents_findpw_email;
+
+    //서버url
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentFindPW.jsp";
+
     private String name;
     private String id;
     private String email;
     private Intent intent;
 
 
-    /*
-     * 엑티비티 생성 시 호출
-     * 사용자 인터페이스 설정
-     * 버튼 이벤트 설정
-     * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.find_password);
 
+        //인스턴스 설정
         btn_parents_findpw = (Button) findViewById(R.id.btn_parents_findpw);
         et_parents_findpw_name = findViewById(R.id.et_parents_findpw_name);
         et_parents_findpw_id = findViewById(R.id.et_parents_findpw_id);
@@ -62,11 +63,11 @@ public class ParentsFindPw extends AppCompatActivity {
                 id = et_parents_findpw_id.getText().toString();
                 email = et_parents_findpw_email.getText().toString();
 
-                if (TextUtils.isEmpty(String.valueOf(name))) {
+                if (TextUtils.isEmpty(String.valueOf(name))) {//이름 공란
                     Toast.makeText(getApplicationContext(), "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(String.valueOf(id))) {
+                } else if (TextUtils.isEmpty(String.valueOf(id))) {//id 공란
                     Toast.makeText(getApplicationContext(), "아이디을 입력해주세요.", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(String.valueOf(email))) {
+                } else if (TextUtils.isEmpty(String.valueOf(email))) {//이미일 공란
                     Toast.makeText(getApplicationContext(), "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show();
                 } else {
 
@@ -86,13 +87,9 @@ public class ParentsFindPw extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /*
-     * volley 호출
-     * 비밀번호 찾기 성공 여부
-     * 아이디 이름 이메일 파라미터로 전송
-     * */
+
     public void findpwRequest(String url) {
-        Log.e("volley", "1");
+
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,

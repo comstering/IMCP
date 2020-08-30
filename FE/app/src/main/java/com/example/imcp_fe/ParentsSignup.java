@@ -33,32 +33,35 @@ import java.util.Map;
  * */
 public class ParentsSignup extends AppCompatActivity {
 
+    //edittext 변수
     private EditText et_parentsignup_id;
     private EditText et_parentsignup_pw;
     private EditText et_parentsignup_repw;
     private EditText et_parentsignup_name;
     private EditText et_parentsignup_phone;
     private EditText et_parentsignup_email;
+
+    //버튼
     private Button btn_parentsignup_signok;
+
     private String id;
     private String pw;
     private String repw;
     private String name;
     private String phone;
     private String email;
+    //서버 url
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentJoin.jsp";
     private SharedPreferences login_preference;
 
-    /*
-     * 엑티비티 생성 시 호출
-     * 사용자 인터페이스 설정
-     * 버튼 이벤트 설정
-     * */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.parents_signup);
 
+
+        //인스턴스 설정
         et_parentsignup_id = findViewById(R.id.et_sign_id);
         et_parentsignup_pw = findViewById(R.id.et_sign_pw);
         et_parentsignup_repw = findViewById(R.id.et_sign_re_pw);
@@ -68,9 +71,12 @@ public class ParentsSignup extends AppCompatActivity {
         btn_parentsignup_signok = findViewById(R.id.btn_signup_ok);
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
 
+
         btn_parentsignup_signok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //변수 edittext 값저장
                 id = et_parentsignup_id.getText().toString();
                 pw = et_parentsignup_pw.getText().toString();
                 repw = et_parentsignup_repw.getText().toString();
@@ -78,6 +84,7 @@ public class ParentsSignup extends AppCompatActivity {
                 phone = et_parentsignup_phone.getText().toString();
                 email = et_parentsignup_email.getText().toString();
 
+                //공란 확인
                 if (TextUtils.isEmpty(String.valueOf(id))) {
                     Toast.makeText(getApplicationContext(), "아이디를 입력하세요.", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(String.valueOf(pw))) {
@@ -101,28 +108,23 @@ public class ParentsSignup extends AppCompatActivity {
 
     }
 
-    /*
-     * sharedprefence로 아이디 패스워드 이메일 저장
-     * 로그인 엑티비티로 전환
-     * */
+
     public void setLogininfo() {
+         //SharedPreferences 저장
         final SharedPreferences.Editor editor = login_preference.edit();
         editor.putString("id", String.valueOf(id));
         editor.putString("pw", String.valueOf(pw));
         editor.putString("email", String.valueOf(email));
         editor.commit();
         Toast.makeText(getApplicationContext(), "회원가입 되었습니다.", Toast.LENGTH_SHORT).show();
+        //엑티비티 전환
         Intent intent = new Intent(getApplicationContext(), ParentsLoginActivity.class);
         startActivity(intent);
     }
 
 
-    /*
-     * volley 호출
-     * 가입 성공 여부
-     * 아이디 비밀번호 이름 폰번호 이메일 파라미터로 전송
-     * */
-    public void signRequest(String url) {
+
+    public void signRequest(String url) {//회원가입 성공 여부
 
         StringRequest request = new StringRequest(
                 Request.Method.POST,

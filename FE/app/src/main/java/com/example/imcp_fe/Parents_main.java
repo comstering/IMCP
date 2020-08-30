@@ -29,6 +29,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import com.example.imcp_fe.Child;
 import com.example.imcp_fe.GPS.GPStracker;
 import com.example.imcp_fe.GPS.Restartservice;
 import com.example.imcp_fe.Network.AppHelper;
@@ -41,6 +42,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import android.graphics.Bitmap;
@@ -52,40 +54,47 @@ import android.widget.Toast;
 public class Parents_main extends AppCompatActivity {
 
     private Intent foregroundIntent;
+
+    //리사이클러뷰
     private RecyclerView rv_mychildren;
     private LinearLayoutManager layoutManager = null;
     private rv_mychildren_adapter rvMychildrenAdapter = null;
-    private ArrayList<rv_mychildren_data> arrayList;
+    private ArrayList<rv_mychildren_data> arrayList = new ArrayList<rv_mychildren_data>();
     private rv_mychildren_data rvMychildrenData;
+
+    //버튼
     private Button btn_main_addchild;
     private Button btn_main_missingclist;
     private ImageButton iv_mypage;
+
     private Intent intent;
+
     public Bitmap test = null;
-    private ArrayList<String> keyvalue;
-    private ArrayList<String> birthvalue;
+
     private SharedPreferences login_preference;
+
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
+
+    //퍼미션
     private String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
-    private Restartservice restartservice;
+    //서버 url
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/getChildList.jsp";
+
     private long backKeyPressedTime = 0;
     private Toast toast;
 
-    /*
-     * 엑티비티 생성 시 호출
-     * 사용자 인터페이스 설정
-     * 버튼 이벤트 설정
-     * volley 호출
-     * */
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        //인스턴스 저장
         btn_main_missingclist = findViewById(R.id.btn_main_missinglist);
         btn_main_addchild = findViewById(R.id.btn_main_addchild);
         iv_mypage = findViewById(R.id.iv_mypage);
         rv_mychildren = findViewById(R.id.rv_mychildren);
+
         test = BitmapFactory.decodeResource(getResources(), R.drawable.children);
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
 
@@ -120,6 +129,8 @@ public class Parents_main extends AppCompatActivity {
             checkRunTimePermission();
         }
 
+
+        //서비스 상태 확인
         if (GPStracker.serviceIntent == null) {
             foregroundIntent = new Intent(this, GPStracker.class);
             startService(foregroundIntent);
@@ -128,7 +139,16 @@ public class Parents_main extends AppCompatActivity {
             foregroundIntent = GPStracker.serviceIntent;
             Toast.makeText(getApplicationContext(), "already", Toast.LENGTH_SHORT).show();
         }
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         childlistRequest(url);
+
 
     }
 
@@ -154,7 +174,7 @@ public class Parents_main extends AppCompatActivity {
 
 
     @Override
-    protected void onDestroy() {
+    protected void onDestroy() {//서비스 종료
         super.onDestroy();
         if (null != foregroundIntent) {
             stopService(foregroundIntent);
@@ -193,8 +213,7 @@ public class Parents_main extends AppCompatActivity {
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])
                         || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[1])
-                        ||ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[2]))
-                 {
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[2])) {
 
                     Toast.makeText(Parents_main.this, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.", Toast.LENGTH_LONG).show();
                     finish();
@@ -213,20 +232,18 @@ public class Parents_main extends AppCompatActivity {
     void checkRunTimePermission() {
 
 
-
-
         //런타임 퍼미션 처리
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(Parents_main.this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(Parents_main.this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
-        int hasBackGROUNDLocationPermission =ContextCompat.checkSelfPermission(Parents_main.this,
+        int hasBackGROUNDLocationPermission = ContextCompat.checkSelfPermission(Parents_main.this,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED &&
-            hasBackGROUNDLocationPermission == PackageManager.PERMISSION_GRANTED){
+                hasBackGROUNDLocationPermission == PackageManager.PERMISSION_GRANTED) {
             // 2. 이미 퍼미션을 가지고 있다면
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
 
@@ -320,11 +337,7 @@ public class Parents_main extends AppCompatActivity {
 
     }
 
-    /*
-     * volley 호출
-     * 아이 리스트 리사이클러뷰 정보 받기
-     * ID를 파라미터로 전송
-     * */
+
     public void childlistRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -333,15 +346,15 @@ public class Parents_main extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("response", "1 : " + response);
+
                         try {
                             if (!response.equals(null)) {
-                                Log.e("rv", "1");
-                                arrayList = new ArrayList<rv_mychildren_data>();
+                                Log.e("fire", "2");
+
                                 layoutManager = new LinearLayoutManager(getApplicationContext());
                                 rv_mychildren.setHasFixedSize(true);//일정한 크기의 아이템뷰를 만들어줌
                                 rv_mychildren.setLayoutManager(layoutManager);//LinearLayout으로 리사이클러뷰 모양을 만듬.
-                                Log.e("response", response);
+
                                 JSONArray jarray = new JSONArray(response);
                                 int size = jarray.length();
                                 for (int i = 0; i < size; i++) {
@@ -351,12 +364,28 @@ public class Parents_main extends AppCompatActivity {
                                     rvMychildrenData.setRv_mychild_name(row.getString("name"));
                                     rvMychildrenData.setkey(row.getString("key"));
                                     rvMychildrenData.setbirth(row.getString("birth"));
-                                    Log.e("rv", "2");
+
                                     arrayList.add(rvMychildrenData);
                                 }
                                 rvMychildrenAdapter = new rv_mychildren_adapter(Parents_main.this, arrayList);
                                 rv_mychildren.setAdapter(rvMychildrenAdapter);//리사이클러뷰에 어댑터 연결
-                                Log.e("rv", "3");
+
+                               //받은 키값이 있다면 체크
+                                Intent intent = getIntent();
+                                if (intent.getStringExtra("key") != null) {
+                                    String key = intent.getStringExtra("key");
+                                    for (int i = 0; i < arrayList.size(); i++) {//아이 엑티비티로 값 전달
+                                        if (arrayList.get(i).getRv_mychild_Key().equals(key)) {//받은키와 같은 아이템을 선택해 아이 엑티비티로 전환
+                                            intent = new Intent(getApplicationContext(), Child.class);
+                                            intent.putExtra("key", arrayList.get(i).getRv_mychild_Key());
+                                            intent.putExtra("image", arrayList.get(i).getRv_mychild_image());
+                                            intent.putExtra("name", arrayList.get(i).getRv_mychild_name());
+                                            intent.putExtra("birth", arrayList.get(i).getRv_mychild_Birth());
+                                            startActivity(intent);
+                                        }
+                                    }
+                                }
+
                             } else if (response.equals(null)) {
                                 Toast.makeText(getApplicationContext(), "null..", Toast.LENGTH_SHORT).show();
                             }

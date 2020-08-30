@@ -28,21 +28,28 @@ import java.util.Map;
 * */
 public class Keypassword extends AppCompatActivity {
 
+    //인스턴스 저장 변수
     private EditText et_children_new_pw, et_children_re_pw;
+
+
     private String sNewPW, sRePW;
     private String key;
+
+    //버튼 변수
     private Button btn_children_create_pw;
+
     private Intent intent;
+
+    //서버 url
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/childRegister.jsp";
     private SharedPreferences login_preference;
 
-    /*엑티비티 생성 시 호출
-     * 사용자 인터페이스 설정
-     * 버튼 이벤트 설정*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //키가 있을 경우 엑티비티 전환
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         if (!login_preference.getString("key", "null").equals("null")) {
             intent = new Intent(getApplicationContext(), Child_main.class);
@@ -50,6 +57,8 @@ public class Keypassword extends AppCompatActivity {
         }
 
         setContentView(R.layout.key_password);
+
+        //인스턴스 저장
         et_children_new_pw = (EditText) findViewById(R.id.et_children_new_pw);
         et_children_re_pw = (EditText) findViewById(R.id.et_children_re_pw);
         btn_children_create_pw = (Button) findViewById(R.id.btn_children_create_pw);
@@ -81,7 +90,7 @@ public class Keypassword extends AppCompatActivity {
     }
 
     //랜덤 키 생성
-    public void getRamdomPassword() {
+    public void getRamdomPassword() {//랜덤키 생성
 
         char[] charSet = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -91,7 +100,7 @@ public class Keypassword extends AppCompatActivity {
         StringBuffer sb = new StringBuffer();
         System.out.println("charSet.length :::: " + charSet.length);
         for (int i = 0; i < 6; i++) {
-            idx = (int) (charSet.length * Math.random()); // 36 * 생성된 난수를 Int로 추출 (소숫점제거) System.out.println("idx :::: "+idx);  } return sb.toString(); }
+            idx = (int) (charSet.length * Math.random()); // 36 * 생성된 난수를 Int로 추출 (소숫점제거)
             sb.append(charSet[idx]);
         }
         key = sb.toString();
@@ -104,13 +113,8 @@ public class Keypassword extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /*
-     * volley 호출
-     * 비밀번호 설정 여부 확인
-     * 랜덤키와 비밀번호 파리미터로 전달
-     * */
     public void setkeyRequest(String url) {
-        Log.e("keypass", "1");
+
         final SharedPreferences.Editor editor = login_preference.edit();
         StringRequest request = new StringRequest(
                 Request.Method.POST,
@@ -122,9 +126,8 @@ public class Keypassword extends AppCompatActivity {
                         switch (response) {
                             case "ChildRegisterSuccess":
                                 Toast.makeText(getApplicationContext(), "비밀번호가 새로 설정되었습니다.", Toast.LENGTH_SHORT).show();
-                                editor.putString("key", key);
+                                editor.putString("key", key);//비밀번호를 SHaredpreference에 저장
                                 editor.commit();
-                                Log.e("key", key);
                                 Success();
                                 break;
                             case "SamePrivateKey":

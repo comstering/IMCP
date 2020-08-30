@@ -29,7 +29,9 @@ import java.util.Map;
 
 public class MyFireBaseMessagingService extends FirebaseMessagingService {
     protected static final String FCM_TAG = "[FCM Service]";
+    //서버 url
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/setFCMToken.jsp";
+    //sharedpreference 변수
     private SharedPreferences login_preference;
 
 
@@ -38,7 +40,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         super.onNewToken(s);
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         Log.d(FCM_TAG, "New Token: " + s);
-        //volley 추가
+
         FirebaseRequest(url, s);
     }
 
@@ -51,21 +53,36 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {    //  백그라운드
             String messageBody = remoteMessage.getData().get("body");
             String messageTitle = remoteMessage.getData().get("title");
-            String messageData = remoteMessage.getData().get("SOS");
+            String messagedanger = remoteMessage.getData().get("danger");
+            String messageSOS = remoteMessage.getData().get("danger");
+            String messageKey = remoteMessage.getData().get("childKey");
 
-            showNotification(messageTitle, messageBody, messageData);
+
+            showNotification(messageTitle, messageBody, messagedanger, messageSOS, messageKey);
         }
     }
 
-    private void showNotification(String messageTitle, String messageBody, String data) {
+    private void showNotification(String messageTitle, String messageBody, String danger, String SOS, String key) {
         Log.d(FCM_TAG, "Title: " + messageTitle);
         Log.d(FCM_TAG, "Body: " + messageBody);
-        Log.d(FCM_TAG, "Data: " + data);
-        if (data.equals("on")) {
+        Log.d(FCM_TAG, "Data: " + danger);
+        Log.d(FCM_TAG, "Key: " + key);
+        boolean token = true;
+        if (danger.equals("on") || SOS.equals("on")) {
 
-            Intent intent = new Intent(this, Parents_main.class);//알림을 받고 바로 아이로 넘어가야함 지금은 부모 메인으로 설정
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            if (SOS.equals("on")) {
+                messageBody = "아이가 도움을 요청했어요!";
+                token = true;
+            } else if (danger.equals("on")) {
+                messageBody = "아이가 위험해요!";
+                token = false;
+            }
+
+            Intent intent = new Intent(this, Parents_main.class);
+            intent.putExtra("key", key);
+            intent.addFlags(Intent. FLAG_ACTIVITY_NEW_TASK);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             String channelId = "Channel ID";
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder =
@@ -75,7 +92,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
                             .setContentText(messageBody)
                             .setSound(defaultSoundUri)
                             .setContentIntent(pendingIntent)
-                            .setOngoing(true);
+                            .setOngoing(token);
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Log.d(FCM_TAG, "Version Check");
@@ -85,7 +102,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             }
             notificationManager.notify(0, notificationBuilder.build());
 
-        } else if (data.equals("off")) {
+        } else if (SOS.equals("off")) {
             Intent intent = new Intent(this, Parents_main.class);//알림을 받고 바로 아이로 넘어가야함 지금은 부모 메인으로 설정
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -145,7 +162,7 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("ID", login_preference.getString("id",""));
+                params.put("ID", login_preference.getString("id", ""));
                 params.put("token", token);
                 return params;
             }

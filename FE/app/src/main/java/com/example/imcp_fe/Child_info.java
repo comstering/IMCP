@@ -59,25 +59,42 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 
 
     private final int REQ_CODE_SELECT_IMAGE = 100;
+
+    //구글맵
     private GoogleMap mMap;
+
+    //마커 리스트
     private ArrayList<MarkerOptions> markerlist = new ArrayList<>();
+
+    //버튼 변수
     private Button btn_childinfo_save;
+
+    //보낼 JSON
     private StringBuffer sendlocation = null;
+
+    //인스턴스 받을 변수
     private CircleImageView iv_childinfo_photo;
     private EditText et_childinfo_name;
     private EditText et_childinfo_brithday;
     private EditText et_childinfo_key;
     private EditText et_childinfo_pw;
+
+    //위도 경도
     private Double x = 0.0;
     private Double y = 0.0;
+
+    //서버 url
     private String gpsurl = "http://tomcat.comstering.synology.me/IMCP_Server/setChildGPSInitial.jsp";
     private String infourl = "http://tomcat.comstering.synology.me/IMCP_Server/childModify.jsp";
     private String getlocationurl = "http://tomcat.comstering.synology.me/IMCP_Server/getChildInitial.jsp";
+
+    //이미지 경로, 비트맵
     private String img_path = null;
     private String imageName = null;
     private Bitmap image_bitmap = null;
     private Bitmap image_bitmap_copy = null;
 
+    //정보 저장 변수
     private String password;
     private String newkey;
     private String key;
@@ -86,36 +103,34 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
     private String birth;
     private SharedPreferences login_preference;
 
-    /*
-    엑티비티 생성 시 호출
-    사용자 인터페이스 설정
-    버튼 이벤트 설정
-    * */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chlid_info);
+
+        //SharedPreferences 인스턴스
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         Intent intent = getIntent();
+
+        //intent에서 받은 값 저장
         key = intent.getStringExtra("key");
         name = intent.getStringExtra("name");
         image = intent.getStringExtra("image");
         birth = intent.getStringExtra("birth");
         btn_childinfo_save = (Button) findViewById(R.id.btn_childinfo_save);
 
-
+        //뷰에서 인스턴스값을 받아옴
         iv_childinfo_photo = (CircleImageView) findViewById(R.id.iv_childinfo_photo);
         et_childinfo_name = findViewById(R.id.et_childinfo_name);
         et_childinfo_brithday = findViewById(R.id.et_childinfo_brithday);
         et_childinfo_key = findViewById(R.id.et_childinfo_key);
         et_childinfo_pw = findViewById(R.id.et_childinfo_password);
 
+        //텍스트뷰 설정
         et_childinfo_name.setText(name);
         et_childinfo_brithday.setText(birth);
-        Log.e("asd", img_path + "");
-        Log.e("key", key);
         et_childinfo_key.setText(key);
 
-
+        //이미지뷰 설정
         Picasso.with(getApplicationContext()).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/" + image).into(iv_childinfo_photo);
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                 .permitDiskReads()
@@ -150,6 +165,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         //지정한 마커들의 좌표를 파라미터로 전송
         getlocationRequest(getlocationurl);
 
+        //edittext에서 값을 받아옴
         btn_childinfo_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,12 +175,10 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                 newkey = et_childinfo_key.getText().toString();
                 password = et_childinfo_pw.getText().toString();
 
-                Log.e("TT", name + birth + key + password);
 
+                if (!markerlist.isEmpty()) {//마커가 찍혔을 시
 
-                if (!markerlist.isEmpty()) {
-
-                    for (int i = 0; i < markerlist.size(); i++) {
+                    for (int i = 0; i < markerlist.size(); i++) {//JSON형태로 변경
                         sendlocation.append("{" + "\"" + "lati" + "\"" + ":" + "\"" + Double.toString(markerlist.get(i).getPosition().latitude) + "\"" + "," + "\"" + "longi" + "\"" + ":" + "\"" + Double.toString(markerlist.get(i).getPosition().longitude) + "\"" + "},");
                         Log.e("output", markerlist.get(i).getPosition().toString());
                     }
@@ -174,7 +188,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                     DoFileUpload(infourl, img_path);
                     locationRequest(gpsurl);//주기적으로 업데이트가 가능해야함.
 
-                } else if (markerlist.isEmpty()) {
+                } else if (markerlist.isEmpty()) {//비었을 경우, 현재 있는 값을 JSON으로 변경
                     if (sendlocation.length() >= 10) {
                         sendlocation.delete(sendlocation.length() - 1, sendlocation.length());
                         sendlocation.append("]");
@@ -182,7 +196,6 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                         locationRequest(gpsurl);//주기적으로 업데이트가 가능해야함.
                     } else {
                         Toast.makeText(getApplicationContext(), "마커를 지정해주세요.", Toast.LENGTH_SHORT).show();
-                        Log.e("output", "리스트 빔");
 
                     }
                 } else {
@@ -220,7 +233,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 
     }
 
-    public void drawmap(double x, double y) {
+    public void drawmap(double x, double y) {//마커 찍기
         LatLng newlatlng = new LatLng(x, y);
 
 
@@ -469,26 +482,21 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                     @Override
                     public void onResponse(String response) {
 
-                        switch (response) {
-                            case "InitailSuccess":
-                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                                Log.e("gpsgps", "1");
+                        switch (response) {//리스폰값 처리
+                            case "InitailSuccess"://설정 성공
+                                Toast.makeText(getApplicationContext(), "설정되었습니다.", Toast.LENGTH_SHORT).show();
                                 break;
-                            case "NoChildInfo":
-                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                                Log.e("gpsgps", "2");
+                            case "NoChildInfo"://정보 없을 시
+                                Toast.makeText(getApplicationContext(), "아이정보가 없습니다.", Toast.LENGTH_SHORT).show();
                                 break;
-                            case "DBError":
-                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                                Log.e("gpsgps", "3");
+                            case "DBError"://서버 에러
+                                Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
                                 break;
-                            case "JSONError":
-                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                                Log.e("gpsgps", "4");
+                            case "JSONError"://josn 에러
+                                Toast.makeText(getApplicationContext(), "JSONErorr", Toast.LENGTH_SHORT).show();
                                 break;
-                            case "DeleteError":
-                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                                Log.e("gpsgps", "5");
+                            case "DeleteError"://삭제 에러
+                                Toast.makeText(getApplicationContext(), "DeleteError", Toast.LENGTH_SHORT).show();
                                 break;
                             default:
                                 Log.e("gpsgps", "6");
@@ -507,8 +515,8 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
+                //파라미터로 키와 JSON 형태의 좌표값 전송
                 params.put("childKey", key);
-                //  Log.e("volley", "sned"+sendlocation.toString());
                 params.put("gps", sendlocation.toString());
 
                 return params;
@@ -529,7 +537,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("map", "위도 경도 : " + response);
+
                         try {
                             if (response.equals(null) == false) {
 
@@ -544,11 +552,8 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
 
                                 }
                             } else if (response.equals(null) == true) {
-                                Log.e("volley", response);
                                 Toast.makeText(Child_info.this, "Error", Toast.LENGTH_SHORT).show();
                             }
-                            Log.e("map", Double.toString(x));
-                            Log.e("map", "3");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -575,7 +580,7 @@ public class Child_info extends AppCompatActivity implements OnMapReadyCallback,
         AppHelper.requestQueue.add(request);
     }
 
-    public void Success() {
+    public void Success() {//성공시 엑티비티 전환
         Intent intent = new Intent(getApplicationContext(), Parents_main.class);
         startActivity(intent);
     }

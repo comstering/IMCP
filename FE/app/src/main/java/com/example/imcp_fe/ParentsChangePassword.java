@@ -27,10 +27,15 @@ import java.util.Map;
  * */
 
 public class ParentsChangePassword extends AppCompatActivity {
+
+    //eidttext 변수
     private EditText et_parents_change_pw, et_parents_change_re_pw;
+
     private String sNewPW, sRePw;
+
     private Button btn_parents_change_pw_ok;
     private Intent intent;
+    //서버 url
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/parentNewPW.jsp";
     private SharedPreferences login_preference;
 

@@ -19,7 +19,6 @@ import androidx.core.content.ContextCompat;
  * */
 public class Start extends AppCompatActivity {
 
-    private Button ib_children, ib_Parents;
     private SharedPreferences login_preference;
     private Intent intent;
 
@@ -46,12 +45,14 @@ public class Start extends AppCompatActivity {
             }
         }
 
+
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
         Log.e("Login", login_preference.getString("key", "null"));
         Log.e("Login", login_preference.getString("id", "null"));
         setContentView(R.layout.start);
 
 
+        //key, id 값을 확인 후 아이, 부모 화면으로 전환
         if (!login_preference.getString("key", "null").equals("null")) {
             intent = new Intent(getApplicationContext(), Child_main.class);
             startActivity(intent);

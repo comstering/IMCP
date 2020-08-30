@@ -137,11 +137,7 @@ public class Missing_child_info extends AppCompatActivity implements OnMapReadyC
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newlatlng, 15));
     }
 
-    /*
-     * volley 호출
-     * 좌표값을 받아옴
-     * 고유키를 파라미터로 전달
-     * */
+
     public void loactionRequest(String url) {
 
 
@@ -159,11 +155,8 @@ public class Missing_child_info extends AppCompatActivity implements OnMapReadyC
                                 y = row.getDouble("longi");
                                 drawmap(x, y);
                             } else if (response.equals(null) == true) {
-                                Log.e("volley", response);
                                 Toast.makeText(Missing_child_info.this, "Error", Toast.LENGTH_SHORT).show();
                             }
-                            Log.e("map", Double.toString(x));
-                            Log.e("map", "3");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -32,25 +32,27 @@ import java.util.Map;
 * 실종 아동 리스트
 * */
 public class Missing_children extends AppCompatActivity {
+
+    //리사이클러뷰
     private RecyclerView rv_missingchildren = null;
     private LinearLayoutManager layoutManager = null;
     private rv_missingchild_adapter rvMissingchildrenAdapter = null;
     private ArrayList<rv_missingchild_data> arrayList;
     private rv_missingchild_data rvMissingchildrenData;
+
+   //버튼
     private ImageButton ib_missingchildren_back;
     public Bitmap test =null;
+
+    //서버 url
     private String url ="http://tomcat.comstering.synology.me/IMCP_Server/getMissingList.jsp";
 
-/*
-* 엑티비티 생성 시 호출
-* 사용자 인터페이스 설정
-* 버튼 이벤트 설정
-* volley 호출
-* */
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.missing_children);
 
+        //인스턴스 저장
         ib_missingchildren_back = (ImageButton) findViewById(R.id.btn_missingchilren_back);
         rv_missingchildren = (RecyclerView) findViewById(R.id.rv_missingchildren);
         test = BitmapFactory.decodeResource(getResources(),R.drawable.children);
@@ -66,18 +68,14 @@ public class Missing_children extends AppCompatActivity {
     }
 
 
-/*volley호출
-* 리스트뷰 설정
-*
-* */
     public void missingRequest(String url) {
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 url,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
-                        Log.e("missing", response);
+                    public void onResponse(String response) {//리스폰 값을 리사이클러뷰에 저장
+
                         try {
                           if(!response.equals(null)){
                             arrayList = new ArrayList<rv_missingchild_data>();

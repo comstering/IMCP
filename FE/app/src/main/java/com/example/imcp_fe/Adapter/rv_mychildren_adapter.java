@@ -26,11 +26,11 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
     private ArrayList<rv_mychildren_data> mychildren;
     Context context;
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView mychild_photo;
         TextView mychild_name;
 
-        public ViewHolder(View itemView){
+        public ViewHolder(View itemView) {
             super(itemView);
             mychild_photo = itemView.findViewById(R.id.mychild_photo);
             mychild_name = itemView.findViewById(R.id.mychild_name);
@@ -43,28 +43,29 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
         return mychildren.size();
     }
 
-    public rv_mychildren_adapter(Context context){
+    public rv_mychildren_adapter(Context context) {
         this.context = context;
     }
 
-    public rv_mychildren_adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType){
+    public rv_mychildren_adapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-       View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_children, viewGroup, false);
-       ViewHolder viewHolder = new ViewHolder(view);
-       return viewHolder;
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_children, viewGroup, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
 
     }
 
-    public void onBindViewHolder(rv_mychildren_adapter.ViewHolder holder, final int position){
+    public void onBindViewHolder(rv_mychildren_adapter.ViewHolder holder, final int position) {
         final rv_mychildren_data item = mychildren.get(position);
-        Picasso.with(context).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/"+item.getRv_mychild_image()).into(holder.mychild_photo);
+        Picasso.with(context).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/" + item.getRv_mychild_image()).into(holder.mychild_photo);
+
         holder.mychild_name.setText(item.getRv_mychild_name());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Child.class);
-                intent.putExtra("key",item.getRv_mychild_Key());
+                intent.putExtra("key", item.getRv_mychild_Key());
                 intent.putExtra("image", item.getRv_mychild_image());
                 intent.putExtra("name", item.getRv_mychild_name());
                 intent.putExtra("birth", item.getRv_mychild_Birth());
@@ -75,9 +76,9 @@ public class rv_mychildren_adapter extends RecyclerView.Adapter<rv_mychildren_ad
     }
 
 
-    public rv_mychildren_adapter(Activity activity, ArrayList<rv_mychildren_data>list){
-        this.mychildren =list;//처리하려는 아이템 리스트
-        this.context =activity;//보여지는 엑티비티
+    public rv_mychildren_adapter(Activity activity, ArrayList<rv_mychildren_data> list) {
+        this.mychildren = list;//처리하려는 아이템 리스트
+        this.context = activity;//보여지는 엑티비티
     }
 
 
