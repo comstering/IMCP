@@ -20,8 +20,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ccf155a-93c3-4507-8c6a-aa6418fbed98" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GpsData/CHILD_GPS(김규1).csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GpsData/CHILD_GPS(김규2).csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GpsData/CHILD_GPS(한수1).csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GpsData/CHILD_GPS(한수2).csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/GpsData/CordData.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbscan.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbscanMethod.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
