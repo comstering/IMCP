@@ -1,6 +1,6 @@
 from haversine import haversine
 
-start = 36.8502926, 127.1552497
-goal = 36.8489883, 127.1550046
+start = 36.6879651, 126.8368192
+goal = 36.833315, 127.1405715
 result = haversine(start, goal)
 print(result)

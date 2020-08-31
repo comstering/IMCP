@@ -4,9 +4,9 @@ import mysql.connector
 import json
 import requests
 import pandas as pd
-from scipy.spatial.distance import pdist, squareform
-from sklearn.cluster import DBSCAN
 from haversine import haversine
+from sklearn.cluster import DBSCAN
+from scipy.spatial.distance import pdist, squareform
 
 # ChildKey 얻어오기
 argvList = sys.argv
@@ -45,7 +45,7 @@ def getNowChildGPS(childKey):
     # gps_info[1]: Time
     # gps_info[2]: Latitude
     # gps_info[3]: Longitude
-    return result
+    return result[0]
 
 
 # 부모 아이디 구하기
@@ -88,18 +88,13 @@ def getInitialGPS(childKey):
 
 # 초기 안전위치와 아이 현재위치 비교
 def compareInitial(childLocation, initialData):
-    count = len(initialData)
     for initial in initialData:
         iniLocation = initial[1], initial[2]
         interval = haversine(childLocation, iniLocation)
         if interval <= 0.05:
-            break
-        count -= 1
+            return True
 
-    if count == 0:
-        return False
-    else:
-        return True
+    return False
 
 
 # 아이 빅데이터 구하기
@@ -184,20 +179,22 @@ def similarLocationCheck(childKey):
             break
         count += 1
 
-    if count == 30:
-        return True
-    else:
+    if count < 30:
         return False
+    else:
+        return True
 
 
 # 부모 토큰값 얻기
 def getParentToken(childKey):
     parentID = getParentID(childKey)
     sql = "select Token from PARENT_TOKEN where ID = %s"
-    result = []
+    tokenList = []
     for ID in parentID:
-        result.append(connectionDB(sql, ID))
-    return result
+        IDToken = connectionDB(sql, ID)
+        for token in IDToken:
+            tokenList.append(token)
+    return tokenList
 
 
 # FCM 보내기
@@ -208,8 +205,6 @@ def sendFCM(childKey):
     tokenList = []
     for token in tupleToken:
         tokenList.append(token[0])
-
-    print(tokenList)
     headers = {
         'Authorization': 'key= ' + server_key,
         'Content-Type': 'application/json; UTF-8'
@@ -234,7 +229,6 @@ def sendFCM(childKey):
 child = argvList[1]
 # 아이 현재위치 획득
 childGPS = getNowChildGPS(child)
-childGPS = childGPS[0]
 # 아이 위치 location으로 저장
 childLocation = childGPS[2], childGPS[3]
 # 부모 현재 위치 획득
@@ -246,7 +240,7 @@ parentLocation = []
 for GPS in parentGPS:
     parentLocation.append((GPS[2], GPS[3]))
 
-if comparePrentChild(childLocation, parentLocation) < 0.05:
+if comparePrentChild(childLocation, parentLocation):
     # 부모와 가까이 있을 경우
     exit()
 elif compareInitial(childLocation, getInitialGPS(child)):
