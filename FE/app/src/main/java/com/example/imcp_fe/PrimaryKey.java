@@ -21,6 +21,7 @@ import java.util.Random;
  * */
 public class PrimaryKey extends AppCompatActivity {
 
+
     private TextView textView;
     private SharedPreferences login_preference;
     private long backKeyPressedTime = 0;

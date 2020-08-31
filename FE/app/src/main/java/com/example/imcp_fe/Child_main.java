@@ -43,40 +43,47 @@ import java.util.Map;
 public class Child_main extends AppCompatActivity {
 
     private Intent foregroundIntent;
+
+    //버튼 및 뷰 인스턴스 변수
     private EditText et_childmain_password;
     private ImageButton ib_childmain_sos;
     private Button btn_childmain_check;
+
+    //SharedPreference 변수
     private SharedPreferences login_preference;
     private String password;
+
     private Intent intent;
+    //서버 url
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/childLogin.jsp";
     private String sosurl = "http://tomcat.comstering.synology.me/IMCP_Server/childSOS.jsp";
 
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
+
+    //퍼미션
     private String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION};
     private Restartservice restartservice;
     private long backKeyPressedTime = 0;
     private Toast toast;
+    //스위치 변수
     private String onoff = "off";
 
-    /*
-     * 엑티비티 생성 시 호출
-     * 사용자 인터페이스 설정
-     * 버튼 이벤트 설정
-     * */
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.child_main);
 
+        //SharedPreference 설정
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
 
+        //인스턴스 값 저장
         et_childmain_password = findViewById(R.id.et_childmain_password);
         ib_childmain_sos = findViewById(R.id.ib_childmain_sos);
         btn_childmain_check = findViewById(R.id.btn_childmain_check);
 
-        if (!login_preference.getString("onoff", "null").equals("null")) {
+        if (!login_preference.getString("onoff", "null").equals("null")) {//onoff 체크 후 저장
             onoff = login_preference.getString("onoff", "");
         }
 
@@ -86,15 +93,16 @@ public class Child_main extends AppCompatActivity {
             public void onClick(View view) {
                 password = et_childmain_password.getText().toString();
                 childRequest(url);
-
-
             }
         });
-        //
+
+        //sos버튼 클릭
         ib_childmain_sos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 final SharedPreferences.Editor editor = login_preference.edit();
+                //on/off 체크 후 Sharedfreperence에 저장
                 if (onoff.equals("off")) {
                     onoff = "on";
                     editor.putString("onoff", String.valueOf(onoff));
@@ -116,6 +124,8 @@ public class Child_main extends AppCompatActivity {
         } else {
             checkRunTimePermission();
         }
+
+        //서비스 실행 확인
         if (GPStracker.serviceIntent == null) {
             foregroundIntent = new Intent(this, GPStracker.class);
             startService(foregroundIntent);
@@ -126,11 +136,13 @@ public class Child_main extends AppCompatActivity {
         }
         Log.e("GPS", login_preference.getString("key", "error"));
     }
+
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         et_childmain_password.setText("");
     }
+
     //뒤로 가기 버튼 2번 누를 시 종료
     @Override
     public void onBackPressed() {
@@ -149,6 +161,7 @@ public class Child_main extends AppCompatActivity {
         }
     }
 
+    //서비스 종료
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -351,10 +364,7 @@ public class Child_main extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /*
-    volley 호츌 로그인 성공 여부
-    고유키와 패스워드를 파라미터로 전송
-    */
+
     public void childRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -435,7 +445,7 @@ public class Child_main extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("childKey", login_preference.getString("key", ""));
-                Log.e("SOS", login_preference.getString("onoff", ""));
+
                 if (onoff.equals("on")) {
                     params.put("sos", "helped");
                 } else if (onoff.equals("off")) {

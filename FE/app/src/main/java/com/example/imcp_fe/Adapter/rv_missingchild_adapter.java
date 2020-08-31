@@ -58,11 +58,13 @@ public class rv_missingchild_adapter extends RecyclerView.Adapter<rv_missingchil
     public void onBindViewHolder(rv_missingchild_adapter.ViewHolder holder, final int postion){
         final rv_missingchild_data item = missingchild.get(postion);
 
+        //이미지 설정
         Picasso.with(context).load("http://tomcat.comstering.synology.me/IMCP_Server/upload/"+item.getRv_missingchild_image()).into(holder.missingchild_photo);
+
         holder.missingchild_name.setText(item.getRv_missingchild_name());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view) {//아이템 클릭 시 해당 정보들을 다음 엑티비티로 전달
                 Intent intent = new Intent(context, Missing_child_info.class);
                 intent.putExtra("key", item.getRv_missingchild_key());
                 intent.putExtra("image", item.getRv_missingchild_image());

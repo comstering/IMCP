@@ -48,24 +48,24 @@ import java.util.Map;
 
 
 public class GPStracker extends Service implements LocationListener {
+
     public static Intent serviceIntent = null;
     private Context mContext;
     private Location location;
-    double latitude;
-    double longitude;
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;//10;
+
+    double latitude;//위도
+    double longitude;//경도
+
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;//거리
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;//1분
     protected LocationManager locationManager =null;
-    private String gpsurl;
+
+
+    private String gpsurl;//서버 url
     private String key;
     private String id;
 
-    private final int M = 1000 * 1000;
-    private final int C = 1000;
     private SharedPreferences login_preference;
-    private Restartservice restartservice;
-    private Thread mThread;
-    private int mCount = 0;
 
 
     @Override
@@ -116,31 +116,6 @@ public class GPStracker extends Service implements LocationListener {
         }
         Notification notification = builder.build();
         startForeground(1, notification);
-
-
-//        Intent intent = new Intent(this, Child_main.class);
-//
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//
-//        String channelId = "Channel ID";
-//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//        NotificationCompat.Builder notificationBuilder =
-//                new NotificationCompat.Builder(this, channelId)
-//                        .setSmallIcon(R.mipmap.ic_launcher)
-//                        .setContentTitle("IMCP")
-//                        .setContentText("gps 동작중")
-//                        .setSound(defaultSoundUri)
-//                        .setContentIntent(pendingIntent);
-////                        .setOngoing(true);
-//
-//
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            String channelName = "Channel Name";
-//            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
-//            notificationManager.createNotificationChannel(channel);
-//        }
-
 
     }
 
@@ -254,12 +229,12 @@ public class GPStracker extends Service implements LocationListener {
         return null;
     }
 
-
-    public void stopUsingGPS() {
-        if (locationManager != null) {
-            locationManager.removeUpdates(GPStracker.this);
-        }
-    }
+//
+//    public void stopUsingGPS() {
+//        if (locationManager != null) {
+//            locationManager.removeUpdates(GPStracker.this);
+//        }
+//    }
 
     public void GPSRequest(String url, final double latitude, final double longitude) {
 

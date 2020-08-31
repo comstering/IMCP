@@ -49,46 +49,59 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * */
 public class Add_child extends AppCompatActivity {
 
-    private final int REQ_CODE_SELECT_IMAGE = 100;//??
+    private final int REQ_CODE_SELECT_IMAGE = 100;
 
+    //등록 할 아이 사진, 이름, 생일 변수
     private CircleImageView photo;
     private EditText name;
+    private EditText birthday;
+
+    //Add_child_check에서 받아 올 고유키와 비밀번호
     private String key;
     private String password;
-    private EditText birthday;
+
+    //등록 버튼
     private Button btn_addchild_add;
+
+    //전송할 서버 주소
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/addChild.jsp";
+
+    //이미지 경로와 비트맵 변수
     private String img_path = new String();
     private String imageName = null;
     private Bitmap image_bitmap = null;
     private Bitmap image_bitmap_copy = null;
+
+    //SharedPreferences 변수
     private SharedPreferences login_preference;
 
-    /*
-     * 액티비티 생성 시 호출
-     * 인터페이스 초기화
-     * 버튼 클릭 시 이벤트 설정
-     */
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_child);
         Intent intent = getIntent();
-        key = intent.getStringExtra("key");
-        password = intent.getStringExtra("password");
 
-        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .permitDiskReads()
-                .permitDiskWrites()
-                .permitNetwork().build());
-
-
+        //각 변수의 인스턴스를 받아옴
         photo = (CircleImageView) findViewById(R.id.iv_addchild_photo);
         name = (EditText) findViewById(R.id.etv_addchild_name);
         birthday = (EditText) findViewById(R.id.etv_addchild_birthday);
         btn_addchild_add = (Button) findViewById(R.id.btn_addchild_add);
 
 
+        //전 액티비티에서 고유키와 비밀번호를 받아옴
+        key = intent.getStringExtra("key");
+        password = intent.getStringExtra("password");
+
+        //SharedPreferences 인스턴스
+        login_preference = getSharedPreferences("Login", MODE_PRIVATE);
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .permitDiskReads()
+                .permitDiskWrites()
+                .permitNetwork().build());
+
+
+        //사진 클릭 이벤트, 사진 변경
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,25 +109,21 @@ public class Add_child extends AppCompatActivity {
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
-                Log.d("Test", img_path);
             }
         });
 
-
+        //등록 버튼 이벤트
         btn_addchild_add.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                Log.e("check", "click check");
+
                 //edittext에 모두 값이 있는지 확인
                 if (name.getText().toString().length() == 0 || birthday.getText().toString().length() == 0) {
                     Toast.makeText(getApplicationContext(), "공란 없이 채워주세요.", Toast.LENGTH_SHORT).show();
-                    Log.e("check", "ddd");
-                } else {
-                    Log.d("Test", "DoFileUpload 전 : " + img_path);
-                    DoFileUpload(url, img_path);
+                } else { //eidttext에 모두 값이 있을 시
+                    DoFileUpload(url, img_path); //서버로 전송
                     Toast.makeText(getApplicationContext(), "이미지 전송 성공", Toast.LENGTH_SHORT).show();
-                    Log.e("check", "Success");
                 }
             }
         });
@@ -129,13 +138,11 @@ public class Add_child extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        Toast.makeText(getBaseContext(), "resultCode : " + data, Toast.LENGTH_SHORT).show();
-
         if (requestCode == REQ_CODE_SELECT_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 try {
                     img_path = getImagePathToUri(data.getData()); //이미지의 URI를 얻어 경로값으로 반환.
-                    Toast.makeText(getBaseContext(), "img_path : " + img_path, Toast.LENGTH_SHORT).show();
+
                     //이미지를 비트맵형식으로 반환
                     image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
 
@@ -168,11 +175,9 @@ public class Add_child extends AppCompatActivity {
 
         //이미지의 경로 값
         String imgPath = cursor.getString(column_index);
-        Log.d("test", imgPath);
 
         //이미지의 이름 값
         String imgName = imgPath.substring(imgPath.lastIndexOf("/") + 1);
-        Toast.makeText(Add_child.this, "이미지 이름 : " + imgName, Toast.LENGTH_SHORT).show();
         this.imageName = imgName;
 
         return imgPath;
@@ -191,20 +196,13 @@ public class Add_child extends AppCompatActivity {
 
     /*
      * Http 통신 이미지 파일 전송 및 정보 전송
-     *
      */
     public void HttpFileUpload(String urlString, String params, String fileName) {
         try {
-            Log.d("Test", urlString);
             File file = new File(fileName);
-            Log.d("Test", "name : " + fileName);
 
             FileInputStream mFileInputStream = new FileInputStream(file);
-            Log.e("Test", "1");
             URL connectUrl = new URL(urlString);
-            Log.e("Test", "2");
-
-            Log.d("Test", "mFileInputStream  is " + mFileInputStream);
 
             // HttpURLConnection 통신
             HttpURLConnection conn = (HttpURLConnection) connectUrl.openConnection();
@@ -214,14 +212,13 @@ public class Add_child extends AppCompatActivity {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-            Log.e("Test", "3");
 
 
             // write data
             DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(twoHyphens + boundary + lineEnd);
 
-
+            //이름 write
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"name\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; UTF-8" + lineEnd);
@@ -229,7 +226,7 @@ public class Add_child extends AppCompatActivity {
             dos.writeUTF(name.getText().toString());
             dos.writeBytes(lineEnd);
 
-
+            //이름 write
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"key\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain; charset=UTF-8" + lineEnd);
@@ -268,7 +265,6 @@ public class Add_child extends AppCompatActivity {
             byte[] buffer = new byte[bufferSize];
             int bytesRead = mFileInputStream.read(buffer, 0, bufferSize);
 
-            Log.d("Test", "image byte is " + bytesRead);
 
             // read image
             while (bytesRead > 0) {
@@ -282,7 +278,6 @@ public class Add_child extends AppCompatActivity {
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
             // close streams
-            Log.e("Test", "File is written");
             mFileInputStream.close();
 
             dos.flush();
@@ -297,15 +292,14 @@ public class Add_child extends AppCompatActivity {
             }
             is.close();
 
-            Log.e("Test", "responese : " + b.toString());
 
-            switch (b.toString()) {
+            switch (b.toString()) {//서버에서 받은 값 처리
                 case "PtoCError":
                     Toast.makeText(getApplicationContext(), "아이 연결실패", Toast.LENGTH_SHORT).show();
                     break;
                 case "AddSuccess":
                     Toast.makeText(getApplicationContext(), "연결 성공", Toast.LENGTH_SHORT).show();
-                    Success();
+                    Success();//연결 성공 시 엑티비티 전환
                     break;
                 case "NoPrivateKey":
                     Toast.makeText(getApplicationContext(), "등록된 키가 없습니다.", Toast.LENGTH_SHORT).show();
@@ -323,7 +317,7 @@ public class Add_child extends AppCompatActivity {
         }
     } // end of HttpFileUpload()
 
-    public void Success() {
+    public void Success() {//전송 성공 시 엑티비티 변경
         Intent intent = new Intent(getApplicationContext(), Parents_main.class);
         startActivity(intent);
     }

@@ -30,30 +30,36 @@ import java.util.Map;
  * 부모 계정 마이페이지
  * */
 public class Parent_info extends AppCompatActivity {
+
+    //textview 변수
     private TextView tv_parentinfo_id;
     private TextView tv_parentinfo_name;
     private TextView tv_parentinfo_phone;
     private TextView tv_parentinfo_email;
+
+    //버튼
     private Button btn_parentinfo_logout;
+
+    //서버 url
     private String url = "http://tomcat.comstering.synology.me/IMCP_Server/getParentInfo.jsp";
     private SharedPreferences login_preference;
 
 
-    /*
-     * 엑티비티 생성 시 호출
-     * 사용자 인터페이스 설정
-     * volley 호출
-     * */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.parent_info);
+
+
         login_preference = getSharedPreferences("Login", MODE_PRIVATE);
+
+        //인스턴스 설정
         tv_parentinfo_id = findViewById(R.id.tv_parentinfo_id);
         tv_parentinfo_name = findViewById(R.id.tv_parentinfo_name);
         tv_parentinfo_phone = findViewById(R.id.tv_parentinfo_phone);
         tv_parentinfo_email = findViewById(R.id.tv_parentinfo_email);
         btn_parentinfo_logout = findViewById(R.id.btn_parentinfo_logout);
 
+        //로그아웃 시 저장된 id pw 값 삭제
         btn_parentinfo_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,11 +76,7 @@ public class Parent_info extends AppCompatActivity {
         mypageRequest(url);
     }
 
-    /*
-     * volley 호출
-     * 마이페이지 정보 받기
-     * ID를 파라미터로 전달
-     * */
+
     public void mypageRequest(String url) {
 
         StringRequest request = new StringRequest(
@@ -82,7 +84,7 @@ public class Parent_info extends AppCompatActivity {
                 url,
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
+                    public void onResponse(String response) {//JSON 형태 리스폰
                         try {
                             if (!response.equals(null)) {
                                 JSONObject row = new JSONObject(response);
